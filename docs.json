@@ -8,9 +8,9 @@
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#22D3EE",
-    "light": "#22D3EE",
-    "dark": "#0E7490"
+    "primary": "#FF5C1C",
+    "light": "#FF5C1C",
+    "dark": "#C2410C"
   },
   "api": {
     "playground": {
@@ -28,8 +28,7 @@
               "introduction",
               "authentication",
               "conventions",
-              "errors",
-              "migrate-from-mobula"
+              "errors"
             ]
           }
         ]
