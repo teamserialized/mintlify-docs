@@ -1,0 +1,68 @@
+---
+title: "Wallet Profile"
+description: "Who is behind an address: display name, avatar, ENS / Basename / .sol, bio, social accounts (Twitter, Farcaster, GitHub…), follower counts, sources, pro-trader flag - plus `linkedWallets`, other addresses of the same person (cross-wallet identity clusters). Built on our identity graph of 7.6M+ labeled wallets across EVM and Solana."
+---
+
+`GET /v1/wallet/profile` · **1 credit**
+
+Who is behind an address: display name, avatar, ENS / Basename / .sol, bio, social accounts (Twitter, Farcaster, GitHub…), follower counts, sources, pro-trader flag - plus `linkedWallets`, other addresses of the same person (cross-wallet identity clusters). Built on our identity graph of 7.6M+ labeled wallets across EVM and Solana.
+
+<ParamField query="address" type="string" required>
+  Wallet address (EVM hex or Solana base58). Example: `0xd8da6bf26964af9d7eed9e03e53415d37aa96045`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/wallet/profile?address=0xd8da6bf26964af9d7eed9e03e53415d37aa96045' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "profile": {
+      "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+      "displayName": "vitalik.eth",
+      "avatarUrl": "https://euc.li/vitalik.eth",
+      "ensName": "vitalik.eth",
+      "basename": null,
+      "solName": null,
+      "bio": "I choose balance. First-level balance.\n\nmi pinxe lo crino tcati\n\nhttps://t.co/gCQrmCby7P",
+      "socials": {
+        "url": "https://vitalik.ca",
+        "arkham": "vitalik-buterin",
+        "github": "vbuterin",
+        "twitter": "VitalikButerin",
+        "farcaster": "vitalik.eth",
+        "gmgn_tags": "bluechip_owner,kol",
+        "gmgn_chain": "eth"
+      },
+      "followerCounts": {
+        "gmgn": 1974,
+        "twitter": 7557156,
+        "farcaster": 536314,
+        "gmgn_renamed": 1337
+      },
+      "sources": [
+        "arkham",
+        "gmgn",
+        "ud",
+        "farcaster",
+        "basenames",
+        "ens"
+      ],
+      "identityGroup": "twitter:VitalikButerin",
+      "isProTrader": false
+    },
+    "linkedWallets": [
+      "0xa6a54119b8d20219e6ffeb8026fb557651c3b9b6"
+    ]
+  },
+  "meta": {
+    "asOf": 1787163134666
+  }
+}
+```
+</ResponseExample>

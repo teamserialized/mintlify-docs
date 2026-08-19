@@ -1,0 +1,72 @@
+---
+title: "Wallet Profile: batch"
+description: "Batch twin: up to 100 addresses per call, response array in input order, `null` slots for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent)."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/wallet/profile` · **1 per item credit**
+
+Batch twin: up to 100 addresses per call, response array in input order, `null` slots for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).
+
+<ParamField body="items" type="array" required>
+  `[{ "address": "…" }]` - 1 to 100 items, EVM and Solana mixed freely.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.trade/v1/wallet/profile' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items":[{"address":"0xd8da6bf26964af9d7eed9e03e53415d37aa96045"},{"address":"GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E"}]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+        "displayName": "vitalik.eth",
+        "avatarUrl": "https://euc.li/vitalik.eth",
+        "ensName": "vitalik.eth",
+        "basename": null,
+        "solName": null,
+        "bio": "I choose balance. First-level balance.\n\nmi pinxe lo crino tcati\n\nhttps://t.co/gCQrmCby7P",
+        "socials": {
+          "url": "https://vitalik.ca",
+          "arkham": "vitalik-buterin",
+          "github": "vbuterin",
+          "twitter": "VitalikButerin",
+          "farcaster": "vitalik.eth",
+          "gmgn_tags": "bluechip_owner,kol",
+          "gmgn_chain": "eth"
+        },
+        "followerCounts": {
+          "gmgn": 1974,
+          "twitter": 7557156,
+          "farcaster": 536314,
+          "gmgn_renamed": 1337
+        },
+        "sources": [
+          "arkham",
+          "gmgn",
+          "ud",
+          "farcaster",
+          "basenames",
+          "ens"
+        ],
+        "identityGroup": "twitter:VitalikButerin",
+        "isProTrader": false
+      }
+    },
+    {
+      "data": null
+    }
+  ],
+  "meta": {
+    "asOf": 1787163134666
+  }
+}
+```
+</ResponseExample>

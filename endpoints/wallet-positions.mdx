@@ -1,0 +1,69 @@
+---
+title: "Wallet Positions"
+description: "Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana."
+---
+
+`GET /v1/wallet/positions` · **2 credits**
+
+Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="wallet" type="string" required>
+  Wallet address (EVM hex, case-insensitive; Solana base58).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/wallet/positions?chain=solana&wallet=GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "solana",
+      "address": "GFQLVG2UKYydSCJ2WjkuMXijpgJ6hbs2nEsNwdZFpump",
+      "symbol": "Tortuga",
+      "name": "Tortuga",
+      "amount": "786309.646509",
+      "amountUsd": 1.542082323211693,
+      "entryPriceUsd": 0.0000094681,
+      "currentPriceUsd": 0.0000019611641928318152,
+      "realizedPnlUsd": 0,
+      "unrealizedPnlUsd": -5.90277604090017,
+      "totalPnlUsd": -5.90277604090017,
+      "buys": 1,
+      "sells": 0,
+      "firstTradeAt": 1786907834306,
+      "lastTradeAt": 1786907834306
+    },
+    {
+      "chain": "solana",
+      "address": "9x4EQVaPRWSw4jKoWTpRzMP7YAu5sZwHyLJ9tbJYpump",
+      "symbol": "JOKE",
+      "name": "Jokecoin",
+      "amount": "0",
+      "amountUsd": 0,
+      "entryPriceUsd": 0.0000043767,
+      "currentPriceUsd": 0.0000022750068945288,
+      "realizedPnlUsd": -3.6082862084,
+      "unrealizedPnlUsd": 0,
+      "totalPnlUsd": -3.6082862084,
+      "buys": 1,
+      "sells": 1,
+      "firstTradeAt": 1786906521018,
+      "lastTradeAt": 1786906537718
+    }
+  ],
+  "meta": {
+    "asOf": 1787163134247
+  }
+}
+```
+</ResponseExample>

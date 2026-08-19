@@ -1,0 +1,91 @@
+---
+title: "Wallet PnL"
+description: "Realized PnL of a wallet: daily curve plus summary (total realized, win rate, trades, wins/losses). Omit `chain` to combine every EVM chain; `chain=solana` for Solana."
+---
+
+`GET /v1/wallet/pnl` · **1 credit**
+
+Realized PnL of a wallet: daily curve plus summary (total realized, win rate, trades, wins/losses). Omit `chain` to combine every EVM chain; `chain=solana` for Solana.
+
+<ParamField query="wallet" type="string" required>
+  Wallet address (EVM hex, case-insensitive; Solana base58).
+</ParamField>
+
+<ParamField query="chain" type="string">
+  Public chain id. Omit for all EVM chains combined.
+</ParamField>
+
+<ParamField query="period" type="string">
+  `1d`, `7d`, `30d` (default) or `all`.
+</ParamField>
+
+<Note>`usdBasis` tells you how USD values were computed and is never hidden: `spot` (EVM today - native PnL valued at the current native price; historical-rate valuation ships with the native-USD history) or `trade` (valued at trade time).</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/wallet/pnl?wallet=0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09&period=7d' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "usdBasis": "spot",
+    "history": [
+      {
+        "at": 1786492800000,
+        "realizedPnlUsd": -57.868301494900045,
+        "trades": 6
+      },
+      {
+        "at": 1786579200000,
+        "realizedPnlUsd": 0,
+        "trades": 2
+      },
+      {
+        "at": 1786665600000,
+        "realizedPnlUsd": 507.4615763179921,
+        "trades": 6
+      },
+      {
+        "at": 1786752000000,
+        "realizedPnlUsd": 1900.1094972529686,
+        "trades": 6
+      },
+      {
+        "at": 1786838400000,
+        "realizedPnlUsd": 9.532610944253003,
+        "trades": 6
+      },
+      {
+        "at": 1786924800000,
+        "realizedPnlUsd": 17.12492628880112,
+        "trades": 7
+      },
+      {
+        "at": 1787011200000,
+        "realizedPnlUsd": 0,
+        "trades": 5
+      },
+      {
+        "at": 1787097600000,
+        "realizedPnlUsd": 305.4557835542363,
+        "trades": 5
+      }
+    ],
+    "summary": {
+      "realizedPnlUsd": 2681.816092863351,
+      "winRate": 90.47619047619048,
+      "trades": 43,
+      "wins": 19,
+      "losses": 2
+    }
+  },
+  "meta": {
+    "asOf": 1787163134665
+  }
+}
+```
+</ResponseExample>

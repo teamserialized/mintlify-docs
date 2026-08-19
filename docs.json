@@ -68,6 +68,22 @@
             ]
           },
           {
+            "group": "Wallets",
+            "pages": [
+              "endpoints/wallet-positions",
+              "endpoints/wallet-trades",
+              "endpoints/wallet-pnl",
+              {
+                "group": "Wallet Profile",
+                "pages": [
+                  "endpoints/wallet-profile",
+                  "endpoints/wallet-profile-batch"
+                ]
+              },
+              "endpoints/wallet-funding"
+            ]
+          },
+          {
             "group": "Market & platform",
             "pages": [
               "endpoints/token-pools",

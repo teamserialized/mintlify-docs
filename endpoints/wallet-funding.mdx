@@ -1,0 +1,41 @@
+---
+title: "Wallet Funding"
+description: "Where a wallet got its first funds: the earliest native transfer that funded it - funder address, timestamp, transaction and amount, with an entity tag (exchange, bridge…) when the funder is known. The primitive behind insider and sybil heuristics."
+---
+
+`GET /v1/wallet/funding` · **1 credit**
+
+Where a wallet got its first funds: the earliest native transfer that funded it - funder address, timestamp, transaction and amount, with an entity tag (exchange, bridge…) when the funder is known. The primitive behind insider and sybil heuristics.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="wallet" type="string" required>
+  Wallet address (EVM hex, case-insensitive; Solana base58).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/wallet/funding?chain=evm:8453&wallet=0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "evm:8453",
+    "funder": "0xae695f8e2cf6bac920fc983ec0e43c77c471b366",
+    "fundedAt": 1760230954000,
+    "txHash": "0x59b8086aecaadb416a815cf81c14d1268aa6b4598e21febbefea757d33fba80c",
+    "amountNative": "200000000000000000",
+    "funderTag": null
+  },
+  "meta": {
+    "asOf": 1787163134667
+  }
+}
+```
+</ResponseExample>
