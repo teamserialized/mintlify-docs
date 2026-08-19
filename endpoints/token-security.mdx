@@ -1,11 +1,11 @@
 ---
 title: "Token Security"
-description: "Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items - no batch security anywhere else on the market. GET twin on the same path for single lookups."
+description: "Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Need many at once? Use the batch twin below."
 ---
 
 `GET /v1/token/security` · **1 credit**
 
-Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items - no batch security anywhere else on the market. GET twin on the same path for single lookups.
+Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Need many at once? Use the batch twin below.
 
 <ParamField query="chain" type="string" required>
   Public chain id. `solana` for now; EVM ships with the LP burn/lock indexing (explicit 400 until then, never silent nulls). Example: `solana`
