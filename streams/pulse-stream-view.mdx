@@ -1,11 +1,11 @@
 ---
-title: "Pulse Stream (view)"
-description: "A live launchpad view: the server maintains the filtered, sorted view and pushes it - a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape."
+title: "Token Filters Stream (view)"
+description: "A live token filter view: the server maintains the filtered, sorted launchpad view and pushes it - a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape."
 ---
 
 `WS channel: pulse`
 
-A live launchpad view: the server maintains the filtered, sorted view and pushes it - a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape.
+A live token filter view: the server maintains the filtered, sorted launchpad view and pushes it - a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape.
 
 <ParamField body="view" type="string" required>
   `new`, `bonding` or `migrated` - same views as REST. Example: `bonding`

@@ -32,10 +32,10 @@ Chart-ready candles from 1s to 1d, multi-pool aggregation (≤50 pools), wick-ou
 </ParamField>
 
 <ParamField query="quote" type="string">
-  `native` (default) or `usd` - usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history (solana; EVM ships with the EVM USD-history dataset). Example: `usd`
+  `native` (default) or `usd` (Solana) - usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history. Example: `usd`
 </ParamField>
 
-<Note>Prices are native-quoted (`meta.quote: "native"`); multiply by the native USD price for USD charts. USD quoting is coming.</Note>
+<Note>Prices are native-quoted by default (`meta.quote: "native"`). On Solana, pass `quote=usd` for USD candles; otherwise multiply by the native USD price for USD charts.</Note>
 
 <Note>Historical pages are immutable and cached - pagination is fast and deterministic.</Note>
 

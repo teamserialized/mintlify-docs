@@ -20,7 +20,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Serialized Data",
+        "tab": "Overview",
         "groups": [
           {
             "group": "Getting Started",
@@ -31,28 +31,48 @@
               "errors",
               "migrate-from-mobula"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "REST API",
+        "groups": [
           {
-            "group": "API Reference",
+            "group": "Tokens",
             "pages": [
               "endpoints/token-details",
               "endpoints/token-details-batch",
               "endpoints/token-price-lean",
               "endpoints/token-price-batch",
               "endpoints/token-stats-windowed",
+              "endpoints/token-metadata",
+              "endpoints/token-holders",
+              "endpoints/token-security-batch"
+            ]
+          },
+          {
+            "group": "Market & platform",
+            "pages": [
               "endpoints/token-pools",
               "endpoints/candles-ohlcv",
               "endpoints/trades-tape",
               "endpoints/sparklines-batch",
-              "endpoints/token-metadata",
-              "endpoints/token-holders",
-              "endpoints/token-security-batch",
-              "endpoints/token-search",
-              "endpoints/pulse",
               "endpoints/native-prices",
               "endpoints/chains"
             ]
           },
+          {
+            "group": "Search & filters",
+            "pages": [
+              "endpoints/token-search",
+              "endpoints/pulse"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Streams",
+        "groups": [
           {
             "group": "Streams (WebSocket)",
             "pages": [
@@ -61,12 +81,6 @@
               "streams/live-candles-ohlcv",
               "streams/token-updates-stream",
               "streams/pulse-stream-view"
-            ]
-          },
-          {
-            "group": "Roadmap",
-            "pages": [
-              "roadmap"
             ]
           }
         ]

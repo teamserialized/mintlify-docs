@@ -1,9 +1,9 @@
 ---
 title: "Streams overview"
-description: "Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged."
+description: "Real-time push over a single WebSocket connection: live trades, candles, token updates and token filter views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged."
 ---
 
-Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged.
+Real-time push over a single WebSocket connection: live trades, candles, token updates and token filter views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged.
 
 **Endpoint** : `wss://api.serialized.trade/v1/stream`
 
@@ -31,7 +31,7 @@ Limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 di
 
 ## Billing
 
-Streams bill connection time: 1 credit per connection-minute. Channel-level metering may be added later, announced well in advance.
+Streams bill connection time: 1 credit per connection-minute, with no per-message cost.
 
 ## Connection walkthrough
 

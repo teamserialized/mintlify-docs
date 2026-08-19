@@ -22,7 +22,7 @@ description: "Endpoint-by-endpoint mapping from the Mobula API, REST and streams
 | Timestamps: mixed seconds/ms | always unix **milliseconds**, fields end in `At` | no guessing |
 | Amounts net-of-fee (Solana) | GROSS on-chain amounts | ~0.3-1% systematic diff is expected, not a bug |
 
-## Endpoint map (shipped so far)
+## Endpoint map
 
 | Mobula | Serialized | Notes |
 |---|---|---|
@@ -37,8 +37,8 @@ description: "Endpoint-by-endpoint mapping from the Mobula API, REST and streams
 | `GET /api/2/search` | `GET /v1/search?q=` | tokens + pools, cross-chain |
 | `GET /api/2/token/metadata` | `GET /v1/token/metadata?chain=&address=` | socials, icon, description, dex-paid |
 | (sparklines inside details) | `POST /v1/token/sparklines` | batch, per-timeframe price lines |
-| (no batch security) | `POST /v1/token/security` | batch mint/freeze authority (Solana live; EVM indexing) |
-| `POST /api/2/pulse` (views[]) | `GET /v1/pulse?view=new\|bonding\|graduated&chains=` | one view per call for now (multi-view POST coming); `bondingProgress` is consistent with the token endpoint (same registry) |
+| (no batch security) | `POST /v1/token/security` | batch mint/freeze authority (Solana) |
+| `POST /api/2/pulse` (views[]) | `GET /v1/pulse?view=new\|bonding\|graduated&chains=` | one view per call; `bondingProgress` is consistent with the token endpoint (same registry) |
 | `GET /1/blockchains` / `/2/system-metadata` | `GET /v1/meta/chains`, `GET /v1/meta/factories` | includes indexing status per chain |
 | (no equivalent) | `GET /v1/prices/native` | live native-coin USD prices with per-symbol freshness |
 
@@ -56,14 +56,9 @@ stream events for free.
 | `ohlcv` (WS type) | `ohlcv` channel | same interval set as REST (`1s…1M`), `quote=usd` on Solana; candle state re-pushed per trade |
 | `token-details` / `market-details` (WS types) | `token-updates` channel | mutable Token Details subset (price, mcap, liquidity, bonding, 24h stats), ≤1 event/s per token |
 | `pulse-v2` (views) | `pulse` channel | same contract you know: authoritative `snapshot` every ~30s (replace, never merge) + `enter`/`update`/`leave` deltas between |
-| `swap`/`swap-enriched`/`transfer` (raw multi-events) | - | not planned as-is; the `trades` channel covers the trading use case |
-| GraphQL subscriptions | - | not planned; REST + WS channels cover the surface |
+| `swap`/`swap-enriched`/`transfer` (raw multi-events) | - | the `trades` channel covers the trading use case |
+| GraphQL subscriptions | - | REST + WS channels cover the surface |
 
 Billing: 1 credit per connection-minute (no per-message cost). Limits
 per key: 5 connections, 20 subscriptions/connection, 50 tracked tokens/pools.
 Ask us to raise them.
-
-## Coming next (mapped, in build)
-
-Holders & trader intelligence (beyond top holders), wallet/portfolio endpoints,
-screener & wallet streams (WebSocket v1.x), multi-view pulse POST.
