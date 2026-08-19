@@ -1,0 +1,70 @@
+---
+title: "Token Audit"
+description: "Full smart-contract security audit of a token, by our sister product **Serialized Audit**: submit a contract, get a safety verdict (`isSafe`), a human-readable summary and the detected vulnerabilities (honeypots, hidden mint, owner privileges, proxy tricks). Verified source is audited directly; closed-source contracts are audited on decompiled bytecode. Cached verdicts return in milliseconds; a first-time audit takes a few seconds. This endpoint lives on the Serialized Audit API: see the [full Serialized Audit docs](https://docs.serializedaudit.io) for supported chains, async mode, push updates (SSE/webhooks) and pricing."
+---
+
+`GET https://www.serializedaudit.io/api/audit-contract`
+
+Full smart-contract security audit of a token, by our sister product **Serialized Audit**: submit a contract, get a safety verdict (`isSafe`), a human-readable summary and the detected vulnerabilities (honeypots, hidden mint, owner privileges, proxy tricks). Verified source is audited directly; closed-source contracts are audited on decompiled bytecode. Cached verdicts return in milliseconds; a first-time audit takes a few seconds. This endpoint lives on the Serialized Audit API: see the [full Serialized Audit docs](https://docs.serializedaudit.io) for supported chains, async mode, push updates (SSE/webhooks) and pricing.
+
+<ParamField query="chain" type="string" required>
+  Chain SYMBOL, case-insensitive (`base`, `eth`, `bsc`, `arb`, `hype`, `monad`, ...). Note: this is the Serialized Audit convention, not the `evm:<id>` ids used by the Data API. Full list in the Audit docs. Example: `base`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  The contract address to audit (EVM hex). Example: `0x6D7401F6f1fB09ff24a048337ff44D890CdF86F8`
+</ParamField>
+
+<ParamField query="allow_decompile" type="string">
+  Default `true`. Set `false` to opt out of bytecode decompilation for closed-source contracts (they then answer `{"audit": null, "reason": "decompile_disabled"}`).
+</ParamField>
+
+<ParamField query="async" type="string">
+  Default `false` (the request holds until the audit is done). `true`: first-time audits run in the background; poll the same URL until `{status}` flips to `{audit}`.
+</ParamField>
+
+<Note>Separate product, separate key: authenticate with your Serialized Audit key in the `X-Auth-Key` header (not the Data API `Authorization` header). Billing is on Audit credits: 4 per verified-source audit, 16 per decompiled (closed-source) audit; cached re-checks are the cheapest path. Get a key at [serializedaudit.io](https://www.serializedaudit.io).</Note>
+
+<Note>For the lightweight on-chain primitives (mint/freeze authority on Solana), use `POST /v1/token/security` above; Token Audit is the deep contract-level verdict.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://www.serializedaudit.io/api/audit-contract?chain=base&address=0x1111111111111111111111111111111111111111' \
+  -H 'X-Auth-Key: YOUR_AUDIT_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "audit": {
+    "isSafe": false,
+    "isTokenSafe": false,
+    "isHookSafe": null,
+    "description": "The owner can mint unlimited supply after deployment, diluting holders at will.",
+    "vulnerabilities": [
+      {
+        "type": "UnlimitedMinting",
+        "impact": "critical",
+        "description": "The owner can mint new tokens without limit.",
+        "code": "function mint(address to, uint256 amount) external onlyOwner { _mint(to, amount); }",
+        "mitigated": false,
+        "gateReason": "Owner is an active externally-owned account"
+      }
+    ],
+    "name": "Risky Token",
+    "symbol": "RISK",
+    "address": "0x1111111111111111111111111111111111111111",
+    "chain": "BASE",
+    "sourceType": "verified",
+    "isProxy": false,
+    "implementationAddress": null,
+    "hookAddress": null,
+    "hookAudit": null,
+    "createdAt": "2026-06-22T10:00:00.000Z",
+    "auditSystemVersion": "prod-v2.10",
+    "latestAuditSystemVersion": "prod-v2.10"
+  }
+}
+```
+</ResponseExample>

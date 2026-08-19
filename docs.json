@@ -47,7 +47,8 @@
               "endpoints/token-stats-windowed",
               "endpoints/token-metadata",
               "endpoints/token-holders",
-              "endpoints/token-security-batch"
+              "endpoints/token-security-batch",
+              "endpoints/token-audit"
             ]
           },
           {
