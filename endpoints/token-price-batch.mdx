@@ -1,14 +1,14 @@
 ---
 title: "Token Price (batch)"
-description: "Batch twin — up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots."
+description: "Batch twin - up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots."
 ---
 
 `POST /v1/token/price` · **1 per item credit**
 
-Batch twin — up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots.
+Batch twin - up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots.
 
 <ParamField body="items" type="array" required>
-  [{chain, address}] — max 100.
+  [{chain, address}] - max 100.
 </ParamField>
 
 <RequestExample>

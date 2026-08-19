@@ -1,15 +1,14 @@
 ---
 title: "Trades Stream"
-description: "Every new trade for a token — all pools by default, or a pool subset — pushed as it lands. Events are the exact REST trades-tape shape, one event per trade."
-tag: "Beta"
+description: "Every new trade for a token - all pools by default, or a pool subset - pushed as it lands. Events are the exact REST trades-tape shape, one event per trade."
 ---
 
 `WS channel: trades`
 
-Every new trade for a token — all pools by default, or a pool subset — pushed as it lands. Events are the exact REST trades-tape shape, one event per trade.
+Every new trade for a token - all pools by default, or a pool subset - pushed as it lands. Events are the exact REST trades-tape shape, one event per trade.
 
 <ParamField body="chain" type="string" required>
-  Public chain id — `evm:<id>` or `solana`. Example: `evm:8453`
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
 </ParamField>
 
 <ParamField body="address" type="string" required>

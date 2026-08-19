@@ -8,7 +8,7 @@ description: "Chart-ready candles from 1s to 1d, multi-pool aggregation (≤50 p
 Chart-ready candles from 1s to 1d, multi-pool aggregation (≤50 pools), wick-outlier clamping and candle connecting included. On Base, the forming candle includes preconfirmed (flashblocks) swaps ~2.5s before block commit.
 
 <ParamField query="chain" type="string" required>
-  Public chain id — `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
+  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
 </ParamField>
 
 <ParamField query="address" type="string" required>
@@ -32,12 +32,12 @@ Chart-ready candles from 1s to 1d, multi-pool aggregation (≤50 pools), wick-ou
 </ParamField>
 
 <ParamField query="quote" type="string">
-  `native` (default) or `usd` — usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history (solana; EVM ships with the EVM USD-history dataset). Example: `usd`
+  `native` (default) or `usd` - usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history (solana; EVM ships with the EVM USD-history dataset). Example: `usd`
 </ParamField>
 
 <Note>Prices are native-quoted (`meta.quote: "native"`); multiply by the native USD price for USD charts. USD quoting is coming.</Note>
 
-<Note>Historical pages are immutable and cached — pagination is fast and deterministic.</Note>
+<Note>Historical pages are immutable and cached - pagination is fast and deterministic.</Note>
 
 <RequestExample>
 ```bash cURL

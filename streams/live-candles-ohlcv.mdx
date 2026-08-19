@@ -1,15 +1,14 @@
 ---
 title: "Live Candles (OHLCV)"
-description: "The current candle of a token, re-pushed on every trade — same candle shape as REST `/v1/token/ohlcv` (`time` in unix seconds, TradingView-style), plus `tradeAt` (ms of the last folded trade). When a bucket rolls over, the first event of the new bucket closes the previous one."
-tag: "Beta"
+description: "The current candle of a token, re-pushed on every trade - same candle shape as REST `/v1/token/ohlcv` (`time` in unix seconds, TradingView-style), plus `tradeAt` (ms of the last folded trade). When a bucket rolls over, the first event of the new bucket closes the previous one."
 ---
 
 `WS channel: ohlcv`
 
-The current candle of a token, re-pushed on every trade — same candle shape as REST `/v1/token/ohlcv` (`time` in unix seconds, TradingView-style), plus `tradeAt` (ms of the last folded trade). When a bucket rolls over, the first event of the new bucket closes the previous one.
+The current candle of a token, re-pushed on every trade - same candle shape as REST `/v1/token/ohlcv` (`time` in unix seconds, TradingView-style), plus `tradeAt` (ms of the last folded trade). When a bucket rolls over, the first event of the new bucket closes the previous one.
 
 <ParamField body="chain" type="string" required>
-  Public chain id — `evm:<id>` or `solana`. Example: `evm:8453`
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
 </ParamField>
 
 <ParamField body="address" type="string" required>
@@ -17,7 +16,7 @@ The current candle of a token, re-pushed on every trade — same candle shape as
 </ParamField>
 
 <ParamField body="interval" type="string">
-  Candle interval — same set as REST: `1s 5s 15s 30s 1m 5m 15m 30m 1h 4h 12h 1d 1w 1M`. Default `1m`. Example: `1m`
+  Candle interval - same set as REST: `1s 5s 15s 30s 1m 5m 15m 30m 1h 4h 12h 1d 1w 1M`. Default `1m`. Example: `1m`
 </ParamField>
 
 <ParamField body="quote" type="string">

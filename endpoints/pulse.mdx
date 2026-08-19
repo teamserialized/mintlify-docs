@@ -19,19 +19,24 @@ Axiom-style launchpad lifecycle columns: `new` (created <24h), `bonding` (curve 
   1-100, default 30.
 </ParamField>
 
-<Note>`bondingProgress` is consistent with the token endpoint — same factory registry, same thresholds.</Note>
+<Note>`bondingProgress` is consistent with the token endpoint - same factory registry, same thresholds.</Note>
 
 <Note>`graduatedAt` uses the authoritative migration event, not the pool creation time.</Note>
 
+<Note>chains=solana serves the Pump.fun / Raydium LaunchLab / Meteora DBC lifecycles with the same views (new, bonding, graduated).</Note>
+
 <RequestExample>
-```bash cURL
+```bash cURL (EVM)
 curl 'https://api.serialized.trade/v1/pulse?view=bonding&chains=evm:8453' \
   -H 'Authorization: YOUR_API_KEY'
+```
+```bash cURL (Solana)
+curl 'https://api.serialized.trade/v1/pulse?view=bonding&chains=solana' -H 'Authorization: YOUR_API_KEY'
 ```
 </RequestExample>
 
 <ResponseExample>
-```json Response
+```json Response (EVM)
 {
   "data": [
     {
@@ -123,6 +128,102 @@ curl 'https://api.serialized.trade/v1/pulse?view=bonding&chains=evm:8453' \
   ],
   "meta": {
     "asOf": 1786724321168,
+    "view": "bonding"
+  }
+}
+```
+```json Response (Solana)
+{
+  "data": [
+    {
+      "chain": "solana",
+      "address": "Gy5norvZpbgv69cxuLnLg27FBj7f13yXr9g5oLEQpump",
+      "name": "Abdul El-Sayed",
+      "symbol": "SAYED",
+      "nameRank": 1,
+      "totalSupply": "1391880367.286238",
+      "priceNative": "0.000000004137723910209546",
+      "priceUsd": 3.108043618992381e-7,
+      "marketCapUsd": 432.6024893944764,
+      "liquidityNative": "31.024624161532348",
+      "liquidityUsd": 2330.4088733171225,
+      "pool": {
+        "address": "48WkwrpuxrjunUiWPjKE6mwt72L8Jt44ZKDzeoxfpJFq",
+        "type": "PUMP_FUN",
+        "factory": "PUMP_FUN",
+        "quoteAddress": "So11111111111111111111111111111111111111112",
+        "quoteSymbol": "SOL"
+      },
+      "bondingProgress": 98.33763928508132,
+      "migrated": false,
+      "createdAt": 1786046774000,
+      "graduatedAt": null,
+      "ageSeconds": 693101,
+      "txns": 6,
+      "buys": 6,
+      "sells": 0,
+      "volumeUsd": 72.86310307979362,
+      "feesUsd": 0,
+      "metadata": {
+        "iconUrl": null,
+        "websiteUrl": null,
+        "twitterUrl": null,
+        "telegramUrl": null,
+        "dexPaid": false
+      },
+      "creator": {
+        "address": "4pJRQqyvx4PybYDmrNwB87LLxfUJNVN1skrKEaKa43HG",
+        "displayName": "slownsteady",
+        "avatarUrl": "https://ipfs.io/ipfs/bafybeieayc6aywadaxw2nupszfkitppywew7gn5kv2ul4tvlxovaeyoqna",
+        "ensName": null
+      }
+    },
+    {
+      "chain": "solana",
+      "address": "Cux8q7LyQTPMvdGxSwZUvgYsXxPLNCwLFFSRdok9pump",
+      "name": "Yodeli",
+      "symbol": "$YODELI",
+      "nameRank": 0,
+      "totalSupply": "1002469822.877352",
+      "priceNative": "0.00000007100145009501439",
+      "priceUsd": 0.000005333260717625789,
+      "marketCapUsd": 5346.4329269570635,
+      "liquidityNative": "47.01854420040547",
+      "liquidityUsd": 3531.789202169865,
+      "pool": {
+        "address": "C9uSZfFvXF2G9Fz1wamUpP7xveWYYqcJXgzgDEfn4oY5",
+        "type": "PUMP_FUN",
+        "factory": "PUMP_FUN",
+        "quoteAddress": "So11111111111111111111111111111111111111112",
+        "quoteSymbol": "SOL"
+      },
+      "bondingProgress": 97.17616259376459,
+      "migrated": false,
+      "createdAt": 1766489011000,
+      "graduatedAt": null,
+      "ageSeconds": 20250864,
+      "txns": 1,
+      "buys": 1,
+      "sells": 0,
+      "volumeUsd": 4.886580253422385,
+      "feesUsd": 0,
+      "metadata": {
+        "iconUrl": null,
+        "websiteUrl": null,
+        "twitterUrl": null,
+        "telegramUrl": null,
+        "dexPaid": false
+      },
+      "creator": {
+        "address": "Dqv7khGbND9KS2QSo7AnMUzJnQfwc3M2NhqZuLeo7mSM",
+        "displayName": "nap",
+        "avatarUrl": "https://ipfs.io/ipfs/bafkreie6md7fe5dmnnim3mwi5gl7astltzbfs3udztdyxzgzxt6kvadaye",
+        "ensName": null
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1786739875514,
     "view": "bonding"
   }
 }

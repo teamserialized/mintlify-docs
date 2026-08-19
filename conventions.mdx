@@ -5,11 +5,11 @@ description: "The contract every endpoint follows"
 
 ## One envelope
 
-Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). Partial sources appear in `meta.degraded` — data is never silently faked.
+Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). Partial sources appear in `meta.degraded` - data is never silently faked.
 
 ## Chain ids
 
-`evm:<EIP-155 id>` (e.g. `evm:8453` for Base, `evm:645749` for HyperEVM — canonical ids, nothing invented) and `solana`.
+`evm:<EIP-155 id>` (e.g. `evm:8453` for Base, `evm:645749` for HyperEVM - canonical ids, nothing invented) and `solana`.
 
 ## camelCase fields, ms timestamps
 
@@ -21,7 +21,7 @@ A `null` field means the source is unavailable or the value fails sanity checks 
 
 ## Strict validation
 
-Unknown params or invalid enums return 400 with a machine-readable `error.code` — never silently-empty data.
+Unknown params or invalid enums return 400 with a machine-readable `error.code` - never silently-empty data.
 
 ## Native + USD
 
@@ -30,3 +30,7 @@ On-chain amounts are native-denominated (`priceNative`, `liquidityNative` as str
 ## Batch twins
 
 Hot single-GET endpoints have a POST twin on the same path taking `items[]`; the response array is in input order with per-item `{error}` slots. Billing is per item.
+
+## Solana included
+
+Every REST endpoint and stream also serves Solana with the same shapes: chain=solana, base58 addresses (case-sensitive), tx identity is the signature (carried in txHash). Solana volumes and counts are organic (wash-trading filtered); trades aggregate multihop legs per transaction (effective VWAP).

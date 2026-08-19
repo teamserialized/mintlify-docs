@@ -1,10 +1,9 @@
 ---
 title: "Streams overview"
-description: "Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins — anything you built against REST parses stream events unchanged."
-tag: "Beta"
+description: "Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged."
 ---
 
-Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins — anything you built against REST parses stream events unchanged.
+Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged.
 
 **Endpoint** : `wss://api.serialized.trade/v1/stream`
 
@@ -20,7 +19,7 @@ Send `{"op":"ping"}` every 30s; the server replies `{"op":"pong"}`. Connections 
 
 ## Errors
 
-Errors arrive as `{"op":"error","id":"<sub id>","error":{"code","message"}}` — the same machine-readable catalog as REST (`INVALID_PARAM`, `INVALID_CHAIN`, …). A bad subscribe only fails that subscription, never the connection.
+Errors arrive as `{"op":"error","id":"<sub id>","error":{"code","message"}}` - the same machine-readable catalog as REST (`INVALID_PARAM`, `INVALID_CHAIN`, …). A bad subscribe only fails that subscription, never the connection.
 
 ## Reconnect & resume
 
@@ -28,11 +27,11 @@ Delivery is at-most-once: after a reconnect, backfill the gap over REST (trades 
 
 ## Limits
 
-Beta limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 distinct tokens/pools across `trades`/`ohlcv`/`token-updates`. Need more? Ask us.
+Limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 distinct tokens/pools across `trades`/`ohlcv`/`token-updates`. Need more? Ask us.
 
 ## Billing
 
-During beta, streams bill connection time only: 1 credit per connection-minute. Per-message metering may replace this at GA — any change is announced well in advance.
+Streams bill connection time: 1 credit per connection-minute. Channel-level metering may be added later, announced well in advance.
 
 ## Connection walkthrough
 

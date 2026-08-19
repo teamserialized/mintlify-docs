@@ -24,7 +24,7 @@ Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with i
 </ParamField>
 
 <ParamField query="cursor" type="string">
-  Opaque — from meta.nextCursor.
+  Opaque - from meta.nextCursor.
 </ParamField>
 
 <ParamField query="include" type="string">
@@ -32,12 +32,12 @@ Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with i
 </ParamField>
 
 <ParamField query="washFilter" type="string">
-  `washOnly` or `organicOnly` — filter by the per-transaction wash badge (solana; every row carries `isWash`). Example: `organicOnly`
+  `washOnly` or `organicOnly` - filter by the per-transaction wash badge (solana; every row carries `isWash`). Example: `organicOnly`
 </ParamField>
 
-<Note>Amounts are GROSS on-chain (Mobula was net-of-fee — expect a ~0.3-1% systematic diff).</Note>
+<Note>Amounts are GROSS on-chain (Mobula was net-of-fee - expect a ~0.3-1% systematic diff).</Note>
 
-<Note>Preconfirmed rows can be phantoms if the tx reverts (~0.5-1%) — they disappear within 30s; dedup by txHash.</Note>
+<Note>Preconfirmed rows can be phantoms if the tx reverts (~0.5-1%) - they disappear within 30s; dedup by txHash.</Note>
 
 <RequestExample>
 ```bash cURL

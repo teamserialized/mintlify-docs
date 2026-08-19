@@ -1,15 +1,14 @@
 ---
 title: "Pulse Stream (view)"
-description: "A live launchpad view: the server maintains the filtered, sorted view and pushes it — a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape."
-tag: "Beta"
+description: "A live launchpad view: the server maintains the filtered, sorted view and pushes it - a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape."
 ---
 
 `WS channel: pulse`
 
-A live launchpad view: the server maintains the filtered, sorted view and pushes it — a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape.
+A live launchpad view: the server maintains the filtered, sorted view and pushes it - a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape.
 
 <ParamField body="view" type="string" required>
-  `new`, `bonding` or `migrated` — same views as REST. Example: `bonding`
+  `new`, `bonding` or `migrated` - same views as REST. Example: `bonding`
 </ParamField>
 
 <ParamField body="chains" type="string" required>
@@ -20,7 +19,7 @@ A live launchpad view: the server maintains the filtered, sorted view and pushes
   View size. Default 50, max 100.
 </ParamField>
 
-<Note>Every ~30s the server re-sends an authoritative `snapshot` — replace your local state with it, never merge. Deltas between snapshots keep the view live.</Note>
+<Note>Every ~30s the server re-sends an authoritative `snapshot` - replace your local state with it, never merge. Deltas between snapshots keep the view live.</Note>
 
 <RequestExample>
 ```json Subscribe

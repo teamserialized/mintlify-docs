@@ -8,26 +8,29 @@ description: "Full token snapshot: price (native + USD), market cap & FDV (sanit
 Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.
 
 <ParamField query="chain" type="string" required>
-  Public chain id — `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
+  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
 </ParamField>
 
 <ParamField query="address" type="string" required>
   Token address (EVM hex, case-insensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
 </ParamField>
 
-<Note>`createdAt` is the TRUE deploy time (launchpad pool) — `launchpad.graduatedAt` carries the migration.</Note>
+<Note>`createdAt` is the TRUE deploy time (launchpad pool) - `launchpad.graduatedAt` carries the migration.</Note>
 
-<Note>`deployer` is resolved through the original launchpad pool owner — not the migration transaction sender.</Note>
+<Note>`deployer` is resolved through the original launchpad pool owner - not the migration transaction sender.</Note>
 
 <RequestExample>
-```bash cURL
+```bash cURL (EVM)
 curl 'https://api.serialized.trade/v1/token?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
   -H 'Authorization: YOUR_API_KEY'
+```
+```bash cURL (Solana)
+curl 'https://api.serialized.trade/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263' -H 'Authorization: YOUR_API_KEY'
 ```
 </RequestExample>
 
 <ResponseExample>
-```json Response
+```json Response (EVM)
 {
   "data": {
     "chain": "evm:8453",
@@ -77,6 +80,59 @@ curl 'https://api.serialized.trade/v1/token?chain=evm:8453&address=0x4ed4e862860
   },
   "meta": {
     "asOf": 1786724319903
+  }
+}
+```
+```json Response (Solana)
+{
+  "data": {
+    "chain": "solana",
+    "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "name": "Bonk",
+    "symbol": "Bonk",
+    "decimals": 5,
+    "nameRank": 1,
+    "totalSupply": "87994588748104.98",
+    "priceNative": "3.139776285604127e-8",
+    "priceUsd": 0.000002359580289275846,
+    "marketCapUsd": 207630297.17296264,
+    "fdvUsd": 207630297.17296264,
+    "liquidityNative": "1048.3939460738586",
+    "liquidityUsd": 78788.08760656719,
+    "priceNativeAth": null,
+    "liquidityNativeAth": null,
+    "pool": {
+      "address": "7KJfyfKAtrse5EqWdiQYMphhLqBC9kRdfWNrdez6TbKi",
+      "type": "ZEROFI",
+      "quoteAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "quoteSymbol": "USDC",
+      "factory": "ZEROFI",
+      "createdAt": 1781705545000
+    },
+    "launchpad": null,
+    "deployer": null,
+    "createdAt": 1671942208000,
+    "stats24h": {
+      "volumeNative": 2466.120265838208,
+      "volumeUsd": 185331.95492098268,
+      "buys": 7534,
+      "sells": 8681,
+      "priceChangePct": 3.636601730081284
+    },
+    "metadata": {
+      "iconUrl": "https://arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I",
+      "headerUrl": null,
+      "websiteUrl": null,
+      "twitterUrl": null,
+      "telegramUrl": null,
+      "discordUrl": null,
+      "description": "The Official Bonk Inu token",
+      "dexPaid": false,
+      "dexPaidAt": null
+    }
+  },
+  "meta": {
+    "asOf": 1786745258937
   }
 }
 ```
