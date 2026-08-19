@@ -1,0 +1,69 @@
+---
+title: "Trades Stream"
+description: "Every new trade for a token — all pools by default, or a pool subset — pushed as it lands. Events are the exact REST trades-tape shape, one event per trade."
+tag: "Beta"
+---
+
+`WS channel: trades`
+
+Every new trade for a token — all pools by default, or a pool subset — pushed as it lands. Events are the exact REST trades-tape shape, one event per trade.
+
+<ParamField body="chain" type="string" required>
+  Public chain id — `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField body="address" type="string" required>
+  Token address (EVM hex, case-insensitive; Solana base58). Example: `0xb2000000000000000000007bf6d5cbb0e24cb301`
+</ParamField>
+
+<ParamField body="pools" type="string">
+  Comma-separated pool addresses to restrict the tape. Default: token-wide (every pool of the token).
+</ParamField>
+
+<RequestExample>
+```json Subscribe
+{
+  "op": "subscribe",
+  "channel": "trades",
+  "id": "tape-1",
+  "params": {
+    "chain": "evm:8453",
+    "address": "0xb2000000000000000000007bf6d5cbb0e24cb301"
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Ack
+{
+  "op": "subscribed",
+  "id": "tape-1",
+  "channel": "trades"
+}
+```
+```json Trade
+{
+  "op": "event",
+  "id": "tape-1",
+  "channel": "trades",
+  "data": {
+    "at": 1786718835000,
+    "maker": "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09",
+    "isBuy": true,
+    "amountToken": 77.05662024406023,
+    "amountQuote": 0.000042612402192036,
+    "priceNative": 5.4747124708872e-7,
+    "volumeNative": 0.000042612402192036,
+    "volumeUsd": 0.08021081608014609,
+    "isProTrader": false,
+    "isSniper": false,
+    "preconfirmed": false,
+    "txHash": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf",
+    "block": 49964744,
+    "logIndex": 289
+  },
+  "asOf": 1786718835412
+}
+```
+</ResponseExample>

@@ -1,0 +1,67 @@
+---
+title: "Live Candles (OHLCV)"
+description: "The current candle of a token, re-pushed on every trade — same candle shape as REST `/v1/token/ohlcv` (`time` in unix seconds, TradingView-style), plus `tradeAt` (ms of the last folded trade). When a bucket rolls over, the first event of the new bucket closes the previous one."
+tag: "Beta"
+---
+
+`WS channel: ohlcv`
+
+The current candle of a token, re-pushed on every trade — same candle shape as REST `/v1/token/ohlcv` (`time` in unix seconds, TradingView-style), plus `tradeAt` (ms of the last folded trade). When a bucket rolls over, the first event of the new bucket closes the previous one.
+
+<ParamField body="chain" type="string" required>
+  Public chain id — `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField body="address" type="string" required>
+  Token address. Example: `0xb2000000000000000000007bf6d5cbb0e24cb301`
+</ParamField>
+
+<ParamField body="interval" type="string">
+  Candle interval — same set as REST: `1s 5s 15s 30s 1m 5m 15m 30m 1h 4h 12h 1d 1w 1M`. Default `1m`. Example: `1m`
+</ParamField>
+
+<ParamField body="quote" type="string">
+  `native` (default) or `usd` (Solana).
+</ParamField>
+
+<RequestExample>
+```json Subscribe
+{
+  "op": "subscribe",
+  "channel": "ohlcv",
+  "id": "candle-1m",
+  "params": {
+    "chain": "evm:8453",
+    "address": "0xb2000000000000000000007bf6d5cbb0e24cb301",
+    "interval": "1m"
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Ack
+{
+  "op": "subscribed",
+  "id": "candle-1m",
+  "channel": "ohlcv"
+}
+```
+```json Candle update
+{
+  "op": "event",
+  "id": "candle-1m",
+  "channel": "ohlcv",
+  "data": {
+    "time": 1786716000,
+    "open": 5.4747109625568e-7,
+    "high": 5.4747124708872e-7,
+    "low": 5.4747109625568e-7,
+    "close": 5.4747124708872e-7,
+    "volume": 0.000042612402192036,
+    "tradeAt": 1786718835000
+  },
+  "asOf": 1786718835420
+}
+```
+</ResponseExample>

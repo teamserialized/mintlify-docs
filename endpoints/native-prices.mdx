@@ -1,0 +1,48 @@
+---
+title: "Native Prices"
+description: "Live USD prices of every chain's native coin, with per-symbol freshness (`updatedAt`, `stale`) — you always know how fresh a price is."
+---
+
+`GET /v1/prices/native` · **1 credit**
+
+Live USD prices of every chain's native coin, with per-symbol freshness (`updatedAt`, `stale`) — you always know how fresh a price is.
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/prices/native' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "evm:8453": {
+      "symbol": "ETH",
+      "priceUsd": 1879.975,
+      "source": "live",
+      "stale": false,
+      "updatedAt": 1786724315885
+    },
+    "evm:56": {
+      "symbol": "BNB",
+      "priceUsd": 605.87,
+      "source": "live",
+      "stale": false,
+      "updatedAt": 1786724315885
+    },
+    "solana": {
+      "symbol": "SOL",
+      "priceUsd": 75.585,
+      "source": "live",
+      "stale": false,
+      "updatedAt": 1786724315885
+    }
+  },
+  "meta": {
+    "asOf": 1786724321170
+  }
+}
+```
+</ResponseExample>

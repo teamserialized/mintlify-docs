@@ -1,0 +1,52 @@
+---
+title: "Token Price (batch)"
+description: "Batch twin — up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots."
+---
+
+`POST /v1/token/price` · **1 per item credit**
+
+Batch twin — up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots.
+
+<ParamField body="items" type="array" required>
+  [{chain, address}] — max 100.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.trade/v1/token/price' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items": [{"chain": "evm:8453", "address": "0x4ed4..."}, {"chain": "evm:8453", "address": "0xac1b..."}]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "chain": "evm:8453",
+        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+        "priceNative": "0.00000054747124708872",
+        "priceUsd": 0.0010292322577456162,
+        "marketCapUsd": 37389232.09806793,
+        "liquidityUsd": 239386.56038744663
+      }
+    },
+    {
+      "data": {
+        "chain": "evm:8453",
+        "address": "0xac1bd2486aaf3b5c0fc3fd868558b082a531b2b4",
+        "priceNative": "0.00000005269515528366",
+        "priceUsd": 0.0000990655745543987,
+        "marketCapUsd": 41675894.672800824,
+        "liquidityUsd": 359568.6990297848
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1786724320247
+  }
+}
+```
+</ResponseExample>

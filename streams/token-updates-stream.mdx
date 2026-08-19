@@ -1,0 +1,67 @@
+---
+title: "Token Updates Stream"
+description: "Live refresh of the mutable Token Details fields — price, market cap, liquidity, bonding progress, 24h stats. Throttled to at most one event per second per token; fields you already parse from `/v1/token`."
+tag: "Beta"
+---
+
+`WS channel: token-updates`
+
+Live refresh of the mutable Token Details fields — price, market cap, liquidity, bonding progress, 24h stats. Throttled to at most one event per second per token; fields you already parse from `/v1/token`.
+
+<ParamField body="chain" type="string" required>
+  Public chain id — `evm:<id>` or `solana`. Example: `solana`
+</ParamField>
+
+<ParamField body="address" type="string" required>
+  Token address. Example: `CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump`
+</ParamField>
+
+<RequestExample>
+```json Subscribe
+{
+  "op": "subscribe",
+  "channel": "token-updates",
+  "id": "tok-1",
+  "params": {
+    "chain": "solana",
+    "address": "CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump"
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Ack
+{
+  "op": "subscribed",
+  "id": "tok-1",
+  "channel": "token-updates"
+}
+```
+```json Update
+{
+  "op": "event",
+  "id": "tok-1",
+  "channel": "token-updates",
+  "data": {
+    "priceNative": "0.000000028472524478",
+    "priceUsd": 0.0000021952461580276,
+    "marketCapUsd": 2195.24,
+    "fdvUsd": 2195.24,
+    "liquidityUsd": 2348.64,
+    "launchpad": {
+      "migrated": false,
+      "bondingProgress": 38.6,
+      "graduatedAt": null
+    },
+    "stats24h": {
+      "volumeUsd": 16738.29,
+      "buys": 412,
+      "sells": 389,
+      "priceChangePct": -71.5
+    }
+  },
+  "asOf": 1787097303652
+}
+```
+</ResponseExample>

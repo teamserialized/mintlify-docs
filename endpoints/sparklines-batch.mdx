@@ -1,0 +1,49 @@
+---
+title: "Sparklines (batch)"
+description: "Small native-price arrays for list rows — one call for up to 100 pools. Timeframes 1m|5m|30m|1h|24h|7d. Missing pools return [] — we never invent data."
+---
+
+`POST /v1/token/sparklines` · **1 per pool credit**
+
+Small native-price arrays for list rows — one call for up to 100 pools. Timeframes 1m|5m|30m|1h|24h|7d. Missing pools return [] — we never invent data.
+
+<ParamField body="chain" type="string" required>
+  undefined
+</ParamField>
+
+<ParamField body="pools" type="array" required>
+  undefined
+</ParamField>
+
+<ParamField body="timeframe" type="string">
+  undefined
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.trade/v1/token/sparklines' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"chain": "evm:8453", "pools": ["0x0ca6485b7e9cf814a3fd09d81672b07323535b64"], "timeframe": "24h"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "0x0ca6485b7e9cf814a3fd09d81672b07323535b64": [
+      5.249040755790959e-7,
+      5.299419269878368e-7,
+      5.341024278723588e-7,
+      5.353384270094856e-7,
+      5.367245992625111e-7,
+      5.382859734840854e-7,
+      "…"
+    ]
+  },
+  "meta": {
+    "asOf": 1786725098728,
+    "timeframe": "24h",
+    "quote": "native"
+  }
+}
+```
+</ResponseExample>

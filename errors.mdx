@@ -1,0 +1,27 @@
+---
+title: "Errors"
+description: "Machine-readable error contract"
+---
+
+Every error is:
+
+```json
+{
+  "error": {
+    "code": "INVALID_PARAM",
+    "message": "Human-readable detail",
+    "details": "optional"
+  }
+}
+```
+
+| Code | HTTP |
+|---|---|
+| `INVALID_CHAIN` | 400 |
+| `INVALID_PARAM` | 400 |
+| `UNAUTHORIZED` | 401 |
+| `NOT_FOUND` | 404 |
+| `RATE_LIMITED` | 429 |
+| `UPSTREAM_ERROR` | 502 |
+| `UPSTREAM_TIMEOUT` | 504 |
+| `INTERNAL` | 500 |

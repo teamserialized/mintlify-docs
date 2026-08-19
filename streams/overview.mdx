@@ -1,0 +1,69 @@
+---
+title: "Streams overview"
+description: "Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins — anything you built against REST parses stream events unchanged."
+tag: "Beta"
+---
+
+Real-time push over a single WebSocket connection: live trades, candles, token updates and pulse views. Event payloads reuse the exact same shapes as their REST twins — anything you built against REST parses stream events unchanged.
+
+**Endpoint** : `wss://api.serialized.trade/v1/stream`
+
+One connection, many subscriptions. Subscriptions are additive: each `subscribe` carries a client-chosen `id`, acks are explicit, and `unsubscribe` targets one id without touching the others.
+
+## Authentication
+
+Send your key as the first frame within 10 seconds of connecting: `{"op":"auth","apiKey":"YOUR_API_KEY"}`. The server replies `{"op":"auth.ok"}`; any other first frame closes the connection (code 4401).
+
+## Keepalive
+
+Send `{"op":"ping"}` every 30s; the server replies `{"op":"pong"}`. Connections idle for more than 60s are closed.
+
+## Errors
+
+Errors arrive as `{"op":"error","id":"<sub id>","error":{"code","message"}}` — the same machine-readable catalog as REST (`INVALID_PARAM`, `INVALID_CHAIN`, …). A bad subscribe only fails that subscription, never the connection.
+
+## Reconnect & resume
+
+Delivery is at-most-once: after a reconnect, backfill the gap over REST (trades has `cursor` + `fromAt`, candles have `endTime`), then re-subscribe. Trade events carry a stable identity key (`txHash`, `block`, `logIndex`) for exact dedup.
+
+## Limits
+
+Beta limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 distinct tokens/pools across `trades`/`ohlcv`/`token-updates`. Need more? Ask us.
+
+## Billing
+
+During beta, streams bill connection time only: 1 credit per connection-minute. Per-message metering may replace this at GA — any change is announced well in advance.
+
+## Connection walkthrough
+
+<CodeGroup>
+```json Auth (first frame)
+{
+  "op": "auth",
+  "apiKey": "YOUR_API_KEY"
+}
+```
+```json Auth ok
+{
+  "op": "auth.ok"
+}
+```
+```json Subscribe
+{
+  "op": "subscribe",
+  "channel": "trades",
+  "id": "tape-1",
+  "params": {
+    "chain": "evm:8453",
+    "address": "0xb2000000000000000000007bf6d5cbb0e24cb301"
+  }
+}
+```
+```json Ack
+{
+  "op": "subscribed",
+  "id": "tape-1",
+  "channel": "trades"
+}
+```
+</CodeGroup>

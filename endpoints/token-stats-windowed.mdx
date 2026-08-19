@@ -1,0 +1,78 @@
+---
+title: "Token Stats (windowed)"
+description: "Windowed volume, buy/sell counts and volumes, price change — 5m/1h/6h/24h in one call."
+---
+
+`GET /v1/token/stats` · **1 credit**
+
+Windowed volume, buy/sell counts and volumes, price change — 5m/1h/6h/24h in one call.
+
+<ParamField query="chain" type="string" required>
+  Public chain id. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
+<ParamField query="pools" type="string" required>
+  CSV of pool addresses (≤50). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+</ParamField>
+
+<ParamField query="windows" type="string">
+  CSV of 5m|1h|6h|24h (default all).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token/stats?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed&pools=0x0ca6485b7e9cf814a3fd09d81672b07323535b64' -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "5m": {
+      "volumeNative": 0,
+      "volumeUsd": 0,
+      "buys": 0,
+      "sells": 0,
+      "buyVolumeNative": 0,
+      "sellVolumeNative": 0,
+      "priceChangePct": null
+    },
+    "1h": {
+      "volumeNative": 0,
+      "volumeUsd": 0,
+      "buys": 0,
+      "sells": 0,
+      "buyVolumeNative": 0,
+      "sellVolumeNative": 0,
+      "priceChangePct": null
+    },
+    "6h": {
+      "volumeNative": 0.004880922336488563,
+      "volumeUsd": 9.1875309462542,
+      "buys": 1,
+      "sells": 1,
+      "buyVolumeNative": 0.000042612402192036,
+      "sellVolumeNative": 0.004838309934296527,
+      "priceChangePct": 0.000027550868166244168
+    },
+    "24h": {
+      "volumeNative": 9.021983006372073,
+      "volumeUsd": 16982.394382299375,
+      "buys": 112,
+      "sells": 5,
+      "buyVolumeNative": 8.238944806734882,
+      "sellVolumeNative": 0.7830381996371939,
+      "priceChangePct": 4.961733381601848
+    }
+  },
+  "meta": {
+    "asOf": 1786725098444
+  }
+}
+```
+</ResponseExample>

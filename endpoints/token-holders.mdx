@@ -1,0 +1,150 @@
+---
+title: "Token Holders"
+description: "Top holders with position size, share of supply, full PnL (realized + unrealized), buy/sell volumes, behavioral labels and named entities (exchanges, funds — the \"Coinbase\" signal). EVM and Solana."
+---
+
+`GET /v1/token/holders` · **2 credits**
+
+Top holders with position size, share of supply, full PnL (realized + unrealized), buy/sell volumes, behavioral labels and named entities (exchanges, funds — the "Coinbase" signal). EVM and Solana.
+
+<ParamField query="chain" type="string" required>
+  Public chain id — `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  1-100, default 50. Example: `5`
+</ParamField>
+
+<Note>`meta.totalHolders` carries the token's full holder count.</Note>
+
+<Note>`entityName` identifies known wallets (exchanges, funds); `labels` carry behavioral tags (whale, bundler, sniper).</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token/holders?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed&limit=5' -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "rank": 1,
+      "address": "0x06a19654e0872ba71c2261ea691ecf8a0c677156",
+      "amountToken": 8093205592.589868,
+      "amountUsd": 8106388.489335061,
+      "pctSupply": 21.57463272169278,
+      "buys": 0,
+      "sells": 0,
+      "volumeBuyUsd": 0,
+      "volumeSellUsd": 0,
+      "realizedPnlUsd": 0,
+      "unrealizedPnlUsd": 8106388.489335061,
+      "totalPnlUsd": 8106388.489335061,
+      "avgBuyPriceUsd": 0,
+      "avgSellPriceUsd": 0,
+      "labels": [
+        "bundler"
+      ],
+      "entityName": null,
+      "entityType": null,
+      "fundingFrom": "0x3c12b77ae8b7dd1feb63d1d6a2a819acda0a41d2",
+      "fundingAt": 1740046431000
+    },
+    {
+      "rank": 2,
+      "address": "0x82d4cd9bf16017fd518511d8bbe6d0493af31a10",
+      "amountToken": 2023345890.1207378,
+      "amountUsd": 2026641.6867793195,
+      "pctSupply": 5.393776785835032,
+      "buys": 0,
+      "sells": 0,
+      "volumeBuyUsd": 0,
+      "volumeSellUsd": 0,
+      "realizedPnlUsd": 0,
+      "unrealizedPnlUsd": 2026641.6867793195,
+      "totalPnlUsd": 2026641.6867793195,
+      "avgBuyPriceUsd": 0,
+      "avgSellPriceUsd": 0,
+      "labels": [],
+      "entityName": "Coinbase",
+      "entityType": "cex",
+      "fundingFrom": "0x91d66b38ae24292e9e12dd962bbb3aecf4ab769a",
+      "fundingAt": 1770315221000
+    },
+    {
+      "rank": 3,
+      "address": "0x9773c9e7d048ae91a4fd9a48cd0b984e31fa418c",
+      "amountToken": 1908210966.989285,
+      "amountUsd": 1911319.222161858,
+      "pctSupply": 5.0868534472909355,
+      "buys": 0,
+      "sells": 0,
+      "volumeBuyUsd": 0,
+      "volumeSellUsd": 0,
+      "realizedPnlUsd": 0,
+      "unrealizedPnlUsd": 1911319.222161858,
+      "totalPnlUsd": 1911319.222161858,
+      "avgBuyPriceUsd": 0,
+      "avgSellPriceUsd": 0,
+      "labels": [],
+      "entityName": null,
+      "entityType": null,
+      "fundingFrom": null,
+      "fundingAt": null
+    },
+    {
+      "rank": 4,
+      "address": "0x7d00d30269fc62ab5fab54418feedbdc71fdb25f",
+      "amountToken": 1848296798,
+      "amountUsd": 1851307.4599143364,
+      "pctSupply": 4.92713599343646,
+      "buys": 0,
+      "sells": 0,
+      "volumeBuyUsd": 0,
+      "volumeSellUsd": 0,
+      "realizedPnlUsd": 0,
+      "unrealizedPnlUsd": 1851307.4599143364,
+      "totalPnlUsd": 1851307.4599143364,
+      "avgBuyPriceUsd": 0,
+      "avgSellPriceUsd": 0,
+      "labels": [],
+      "entityName": "Degen",
+      "entityType": "meme",
+      "fundingFrom": "0x072c6b59485e15a1c9f180f92701450ca06c0f5e",
+      "fundingAt": 1763070264000
+    },
+    {
+      "rank": 5,
+      "address": "0xefef4558802bf373ce3307189c79a9cab0a4cb9c",
+      "amountToken": 1840652205.0907912,
+      "amountUsd": 1843650.4148466068,
+      "pctSupply": 4.906757259393914,
+      "buys": 0,
+      "sells": 0,
+      "volumeBuyUsd": 0,
+      "volumeSellUsd": 0,
+      "realizedPnlUsd": 0,
+      "unrealizedPnlUsd": 1843650.4148466068,
+      "totalPnlUsd": 1843650.4148466068,
+      "avgBuyPriceUsd": 0,
+      "avgSellPriceUsd": 0,
+      "labels": [],
+      "entityName": "Degen",
+      "entityType": "meme",
+      "fundingFrom": "0x766dd3a13d17c6d175975c89225bde89f052dbc4",
+      "fundingAt": 1710087441000
+    }
+  ],
+  "meta": {
+    "asOf": 1786928983078,
+    "totalHolders": 1192454
+  }
+}
+```
+</ResponseExample>

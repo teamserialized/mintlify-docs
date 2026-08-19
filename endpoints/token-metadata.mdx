@@ -1,0 +1,48 @@
+---
+title: "Token Metadata"
+description: "Socials, description, images, dex-paid status. POST twin on the same path for batches (≤100, billed per item)."
+---
+
+`GET /v1/token/metadata` · **1 credit**
+
+Socials, description, images, dex-paid status. POST twin on the same path for batches (≤100, billed per item).
+
+<ParamField query="chain" type="string" required>
+  Public chain id. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token/metadata?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+    "name": "Degen",
+    "symbol": "DEGEN",
+    "decimals": 18,
+    "iconUrl": "https://cdn.dexscreener.com/cms/images/c865067e6e29f660b5d0c2a69814875c7415c3fc0022434651525c21f03cc24a?width=800&height=800&quality=90",
+    "headerUrl": "https://cdn.dexscreener.com/cms/images/b0bbfdf2aa7c44176f77b9e541ae3e247c358f0ee1aed5dbe171f5cd5f8f5cd1?width=1500&height=500&quality=90",
+    "websiteUrl": "https://www.degen.tips/",
+    "twitterUrl": "https://twitter.com/degentokenbase",
+    "telegramUrl": "https://t.me/degentokenbase",
+    "discordUrl": null,
+    "description": null,
+    "dexPaid": true,
+    "dexPaidAt": null
+  },
+  "meta": {
+    "asOf": 1786725098674
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,130 @@
+---
+title: "Pulse"
+description: "Axiom-style launchpad lifecycle columns: `new` (created <24h), `bonding` (curve in progress, sorted by bonding %), `graduated` (migrated or virtually-graduated, last 7 days). ~90 launchpads tracked natively across 18 EVM chains, bonding thresholds per factory."
+---
+
+`GET /v1/pulse` · **1 credit**
+
+Axiom-style launchpad lifecycle columns: `new` (created <24h), `bonding` (curve in progress, sorted by bonding %), `graduated` (migrated or virtually-graduated, last 7 days). ~90 launchpads tracked natively across 18 EVM chains, bonding thresholds per factory.
+
+<ParamField query="view" type="string" required>
+  new | bonding | graduated Example: `bonding`
+</ParamField>
+
+<ParamField query="chains" type="string" required>
+  CSV of chain ids (≤8). Example: `evm:8453`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  1-100, default 30.
+</ParamField>
+
+<Note>`bondingProgress` is consistent with the token endpoint — same factory registry, same thresholds.</Note>
+
+<Note>`graduatedAt` uses the authoritative migration event, not the pool creation time.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/pulse?view=bonding&chains=evm:8453' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "evm:8453",
+      "address": "0x6d15ea268ec2345455c087465bd336adffffca26",
+      "name": "CHIANGRAI by Virtuals",
+      "symbol": "CHIANGRAI",
+      "nameRank": 3,
+      "totalSupply": "1000000000",
+      "priceNative": "0.0000000110386714952650873516541921155458",
+      "priceUsd": 0.000020752426444310983,
+      "marketCapUsd": 20752.426444310982,
+      "liquidityNative": "5.5187286874768706372748",
+      "liquidityUsd": 10375.071964239329,
+      "pool": {
+        "address": "0xb852193b794dafbd5237866439531dd621bf78b0",
+        "type": "VIRTUAL_V3",
+        "factory": "VIRTUAL",
+        "quoteAddress": "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+        "quoteSymbol": "VIRTUAL"
+      },
+      "bondingProgress": 57.149142165790856,
+      "migrated": false,
+      "createdAt": 1786625071000,
+      "graduatedAt": null,
+      "ageSeconds": 99250,
+      "txns": 1,
+      "buys": 1,
+      "sells": 0,
+      "volumeUsd": 1.1411323915032607,
+      "feesUsd": 0.01643934738875,
+      "metadata": {
+        "iconUrl": "https://s3.ap-southeast-1.amazonaws.com/virtualprotocolcdn/f71c3976-f1f7-438a-a895-1dd014869b33.jpeg",
+        "websiteUrl": null,
+        "twitterUrl": null,
+        "telegramUrl": null,
+        "dexPaid": false
+      },
+      "creator": {
+        "address": "0x384d92776496bce2c6f08d5b8e015eae498e78b3",
+        "displayName": null,
+        "avatarUrl": null,
+        "ensName": null
+      }
+    },
+    {
+      "chain": "evm:8453",
+      "address": "0x4a2b95e6828fb05da788d7300a48016386f696bc",
+      "name": "LILUNI by Virtuals",
+      "symbol": "LILUNI",
+      "nameRank": 17,
+      "totalSupply": "1000000000",
+      "priceNative": "0.0000000102253686020262522",
+      "priceUsd": 0.000019223437337594303,
+      "marketCapUsd": 19223.437337594303,
+      "liquidityNative": "5.1126843010131261",
+      "liquidityUsd": 9611.718668797152,
+      "pool": {
+        "address": "0x8715a648672124cb7eb688941a2eb6c9aa65c206",
+        "type": "VIRTUAL_V3",
+        "factory": "VIRTUAL",
+        "quoteAddress": "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+        "quoteSymbol": "VIRTUAL"
+      },
+      "bondingProgress": 57.142857142857146,
+      "migrated": false,
+      "createdAt": 1786507633000,
+      "graduatedAt": null,
+      "ageSeconds": 216688,
+      "txns": 0,
+      "buys": 0,
+      "sells": 0,
+      "volumeUsd": 0,
+      "feesUsd": 0,
+      "metadata": {
+        "iconUrl": "https://s3.ap-southeast-1.amazonaws.com/virtualprotocolcdn/e2a5d275-6765-4b20-9dbe-4a8ad3bc87b4.png",
+        "websiteUrl": null,
+        "twitterUrl": null,
+        "telegramUrl": null,
+        "dexPaid": false
+      },
+      "creator": {
+        "address": "0x384d92776496bce2c6f08d5b8e015eae498e78b3",
+        "displayName": null,
+        "avatarUrl": null,
+        "ensName": null
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1786724321168,
+    "view": "bonding"
+  }
+}
+```
+</ResponseExample>

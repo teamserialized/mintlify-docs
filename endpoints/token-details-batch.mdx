@@ -1,0 +1,134 @@
+---
+title: "Token Details (batch)"
+description: "Full-detail batch twin: up to 25 `{chain, address}` items (EVM and Solana can be mixed in one call), response array in input order with per-item `{error}` slots. Billed per item."
+---
+
+`POST /v1/token` · **1 credit**
+
+Full-detail batch twin: up to 25 `{chain, address}` items (EVM and Solana can be mixed in one call), response array in input order with per-item `{error}` slots. Billed per item.
+
+<ParamField body="items" type="array" required>
+  1 to 25 of `{chain, address}`. Example: `[{"chain":"solana","address":"DezXAZ…"},{"chain":"evm:8453","address":"0x4ed4…"}]`
+</ParamField>
+
+<Note>Mixed families in one batch; a missing token returns a per-item error slot, never a failed batch.</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.trade/v1/token' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"items":[{"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"},{"chain":"evm:8453","address":"0x4ed4e862860bed51a9570b96d89af5e1b0efefed"},{"chain":"solana","address":"11111111111111111111111111111112"}]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "chain": "solana",
+        "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+        "name": "Bonk",
+        "symbol": "Bonk",
+        "decimals": 5,
+        "nameRank": 1,
+        "totalSupply": "87994588729835.19",
+        "priceNative": "3.114354186014164e-8",
+        "priceUsd": 0.0000023183462889777713,
+        "marketCapUsd": 204001928.23193863,
+        "fdvUsd": 204001928.23193863,
+        "liquidityNative": "1247.8722515017655",
+        "liquidityUsd": 92892.45315703782,
+        "priceNativeAth": null,
+        "liquidityNativeAth": "111988.091179998",
+        "pool": {
+          "address": "BqnpCdDLPV2pFdAaLnVidmn3G93RP2p5oRdGEY2sJGez",
+          "type": "ORCA_WHIRLPOOL",
+          "quoteAddress": "So11111111111111111111111111111111111111112",
+          "quoteSymbol": "SOL",
+          "factory": "ORCA_WHIRLPOOL",
+          "createdAt": 1671967690000
+        },
+        "launchpad": null,
+        "deployer": null,
+        "createdAt": 1671942208000,
+        "stats24h": {
+          "volumeNative": 1110.7188363988646,
+          "volumeUsd": 82682.66030970006,
+          "buys": 3318,
+          "sells": 3622,
+          "priceChangePct": -0.021737638420461072
+        },
+        "metadata": {
+          "iconUrl": null,
+          "headerUrl": null,
+          "websiteUrl": null,
+          "twitterUrl": null,
+          "telegramUrl": null,
+          "discordUrl": null,
+          "description": null,
+          "dexPaid": false,
+          "dexPaidAt": null
+        }
+      }
+    },
+    {
+      "data": {
+        "chain": "evm:8453",
+        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+        "name": "Degen",
+        "symbol": "DEGEN",
+        "decimals": 18,
+        "nameRank": 2,
+        "totalSupply": "36306431084.81028",
+        "priceNative": "0.00000053780256587706",
+        "priceUsd": 0.0010068282506169321,
+        "marketCapUsd": 36554340.49526374,
+        "fdvUsd": 36554340.49526374,
+        "liquidityNative": "124.66932335641",
+        "liquidityUsd": 233395.3102953855,
+        "priceNativeAth": "0.00016019154265359148",
+        "liquidityNativeAth": "176.38022888186",
+        "pool": {
+          "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+          "type": "UNISWAP_V3",
+          "quoteAddress": "0x4200000000000000000000000000000000000006",
+          "quoteSymbol": "WETH",
+          "factory": null,
+          "createdAt": 1705088299000
+        },
+        "launchpad": null,
+        "deployer": "0xac937655e7b69934eaf0ef56a7f38ece1d74b451",
+        "createdAt": 1705088299000,
+        "stats24h": {
+          "volumeNative": 4.487598856312728,
+          "volumeUsd": 8401.301132885903,
+          "buys": 12,
+          "sells": 647,
+          "priceChangePct": -0.9684633054796891
+        },
+        "metadata": {
+          "iconUrl": "https://cdn.dexscreener.com/cms/images/c865067e6e29f660b5d0c2a69814875c7415c3fc0022434651525c21f03cc24a?width=800&height=800&quality=90",
+          "headerUrl": "https://cdn.dexscreener.com/cms/images/b0bbfdf2aa7c44176f77b9e541ae3e247c358f0ee1aed5dbe171f5cd5f8f5cd1?width=1500&height=500&quality=90",
+          "websiteUrl": "https://www.degen.tips/",
+          "twitterUrl": "https://twitter.com/degentokenbase",
+          "telegramUrl": "https://t.me/degentokenbase",
+          "discordUrl": null,
+          "description": null,
+          "dexPaid": true,
+          "dexPaidAt": null
+        }
+      }
+    },
+    {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "Token 11111111111111111111111111111112 on solana not found"
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1786927094821
+  }
+}
+```
+</ResponseExample>

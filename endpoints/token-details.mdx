@@ -1,0 +1,83 @@
+---
+title: "Token Details"
+description: "Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials."
+---
+
+`GET /v1/token` · **1 credit**
+
+Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.
+
+<ParamField query="chain" type="string" required>
+  Public chain id — `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address (EVM hex, case-insensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
+<Note>`createdAt` is the TRUE deploy time (launchpad pool) — `launchpad.graduatedAt` carries the migration.</Note>
+
+<Note>`deployer` is resolved through the original launchpad pool owner — not the migration transaction sender.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+    "name": "Degen",
+    "symbol": "DEGEN",
+    "decimals": 18,
+    "nameRank": 2,
+    "totalSupply": "36327303013.18345",
+    "priceNative": "0.00000054747124708872",
+    "priceUsd": 0.0010292322577456162,
+    "marketCapUsd": 37389232.09806793,
+    "fdvUsd": 37389232.09806793,
+    "liquidityNative": "127.33497008601",
+    "liquidityUsd": 239386.56038744663,
+    "priceNativeAth": "0.00016019154265359148",
+    "liquidityNativeAth": "176.38022888186",
+    "pool": {
+      "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+      "type": "UNISWAP_V3",
+      "quoteAddress": "0x4200000000000000000000000000000000000006",
+      "quoteSymbol": "WETH",
+      "factory": null,
+      "createdAt": 1705088299000
+    },
+    "launchpad": null,
+    "deployer": "0xac937655e7b69934eaf0ef56a7f38ece1d74b451",
+    "createdAt": 1705088299000,
+    "stats24h": {
+      "volumeNative": 12.472824758820458,
+      "volumeUsd": 23448.59872596349,
+      "buys": 176,
+      "sells": 5,
+      "priceChangePct": 7.328276263872449
+    },
+    "metadata": {
+      "iconUrl": "https://cdn.dexscreener.com/cms/images/c865067e6e29f660b5d0c2a69814875c7415c3fc0022434651525c21f03cc24a?width=800&height=800&quality=90",
+      "headerUrl": "https://cdn.dexscreener.com/cms/images/b0bbfdf2aa7c44176f77b9e541ae3e247c358f0ee1aed5dbe171f5cd5f8f5cd1?width=1500&height=500&quality=90",
+      "websiteUrl": "https://www.degen.tips/",
+      "twitterUrl": "https://twitter.com/degentokenbase",
+      "telegramUrl": "https://t.me/degentokenbase",
+      "discordUrl": null,
+      "description": null,
+      "dexPaid": true,
+      "dexPaidAt": null
+    }
+  },
+  "meta": {
+    "asOf": 1786724319903
+  }
+}
+```
+</ResponseExample>

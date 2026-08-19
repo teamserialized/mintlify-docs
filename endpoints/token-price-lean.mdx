@@ -1,0 +1,41 @@
+---
+title: "Token Price (lean)"
+description: "Cheap price tier for bots and tickers: price, market cap, liquidity. Nothing else."
+---
+
+`GET /v1/token/price` · **1 credit**
+
+Cheap price tier for bots and tickers: price, market cap, liquidity. Nothing else.
+
+<ParamField query="chain" type="string" required>
+  Public chain id — `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address (EVM hex, case-insensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token/price?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+    "priceNative": "0.00000054747124708872",
+    "priceUsd": 0.0010292322577456162,
+    "marketCapUsd": 37389232.09806793,
+    "liquidityUsd": 239386.56038744663
+  },
+  "meta": {
+    "asOf": 1786724320112
+  }
+}
+```
+</ResponseExample>

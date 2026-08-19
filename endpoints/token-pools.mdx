@@ -1,0 +1,63 @@
+---
+title: "Token Pools"
+description: "Every market of a token, ranked by our canonical pool priority — rank 1 is the exact pool the token endpoint prices from."
+---
+
+`GET /v1/token/pools` · **1 credit**
+
+Every market of a token, ranked by our canonical pool priority — rank 1 is the exact pool the token endpoint prices from.
+
+<ParamField query="chain" type="string" required>
+  Public chain id — `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address (EVM hex, case-insensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  1-100, default 50.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token/pools?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+      "type": "UNISWAP_V3",
+      "factory": null,
+      "quoteAddress": "0x4200000000000000000000000000000000000006",
+      "quoteSymbol": "WETH",
+      "liquidityNative": "127.33497008601",
+      "priceNative": "0.00000054747124708872",
+      "isLaunchpad": false,
+      "migrated": false,
+      "createdAt": 1705088299000
+    },
+    {
+      "address": "0xc9034c3e7f58003e6ae0c8438e7c8f4598d5acaa",
+      "type": "UNISWAP_V3",
+      "factory": null,
+      "quoteAddress": "0x4200000000000000000000000000000000000006",
+      "quoteSymbol": "WETH",
+      "liquidityNative": "18.671634022943",
+      "priceNative": "0.00000054502089147879",
+      "isLaunchpad": false,
+      "migrated": false,
+      "createdAt": 1704655845000
+    }
+  ],
+  "meta": {
+    "asOf": 1786724320416
+  }
+}
+```
+</ResponseExample>

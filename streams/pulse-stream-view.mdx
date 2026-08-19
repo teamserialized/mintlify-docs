@@ -1,0 +1,127 @@
+---
+title: "Pulse Stream (view)"
+description: "A live launchpad view: the server maintains the filtered, sorted view and pushes it — a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape."
+tag: "Beta"
+---
+
+`WS channel: pulse`
+
+A live launchpad view: the server maintains the filtered, sorted view and pushes it — a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape.
+
+<ParamField body="view" type="string" required>
+  `new`, `bonding` or `migrated` — same views as REST. Example: `bonding`
+</ParamField>
+
+<ParamField body="chains" type="string" required>
+  Comma-separated public chain ids. Example: `evm:8453,solana`
+</ParamField>
+
+<ParamField body="limit" type="number">
+  View size. Default 50, max 100.
+</ParamField>
+
+<Note>Every ~30s the server re-sends an authoritative `snapshot` — replace your local state with it, never merge. Deltas between snapshots keep the view live.</Note>
+
+<RequestExample>
+```json Subscribe
+{
+  "op": "subscribe",
+  "channel": "pulse",
+  "id": "pulse-bonding",
+  "params": {
+    "view": "bonding",
+    "chains": "evm:8453",
+    "limit": 50
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Ack
+{
+  "op": "subscribed",
+  "id": "pulse-bonding",
+  "channel": "pulse"
+}
+```
+```json Snapshot
+{
+  "op": "event",
+  "id": "pulse-bonding",
+  "channel": "pulse",
+  "data": {
+    "kind": "snapshot",
+    "cards": [
+      {
+        "chain": "evm:8453",
+        "address": "0x6d15ea268ec2345455c087465bd336adffffca26",
+        "name": "CHIANGRAI by Virtuals",
+        "symbol": "CHIANGRAI",
+        "nameRank": 3,
+        "totalSupply": "1000000000",
+        "priceNative": "0.0000000110386714952650873516541921155458",
+        "priceUsd": 0.000020752426444310983,
+        "marketCapUsd": 20752.426444310982,
+        "liquidityNative": "5.5187286874768706372748",
+        "liquidityUsd": 10375.071964239329,
+        "pool": {
+          "address": "0xb852193b794dafbd5237866439531dd621bf78b0",
+          "type": "VIRTUAL_V3",
+          "factory": "VIRTUAL",
+          "quoteAddress": "0x0b3e328455c4059eeb9e3f84b5543f74e24e7e1b",
+          "quoteSymbol": "VIRTUAL"
+        },
+        "bondingProgress": 57.149142165790856,
+        "migrated": false,
+        "createdAt": 1786625071000,
+        "graduatedAt": null,
+        "ageSeconds": 99250,
+        "txns": 1,
+        "buys": 1,
+        "sells": 0,
+        "volumeUsd": 1.1411323915032607,
+        "feesUsd": 0.01643934738875,
+        "metadata": {
+          "iconUrl": "https://s3.ap-southeast-1.amazonaws.com/virtualprotocolcdn/f71c3976-f1f7-438a-a895-1dd014869b33.jpeg",
+          "websiteUrl": null,
+          "twitterUrl": null,
+          "telegramUrl": null,
+          "dexPaid": false
+        },
+        "creator": {
+          "address": "0x384d92776496bce2c6f08d5b8e015eae498e78b3",
+          "displayName": null,
+          "avatarUrl": null,
+          "ensName": null
+        }
+      }
+    ]
+  },
+  "asOf": 1786724321168
+}
+```
+```json Delta
+{
+  "op": "event",
+  "id": "pulse-bonding",
+  "channel": "pulse",
+  "data": {
+    "kind": "update",
+    "cards": [
+      {
+        "chain": "evm:8453",
+        "address": "0x6d15ea268ec2345455c087465bd336adffffca26",
+        "bondingProgress": 57.31,
+        "priceUsd": 0.0000208112,
+        "marketCapUsd": 20811.2,
+        "txns": 2,
+        "buys": 2,
+        "volumeUsd": 3.02
+      }
+    ]
+  },
+  "asOf": 1786724352901
+}
+```
+</ResponseExample>

@@ -1,0 +1,78 @@
+---
+title: "Token Search"
+description: "Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry price, liquidity, market cap, 24h volume and 1h/24h price change."
+---
+
+`GET /v1/search` · **5 credits**
+
+Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry price, liquidity, market cap, 24h volume and 1h/24h price change.
+
+<ParamField query="q" type="string" required>
+  Address or text. Example: `degen`
+</ParamField>
+
+<ParamField query="chain" type="string">
+  Restrict to one chain.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  1-50, default 12.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/search?q=degen' -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "evm:8453",
+      "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+      "name": "Degen",
+      "symbol": "DEGEN",
+      "nameRank": 2,
+      "priceUsd": 0.0010305242898887457,
+      "liquidityUsd": 239687.07091684965,
+      "marketCapUsd": 37436168.14123417,
+      "volume24hUsd": 57125.74099077385,
+      "priceChange1hPct": -0.10397104623411314,
+      "priceChange24hPct": 3.747121113042337,
+      "pool": {
+        "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+        "type": "UNISWAP_V3",
+        "factory": null
+      },
+      "iconUrl": "https://cdn.dexscreener.com/cms/images/c865067e6e29f660b5d0c2a69814875c7415c3fc0022434651525c21f03cc24a?width=800&height=800&quality=90",
+      "createdAt": 1705088299000
+    },
+    {
+      "chain": "evm:1",
+      "address": "0xbe92b510007bd3ec0adb3d1fca338dd631e98de7",
+      "name": "Degen",
+      "symbol": "DEGEN",
+      "nameRank": 63,
+      "priceUsd": 0.0000010794758137739666,
+      "liquidityUsd": 128072.76371509997,
+      "marketCapUsd": 161390.44514953013,
+      "volume24hUsd": null,
+      "priceChange1hPct": null,
+      "priceChange24hPct": null,
+      "pool": {
+        "address": "0xe0fe0440a7121a8815a49de4f15508123c4102e7",
+        "type": "UNISWAP_V2",
+        "factory": null
+      },
+      "iconUrl": null,
+      "createdAt": 1683837491000
+    }
+  ],
+  "meta": {
+    "asOf": 1786725099432
+  }
+}
+```
+</ResponseExample>

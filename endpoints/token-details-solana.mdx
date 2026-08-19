@@ -1,0 +1,70 @@
+---
+title: "Token Details (Solana)"
+description: "Same contract as EVM. Live example: BONK."
+---
+
+`GET /v1/token?chain=solana` · **1 credit**
+
+Same contract as EVM. Live example: BONK.
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263' -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "solana",
+    "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "name": "Bonk",
+    "symbol": "Bonk",
+    "decimals": 5,
+    "nameRank": 1,
+    "totalSupply": "87994588748104.98",
+    "priceNative": "3.139776285604127e-8",
+    "priceUsd": 0.000002359580289275846,
+    "marketCapUsd": 207630297.17296264,
+    "fdvUsd": 207630297.17296264,
+    "liquidityNative": "1048.3939460738586",
+    "liquidityUsd": 78788.08760656719,
+    "priceNativeAth": null,
+    "liquidityNativeAth": null,
+    "pool": {
+      "address": "7KJfyfKAtrse5EqWdiQYMphhLqBC9kRdfWNrdez6TbKi",
+      "type": "ZEROFI",
+      "quoteAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "quoteSymbol": "USDC",
+      "factory": "ZEROFI",
+      "createdAt": 1781705545000
+    },
+    "launchpad": null,
+    "deployer": null,
+    "createdAt": 1671942208000,
+    "stats24h": {
+      "volumeNative": 2466.120265838208,
+      "volumeUsd": 185331.95492098268,
+      "buys": 7534,
+      "sells": 8681,
+      "priceChangePct": 3.636601730081284
+    },
+    "metadata": {
+      "iconUrl": "https://arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I",
+      "headerUrl": null,
+      "websiteUrl": null,
+      "twitterUrl": null,
+      "telegramUrl": null,
+      "discordUrl": null,
+      "description": "The Official Bonk Inu token",
+      "dexPaid": false,
+      "dexPaidAt": null
+    }
+  },
+  "meta": {
+    "asOf": 1786745258937
+  }
+}
+```
+</ResponseExample>

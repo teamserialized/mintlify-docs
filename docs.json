@@ -1,72 +1,104 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
-  },
+  "name": "serialized.data",
   "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#22D3EE",
+    "light": "#22D3EE",
+    "dark": "#0E7490"
+  },
+  "banner": {
+    "content": "🚧 **Pilot** — We are onboarding partners progressively — API keys are issued per partnership. Reach out to get access.",
+    "dismissible": false
+  },
+  "api": {
+    "playground": {
+      "display": "none"
+    }
+  },
   "navigation": {
-    "pages": [
+    "tabs": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
+        "tab": "Serialized Data",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "introduction",
+              "authentication",
+              "conventions",
+              "errors"
+            ]
+          },
+          {
+            "group": "Tokens",
+            "pages": [
+              "endpoints/token-details",
+              "endpoints/token-details-batch",
+              "endpoints/token-price-lean",
+              "endpoints/token-price-batch",
+              "endpoints/token-pools",
+              "endpoints/candles-ohlcv",
+              "endpoints/token-stats-windowed",
+              "endpoints/token-metadata",
+              "endpoints/sparklines-batch",
+              "endpoints/trades-tape",
+              "endpoints/token-holders"
+            ]
+          },
+          {
+            "group": "Pulse (launchpads)",
+            "pages": [
+              "endpoints/pulse"
+            ]
+          },
+          {
+            "group": "Market & platform",
+            "pages": [
+              "endpoints/native-prices",
+              "endpoints/chains"
+            ]
+          },
+          {
+            "group": "Search",
+            "pages": [
+              "endpoints/token-search"
+            ]
+          },
+          {
+            "group": "Solana",
+            "pages": [
+              "endpoints/token-details-solana",
+              "endpoints/pulse-solana",
+              "endpoints/token-security-batch"
+            ]
+          },
+          {
+            "group": "Streams (WebSocket)",
+            "pages": [
+              "streams/overview",
+              "streams/trades-stream",
+              "streams/live-candles-ohlcv",
+              "streams/token-updates-stream",
+              "streams/pulse-stream-view"
+            ]
+          },
+          {
+            "group": "Roadmap",
+            "pages": [
+              "roadmap"
+            ]
+          }
         ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
+      },
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "tab": "Serialized Audit",
+        "href": "https://docs.serializedaudit.io"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
     ]
   },
   "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    "socials": {}
   }
 }

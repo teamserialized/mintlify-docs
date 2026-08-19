@@ -1,0 +1,52 @@
+---
+title: "Token Security (batch)"
+description: "Mint & freeze authority state — the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable — the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items — no batch security anywhere else on the market. GET twin on the same path for single lookups. Solana today; EVM (LP burn/lock) ships next."
+---
+
+`POST /v1/token/security` · **1 credit**
+
+Mint & freeze authority state — the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable — the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items — no batch security anywhere else on the market. GET twin on the same path for single lookups. Solana today; EVM (LP burn/lock) ships next.
+
+<ParamField body="items" type="array" required>
+  Up to 500 of `{chain, address}`. Response array is in input order with per-item `{error}` slots. Billed per item. Example: `[{"chain":"solana","address":"DezXAZ…"}]`
+</ParamField>
+
+<Note>BONK: both authorities revoked (safe). USDC: both ACTIVE (Circle can mint & freeze — expected for a stablecoin, a red flag on a memecoin).</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.trade/v1/token/security' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"items":[{"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"},{"chain":"solana","address":"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"}]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "chain": "solana",
+        "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+        "mintAuthority": null,
+        "mintRevoked": true,
+        "freezeAuthority": null,
+        "freezeRevoked": true
+      }
+    },
+    {
+      "data": {
+        "chain": "solana",
+        "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "mintAuthority": "BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG",
+        "mintRevoked": false,
+        "freezeAuthority": "7dGbd2QZcCKcTndnHcTL8q7SMVXAkp688NTQYwrRCrar",
+        "freezeRevoked": false
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1786777912344
+  }
+}
+```
+</ResponseExample>

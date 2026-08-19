@@ -1,0 +1,51 @@
+---
+title: "Chains"
+description: "Supported chains with status. Free."
+---
+
+`GET /v1/meta/chains`
+
+Supported chains with status. Free.
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/meta/chains' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "evm:8453",
+      "name": "Base",
+      "slug": "base",
+      "family": "evm",
+      "nativeSymbol": "ETH",
+      "status": "live"
+    },
+    {
+      "chain": "evm:1",
+      "name": "Ethereum",
+      "slug": "ethereum",
+      "family": "evm",
+      "nativeSymbol": "ETH",
+      "status": "live"
+    },
+    {
+      "chain": "evm:56",
+      "name": "BNB Smart Chain",
+      "slug": "bsc",
+      "family": "evm",
+      "nativeSymbol": "BNB",
+      "status": "live"
+    }
+  ],
+  "meta": {
+    "asOf": 1786724321172
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,108 @@
+---
+title: "Trades Tape"
+description: "Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with isProTrader/isSniper badges on every row. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Filters: tradeType, USD/native/token amount ranges, date range, makers (POST twin, ≤2000). Cursor pagination."
+---
+
+`GET /v1/token/trades` · **1 credit**
+
+Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with isProTrader/isSniper badges on every row. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Filters: tradeType, USD/native/token amount ranges, date range, makers (POST twin, ≤2000). Cursor pagination.
+
+<ParamField query="chain" type="string" required>
+  Public chain id. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
+<ParamField query="pools" type="string" required>
+  CSV of pool addresses (≤50). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  1-500, default 100. Example: `3`
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  Opaque — from meta.nextCursor.
+</ParamField>
+
+<ParamField query="include" type="string">
+  Opt-ins: traderTxCounts.
+</ParamField>
+
+<ParamField query="washFilter" type="string">
+  `washOnly` or `organicOnly` — filter by the per-transaction wash badge (solana; every row carries `isWash`). Example: `organicOnly`
+</ParamField>
+
+<Note>Amounts are GROSS on-chain (Mobula was net-of-fee — expect a ~0.3-1% systematic diff).</Note>
+
+<Note>Preconfirmed rows can be phantoms if the tx reverts (~0.5-1%) — they disappear within 30s; dedup by txHash.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token/trades?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed&pools=0x0ca6485b7e9cf814a3fd09d81672b07323535b64&limit=3' -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "at": 1786718835000,
+      "maker": "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09",
+      "isBuy": true,
+      "amountToken": 77.05662024406023,
+      "amountQuote": 0.000042612402192036,
+      "priceNative": 5.4747124708872e-7,
+      "volumeNative": 0.000042612402192036,
+      "volumeUsd": 0.08021081608014609,
+      "isProTrader": false,
+      "isSniper": false,
+      "preconfirmed": false,
+      "txHash": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf",
+      "block": 49964744,
+      "logIndex": 289
+    },
+    {
+      "at": 1786704145000,
+      "maker": "0x874a50b0d82b0258e2849c5a8d6f8926e5393748",
+      "isBuy": false,
+      "amountToken": 8926.68959914344,
+      "amountQuote": 0.004838309934296527,
+      "priceNative": 5.4747109625568e-7,
+      "volumeNative": 0.004838309934296527,
+      "volumeUsd": 9.107320130174054,
+      "isProTrader": false,
+      "isSniper": false,
+      "preconfirmed": false,
+      "txHash": "0x2ab1a0e9706e1c5570932cb934f792a9818329af1827cc8cec45076d151bd12c",
+      "block": 49957399,
+      "logIndex": 210
+    },
+    {
+      "at": 1786695809000,
+      "maker": "0x6011b76b4b7badc0c4aa28a703a7eedc28334181",
+      "isBuy": true,
+      "amountToken": 27832.30183604025,
+      "amountQuote": 0.015391014265196838,
+      "priceNative": 5.4748839531073e-7,
+      "volumeNative": 0.015391014265196838,
+      "volumeUsd": 28.97104483687929,
+      "isProTrader": true,
+      "isSniper": false,
+      "preconfirmed": false,
+      "txHash": "0xfe19670bf678d0a83f9ef9227e34f3a76462a924603a31ec2481fac34c7be319",
+      "block": 49953231,
+      "logIndex": 407
+    }
+  ],
+  "meta": {
+    "asOf": 1786725098947,
+    "hasMore": true,
+    "nextCursor": "eyJ0IjoxNzg2Njk1ODA5MDAwLCJiIjo0OTk1MzIzMSwibCI6NDA3fQ"
+  }
+}
+```
+</ResponseExample>
