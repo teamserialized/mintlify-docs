@@ -28,7 +28,8 @@
               "introduction",
               "authentication",
               "conventions",
-              "errors"
+              "errors",
+              "migrate-from-mobula"
             ]
           },
           {

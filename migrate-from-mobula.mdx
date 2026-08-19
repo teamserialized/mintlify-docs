@@ -1,0 +1,69 @@
+---
+title: "Migrate from Mobula"
+description: "Endpoint-by-endpoint mapping from the Mobula API — REST and streams"
+---
+
+> Serialized Data is a clean API inspired by what worked at Mobula — not a clone.
+> This guide maps every Mobula endpoint to its Serialized equivalent, field by field
+> where shapes differ. Feed it to your coding agent, or follow it by hand.
+> Base URL: `https://api.serialized.trade` (pilots: ask us). Auth: same convention as
+> Mobula — raw API key in the `Authorization` header.
+
+## Conventions that differ (once, globally)
+
+| Mobula | Serialized | Why |
+|---|---|---|
+| `blockchain`/`chainId` mixed (`evm:56`, `solana:solana`, names) | `chain` param, always `evm:<id>` or `solana` (`solana:solana` accepted on input) | one format everywhere |
+| HyperEVM = `999` | HyperEVM = `evm:645749` (canonical EIP-155) | no invented ids |
+| `priceUSD`, `marketCapUSD` (USD-suffix) | `priceUsd`, `marketCapUsd` (camelCase) | consistent casing |
+| Missing data → often `0` or absent | `null` + `meta.degraded` — never a fake 0 | you can trust a zero |
+| Unknown params silently ignored | 400 with machine-readable `error.code` | fail loud |
+| GET `{data}` / batch POST `{payload}` wrappers | always `{ data, meta }` | one envelope |
+| Timestamps: mixed seconds/ms | always unix **milliseconds**, fields end in `At` | no guessing |
+| Amounts net-of-fee (Solana) | GROSS on-chain amounts | ~0.3-1% systematic diff is expected, not a bug |
+
+## Endpoint map (shipped so far)
+
+| Mobula | Serialized | Notes |
+|---|---|---|
+| `GET /api/2/token/details?blockchain=&address=` | `GET /v1/token?chain=&address=` | richer launchpad block (bondingProgress, graduatedAt, milestones); `deployer` never null when we have it |
+| `POST /api/2/token/details` (batch) | `POST /v1/token` (full details) or `POST /v1/token/price` (lean tier) | response array in input order, per-item `{error}` slots |
+| `GET /api/2/token/price` | `GET /v1/token/price?chain=&address=` | + `marketCapUsd`, `liquidityUsd` included |
+| `GET /api/2/token/market-data` pairs | `GET /v1/token/pools?chain=&address=` | ranked by canonical pool priority — rank 1 = the pool our token endpoint prices from |
+| `GET/POST /api/2/token/ohlcv-history` | `GET /v1/token/ohlcv?chain=&address=&interval=&limit=&endTime=` | intervals `1s…1M`; `quote=usd` on Solana; pagination: `endTime = prev oldestTime - 1` while `meta.hasMore` |
+| `GET /api/2/token/market-details` (windowed stats) | `GET /v1/token/stats?chain=&address=&windows=5m,1h,24h` | token-wide by default, `pools=` to restrict; organic (wash-filtered) counts on Solana |
+| `GET /api/2/token/trades` | `GET /v1/token/trades?chain=&address=` | token-wide or `pools=`; cursor pagination + `fromAt`; `isWash` flag on Solana |
+| `GET /api/2/token/holders` | `GET /v1/token/holders?chain=&address=` | top holders with supply share |
+| `GET /api/2/search` | `GET /v1/search?q=` | tokens + pools, cross-chain |
+| `GET /api/2/token/metadata` | `GET /v1/token/metadata?chain=&address=` | socials, icon, description, dex-paid |
+| (sparklines inside details) | `POST /v1/token/sparklines` | batch, per-timeframe price lines |
+| (no batch security) | `POST /v1/token/security` | batch mint/freeze authority (Solana live; EVM indexing) |
+| `POST /api/2/pulse` (views[]) | `GET /v1/pulse?view=new\|bonding\|graduated&chains=` | one view per call for now (multi-view POST coming); `bondingProgress` is consistent with the token endpoint (same registry) |
+| `GET /1/blockchains` / `/2/system-metadata` | `GET /v1/meta/chains`, `GET /v1/meta/factories` | includes indexing status per chain |
+| (no equivalent) | `GET /v1/prices/native` | live native-coin USD prices with per-symbol freshness |
+
+## Streams (WebSocket) — beta
+
+One endpoint, one protocol: `wss://api.serialized.trade/v1/stream` — auth as the
+first frame, then **additive** subscriptions (each with its own client-chosen `id`,
+explicit acks, per-id unsubscribe — no more replace-on-subscribe). Event payloads
+are the **same shapes as our REST endpoints**, so a migrated REST parser handles
+stream events for free.
+
+| Mobula stream | Serialized channel | Notes |
+|---|---|---|
+| `fast-trade` (WS type) | `trades` channel | token-wide by default or `pools=`; REST trades-tape shape, stable identity key (`txHash`, `block`, `logIndex`) |
+| `ohlcv` (WS type) | `ohlcv` channel | same interval set as REST (`1s…1M`), `quote=usd` on Solana; candle state re-pushed per trade |
+| `token-details` / `market-details` (WS types) | `token-updates` channel | mutable Token Details subset (price, mcap, liquidity, bonding, 24h stats), ≤1 event/s per token |
+| `pulse-v2` (views) | `pulse` channel | same contract you know: authoritative `snapshot` every ~30s (replace, never merge) + `enter`/`update`/`leave` deltas between |
+| `swap`/`swap-enriched`/`transfer` (raw multi-events) | — | not planned as-is; the `trades` channel covers the trading use case |
+| GraphQL subscriptions | — | not planned; REST + WS channels cover the surface |
+
+Billing during beta: 1 credit per connection-minute (no per-message cost). Limits
+per key: 5 connections, 20 subscriptions/connection, 50 tracked tokens/pools —
+ask us to raise them.
+
+## Coming next (mapped, in build)
+
+Holders & trader intelligence (beyond top holders), wallet/portfolio endpoints,
+screener & wallet streams (WebSocket v1.x), multi-view pulse POST.
