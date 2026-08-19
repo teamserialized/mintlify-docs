@@ -1,0 +1,41 @@
+---
+title: "Token Security"
+description: "Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items - no batch security anywhere else on the market. GET twin on the same path for single lookups."
+---
+
+`GET /v1/token/security` · **1 credit**
+
+Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items - no batch security anywhere else on the market. GET twin on the same path for single lookups.
+
+<ParamField query="chain" type="string" required>
+  Public chain id. `solana` for now; EVM ships with the LP burn/lock indexing (explicit 400 until then, never silent nulls). Example: `solana`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token mint (base58, case-sensitive). Example: `DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.trade/v1/token/security?chain=solana&address=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "solana",
+    "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "mintAuthority": null,
+    "mintRevoked": true,
+    "freezeAuthority": null,
+    "freezeRevoked": true
+  },
+  "meta": {
+    "asOf": 1786777912344
+  }
+}
+```
+</ResponseExample>

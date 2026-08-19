@@ -40,14 +40,30 @@
           {
             "group": "Tokens",
             "pages": [
-              "endpoints/token-details",
-              "endpoints/token-details-batch",
-              "endpoints/token-price-lean",
-              "endpoints/token-price-batch",
+              {
+                "group": "Token Details",
+                "pages": [
+                  "endpoints/token-details",
+                  "endpoints/token-details-batch"
+                ]
+              },
+              {
+                "group": "Token Price",
+                "pages": [
+                  "endpoints/token-price-lean",
+                  "endpoints/token-price-batch"
+                ]
+              },
               "endpoints/token-stats-windowed",
               "endpoints/token-metadata",
               "endpoints/token-holders",
-              "endpoints/token-security-batch",
+              {
+                "group": "Token Security",
+                "pages": [
+                  "endpoints/token-security",
+                  "endpoints/token-security-batch"
+                ]
+              },
               "endpoints/token-audit"
             ]
           },
@@ -75,7 +91,7 @@
         "tab": "Streams",
         "groups": [
           {
-            "group": "Streams (WebSocket)",
+            "group": "Streams",
             "pages": [
               "streams/overview",
               "streams/trades-stream",
