@@ -19,9 +19,8 @@ TradingView-style), `null` means unknown (never a fake zero), strict 400 on
 invalid params, batch twins on hot endpoints, and USD alongside native
 denominations.
 
----
-
-## Migrating from Mobula
+<Tabs>
+  <Tab title="Mobula">
 
 Closest mapping of the three: our surface was designed so that a Mobula
 integration moves with minimal relearning. Auth is the same convention (raw
@@ -74,9 +73,8 @@ payloads reuse our REST shapes, so your parser is already written.
 (same contract you know: authoritative snapshot every ~30s, replace not merge,
 plus enter/update/leave deltas).
 
----
-
-## Migrating from Codex
+  </Tab>
+  <Tab title="Codex">
 
 Codex is a GraphQL API (single `POST /graphql`); Serialized is REST. You trade
 query composition for one-purpose endpoints with stable, documented shapes,
@@ -123,9 +121,8 @@ REST counterpart below.
 Not carried over: Sui/Aptos/Starknet networks, NFT queries, community notes.
 If one of these blocks your migration, tell us.
 
----
-
-## Migrating from Birdeye
+  </Tab>
+  <Tab title="Birdeye">
 
 Birdeye is REST like us, so most of the work is renaming. The structural
 differences: chain selection moves from the `x-chain` header (which silently
@@ -174,7 +171,8 @@ Not carried over: Sui/Aptos, NFT and gainers/losers leaderboards (top-traders
 intelligence is on our roadmap). If one of these blocks your migration, tell
 us.
 
----
+  </Tab>
+</Tabs>
 
 Whatever you come from: send us your current endpoint list and we will return
 the exact mapping for your integration, run a side-by-side accuracy pass with
