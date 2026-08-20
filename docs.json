@@ -29,7 +29,8 @@
               "introduction",
               "authentication",
               "conventions",
-              "errors"
+              "errors",
+              "migrate"
             ]
           }
         ]
