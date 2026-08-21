@@ -8,11 +8,11 @@ description: "A live token filter view: the server maintains the filtered, sorte
 A live token filter view: the server maintains the filtered, sorted launchpad view and pushes it - a full `snapshot` on subscribe, then `enter`/`update`/`leave` deltas as tokens move through the lifecycle. Cards are the exact REST `/v1/pulse` shape.
 
 <ParamField body="view" type="string" required>
-  `new`, `bonding` or `migrated` - same views as REST. Example: `bonding`
+  `new`, `bonding` or `graduated` - same views as REST (`migrated` is accepted as an alias of `graduated`). Example: `bonding`
 </ParamField>
 
 <ParamField body="chains" type="string" required>
-  Comma-separated public chain ids. Example: `evm:8453,solana`
+  Comma-separated public chain ids. `solana` is not mixable with EVM chains yet - subscribe separately. Example: `evm:8453`
 </ParamField>
 
 <ParamField body="limit" type="number">
