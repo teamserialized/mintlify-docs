@@ -5,7 +5,7 @@ description: "Real-time push over a single WebSocket connection: live trades, ca
 
 Real-time push over a single WebSocket connection: live trades, candles, token updates and token filter views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged.
 
-**Endpoint** : `wss://api.serialized.trade/v1/stream`
+**Endpoint** : `wss://api.serialized.xyz/v1/stream`
 
 One connection, many subscriptions. Subscriptions are additive: each `subscribe` carries a client-chosen `id`, acks are explicit, and `unsubscribe` targets one id without touching the others.
 
