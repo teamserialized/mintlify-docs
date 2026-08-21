@@ -1,7 +1,7 @@
 # mintlify-docs — GENERATED, do not edit
 
 This repo is the Mintlify deployment target for the **Serialized Data** docs
-(docs.serialized.trade). Every file here except this README, AGENTS.md, LICENSE
+(docs.serialized.xyz). Every file here except this README, AGENTS.md, LICENSE
 and .mintignore is **generated and force-synced** — any hand edit will be
 erased on the next publish.
 
