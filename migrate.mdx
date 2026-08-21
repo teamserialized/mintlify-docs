@@ -5,19 +5,7 @@ description: "Endpoint-by-endpoint mappings from Mobula, Codex and Birdeye, REST
 
 Serialized Data covers the market-data surface you are using today at Mobula,
 Codex or Birdeye: token details, prices, candles, trades, holders, wallet
-intelligence, launchpad feeds and live streams. It runs on our own indexers
-(18 EVM chains + Solana, the same pipeline that powers the Based trading app in
-production), and it is built to be benchmarked, on freshness, accuracy and
-latency, against every provider on this page. If the data you need is listed
-below, the switch is safe: the mappings take you endpoint by endpoint, most
-integrations move in a day, and we run the migration with you.
-
-One contract everywhere, whichever provider you come from: `{ data, meta }`
-envelope, chain ids as `evm:<EIP-155 id>` or `solana`, camelCase fields, unix
-millisecond timestamps ending in `At` (candle `time` is unix seconds,
-TradingView-style), `null` means unknown (never a fake zero), strict 400 on
-invalid params, batch twins on hot endpoints, and USD alongside native
-denominations.
+intelligence, launchpad feeds and live streams.
 
 <Tabs>
   <Tab title="Mobula">
