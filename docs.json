@@ -81,7 +81,9 @@
                   "endpoints/wallet-profile-batch"
                 ]
               },
-              "endpoints/wallet-funding"
+              "endpoints/wallet-funding",
+              "endpoints/wallet-equity-history",
+              "endpoints/wallet-transfers"
             ]
           },
           {
@@ -92,14 +94,20 @@
               "endpoints/trades-tape",
               "endpoints/sparklines-batch",
               "endpoints/native-prices",
-              "endpoints/chains"
+              "endpoints/chains",
+              "endpoints/market-definition",
+              "endpoints/market-data",
+              "endpoints/market-candles",
+              "endpoints/market-trades",
+              "endpoints/batch-market-trades"
             ]
           },
           {
             "group": "Search & filters",
             "pages": [
               "endpoints/token-search",
-              "endpoints/pulse"
+              "endpoints/pulse",
+              "endpoints/market-screener"
             ]
           }
         ]

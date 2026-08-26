@@ -1,0 +1,23 @@
+---
+title: "Wallet Transfers"
+description: "Token in/out history of a wallet: deposits, withdrawals, plain transfers - timestamp (ms), token, amount, direction, counterparty, tx hash. The reconciliation primitive next to `/v1/wallet/trades`."
+---
+
+`GET /v1/wallet/transfers` · **1 credit**
+
+Token in/out history of a wallet: deposits, withdrawals, plain transfers - timestamp (ms), token, amount, direction, counterparty, tx hash. The reconciliation primitive next to `/v1/wallet/trades`.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Wallet address. Example: `0x8888888888888888888888888888888888888888`
+</ParamField>
+
+<ParamField query="fromAt" type="integer">
+  Only transfers at/after this time (epoch ms). Example: `1755000000000`
+</ParamField>
+
+<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+

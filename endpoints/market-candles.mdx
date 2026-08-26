@@ -1,0 +1,31 @@
+---
+title: "Market Candles"
+description: "Historical OHLCV for one market, addressed by pool. Same engine and intervals as `/v1/token/ohlcv` (1s to 1M), deep backfill."
+---
+
+`GET /v1/pool/ohlcv` · **5 credits**
+
+Historical OHLCV for one market, addressed by pool. Same engine and intervals as `/v1/token/ohlcv` (1s to 1M), deep backfill.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+</ParamField>
+
+<ParamField query="interval" type="string">
+  Candle interval (default `1m`). Example: `5m`
+</ParamField>
+
+<ParamField query="from" type="integer">
+  Window start (epoch ms). Example: `1755000000000`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Max candles per page (default 200, max 500). Example: `300`
+</ParamField>
+
+<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+

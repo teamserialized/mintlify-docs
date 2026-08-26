@@ -1,0 +1,23 @@
+---
+title: "Market Screener"
+description: "Every tradable market, paginated: filters by chain and token, sort by volume, market cap or creation time, cursor pagination. The discovery primitive - poll it to detect new markets."
+---
+
+`GET /v1/screener` · **2 credits**
+
+Every tradable market, paginated: filters by chain and token, sort by volume, market cap or creation time, cursor pagination. The discovery primitive - poll it to detect new markets.
+
+<ParamField query="chain" type="string">
+  Restrict to one chain. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="sortBy" type="string">
+  `volume` (default), `marketCap` or `createdAt`. Example: `createdAt`
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  Opaque cursor from `meta.nextCursor`. Example: `eyJzIjo...`
+</ParamField>
+
+<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+

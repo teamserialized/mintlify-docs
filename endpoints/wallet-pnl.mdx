@@ -21,6 +21,8 @@ Realized PnL of a wallet: daily curve plus summary (total realized, win rate, tr
 
 <Note>`usdBasis` tells you how USD values were computed and is never hidden: `spot` (EVM today - native PnL valued at the current native price; historical-rate valuation ships with the native-USD history) or `trade` (valued at trade time).</Note>
 
+<Note>Unrealized PnL series is rolling out alongside the realized series.</Note>
+
 <RequestExample>
 ```bash cURL
 curl 'https://api.serialized.xyz/v1/wallet/pnl?wallet=0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09&period=7d' \

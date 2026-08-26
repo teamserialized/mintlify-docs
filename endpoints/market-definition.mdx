@@ -1,0 +1,19 @@
+---
+title: "Market Definition"
+description: "Static definition of one market (pool): pair address, venue/DEX, base & quote token metadata, fee tier, created-at. Slow-changing - cache-friendly. A market id is simply chain + pool address: stable, unique on its venue, never reused."
+---
+
+`GET /v1/pool` · **1 credit**
+
+Static definition of one market (pool): pair address, venue/DEX, base & quote token metadata, fee tier, created-at. Slow-changing - cache-friendly. A market id is simply chain + pool address: stable, unique on its venue, never reused.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+</ParamField>
+
+<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+

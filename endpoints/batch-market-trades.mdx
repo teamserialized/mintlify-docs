@@ -1,0 +1,21 @@
+---
+title: "Batch Market Trades"
+description: "The tape of up to 100+ markets in a single call, since a timestamp - grouped per market, per-market row cap. One request replaces a full polling fan-out."
+---
+
+`POST /v1/pools/trades` · **1 credit**
+
+The tape of up to 100+ markets in a single call, since a timestamp - grouped per market, per-market row cap. One request replaces a full polling fan-out.
+
+<ParamField body="markets" type="array" required>
+  List of `{chain, address}` pools (100+ per call). Example: `[{"chain":"evm:8453","address":"0x..."}]`
+</ParamField>
+
+<ParamField body="from" type="integer" required>
+  Only trades at/after this time (epoch ms). Example: `1755000000000`
+</ParamField>
+
+<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+
+<Note>Billed per market included in the call.</Note>
+

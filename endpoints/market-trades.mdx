@@ -1,0 +1,27 @@
+---
+title: "Market Trades"
+description: "Trade tape of one market: recent + historical, time-bounded, cursor pagination, optional participant filter. Each trade carries a stable id, timestamp (ms), price, size, side, maker and tx hash."
+---
+
+`GET /v1/pool/trades` · **1 credit**
+
+Trade tape of one market: recent + historical, time-bounded, cursor pagination, optional participant filter. Each trade carries a stable id, timestamp (ms), price, size, side, maker and tx hash.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+</ParamField>
+
+<ParamField query="fromAt" type="integer">
+  Only trades at/after this time (epoch ms). Example: `1755000000000`
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  Opaque cursor from `meta.nextCursor`. Example: `eyJ0IjoxNzU1...`
+</ParamField>
+
+<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+

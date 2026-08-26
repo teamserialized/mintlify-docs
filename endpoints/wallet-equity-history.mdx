@@ -1,0 +1,27 @@
+---
+title: "Wallet Equity History"
+description: "Total wallet value (USD) as a time series over a chosen window - the equity curve behind every portfolio chart."
+---
+
+`GET /v1/wallet/equity/history` · **2 credits**
+
+Total wallet value (USD) as a time series over a chosen window - the equity curve behind every portfolio chart.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Wallet address. Example: `0x8888888888888888888888888888888888888888`
+</ParamField>
+
+<ParamField query="from" type="integer">
+  Window start (epoch ms). Example: `1755000000000`
+</ParamField>
+
+<ParamField query="to" type="integer">
+  Window end (epoch ms, default now). Example: `1787800000000`
+</ParamField>
+
+<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+
