@@ -1,12 +1,12 @@
 ---
 title: "Token Security: batch"
-description: "Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items - no batch security anywhere else on the market. GET twin on the same path for single lookups."
+description: "Per-family security fields. Solana: mint/freeze authority state (on-chain truth). EVM: holders count, top-10 concentration (CEX-custody excluded), dev/snipers/bundlers holdings %, token burn %, buy/sell/transfer tax (on-chain simulation), dexPaid. null always means unknown, never a fake zero."
 sidebarTitle: "Batch"
 ---
 
 `POST /v1/token/security` · **10 credits**
 
-Mint & freeze authority state for Solana tokens - the rug-risk primitives. Tri-state, never faked: `mintRevoked`/`freezeRevoked` true = revoked (safe), false = AUTHORITY ACTIVE (token is mintable/freezable - the risk signal), null = not yet observed (treat as unknown, NOT safe). Live tokens are covered within minutes of creation; a post-launch revocation is reflected in ≤1h. Batch up to 500 items - no batch security anywhere else on the market. GET twin on the same path for single lookups.
+Per-family security fields. Solana: mint/freeze authority state (on-chain truth). EVM: holders count, top-10 concentration (CEX-custody excluded), dev/snipers/bundlers holdings %, token burn %, buy/sell/transfer tax (on-chain simulation), dexPaid. null always means unknown, never a fake zero.
 
 <ParamField body="items" type="array" required>
   Up to 500 of `{chain, address}`. Response array is in input order with per-item `{error}` slots. Billed per item. Example: `[{"chain":"solana","address":"DezXAZ…"}]`

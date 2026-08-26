@@ -65,7 +65,8 @@
                   "endpoints/token-security-batch"
                 ]
               },
-              "endpoints/token-audit"
+              "endpoints/contract-audit",
+              "endpoints/audit-coverage"
             ]
           },
           {
