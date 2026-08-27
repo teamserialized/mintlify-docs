@@ -14,6 +14,8 @@ Per-family security fields. Solana: mint/freeze authority state (on-chain truth)
 
 <Note>BONK: both authorities revoked (safe). USDC: both ACTIVE (Circle can mint & freeze - expected for a stablecoin, a red flag on a memecoin).</Note>
 
+<Note>Batch: up to 500 Solana items; EVM capped at 100 items per call (per-token holder scans).</Note>
+
 <RequestExample>
 ```bash cURL
 curl -X POST 'https://api.serialized.xyz/v1/token/security' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"items":[{"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"},{"chain":"solana","address":"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"}]}'

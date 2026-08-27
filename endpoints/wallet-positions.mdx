@@ -17,6 +17,8 @@ Every position of a wallet with entry price and PnL: amount held, USD value, ave
 
 <Note>Billed per chain queried.</Note>
 
+<Note>EVM lists TRADED tokens currently held (closed positions excluded; native coin balances not tracked). `meta.summary` carries wallet-level totals + `usdBasis`.</Note>
+
 <RequestExample>
 ```bash cURL
 curl 'https://api.serialized.xyz/v1/wallet/positions?chain=solana&wallet=GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E' \

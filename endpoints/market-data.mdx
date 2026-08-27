@@ -1,11 +1,11 @@
 ---
 title: "Market Data"
-description: "Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, supply, buys/sells and unique traders per window (5m/1h/24h), buy/sell tax."
+description: "Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, circulating + total supply, buys/sells and unique traders per window (5m/1h/24h). Buy/sell tax and the full security fields live on `/v1/token/security`."
 ---
 
 `GET /v1/pool/data` · **1 credit**
 
-Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, supply, buys/sells and unique traders per window (5m/1h/24h), buy/sell tax.
+Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, circulating + total supply, buys/sells and unique traders per window (5m/1h/24h). Buy/sell tax and the full security fields live on `/v1/token/security`.
 
 <ParamField query="chain" type="string" required>
   Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`

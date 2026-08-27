@@ -16,11 +16,11 @@ Historical OHLCV for one market, addressed by pool. Same engine and intervals as
 </ParamField>
 
 <ParamField query="interval" type="string">
-  Candle interval (default `1m`). Example: `5m`
+  Candle interval (default `5m`). Example: `5m`
 </ParamField>
 
 <ParamField query="from" type="integer">
-  Window start (epoch ms). Example: `1755000000000`
+  Window start (unix SECONDS, inclusive - candle timestamps are TradingView-style seconds). Example: `1755000000`
 </ParamField>
 
 <ParamField query="limit" type="integer">

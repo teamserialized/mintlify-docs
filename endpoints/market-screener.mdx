@@ -7,16 +7,20 @@ description: "Every tradable market, paginated: filters by chain and token, sort
 
 Every tradable market, paginated: filters by chain and token, sort by volume, market cap or creation time, cursor pagination. The discovery primitive - poll it to detect new markets.
 
-<ParamField query="chain" type="string">
-  Restrict to one chain. Example: `evm:8453`
+<ParamField query="chains" type="string" required>
+  CSV of public chain ids (1-8). sortBy=createdAt serves ONE chain per call (indexed walk) - fan out per chain. Example: `evm:8453,solana`
 </ParamField>
 
 <ParamField query="sortBy" type="string">
-  `volume` (default), `marketCap` or `createdAt`. Example: `createdAt`
+  `volume` (default), `marketCap` or `createdAt`. volume/marketCap rank within the top-1000-by-24h-volume universe (`meta.universe`). Example: `createdAt`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Rows per page (default 30, max 100). Example: `50`
 </ParamField>
 
 <ParamField query="cursor" type="string">
-  Opaque cursor from `meta.nextCursor`. Example: `eyJzIjo...`
+  Opaque cursor from `meta.nextCursor`. Example: `eyJvIjozMH0`
 </ParamField>
 
 <Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
