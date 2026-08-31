@@ -56,10 +56,9 @@ API key in the `Authorization` header) and the credit model is aligned.
 Same idea, cleaner protocol: one `wss` endpoint, auth as the first frame, then
 additive subscriptions with explicit acks and per-id unsubscribe. Event
 payloads reuse our REST shapes, so your parser is already written.
-`fast-trade` maps to the `trades` channel, `ohlcv` to `ohlcv`,
-`token-details`/`market-details` to `token-updates`, and `pulse-v2` to `pulse`
-(same contract you know: authoritative snapshot every ~30s, replace not merge,
-plus enter/update/leave deltas).
+`fast-trade` maps to the `trades` channel and `token-details`/`market-details`
+to `token-updates`. For bars, poll `GET /v1/token/ohlcv` (intervals down to
+`1s`) or fold the live `trades` feed; for launchpad views, poll `GET /v1/pulse`.
 
   </Tab>
   <Tab title="Codex">
@@ -102,9 +101,9 @@ REST counterpart below.
 | `getNetworks`, `getNetworkStatus`                               | `GET /v1/meta/chains`                          | indexing status included                                                               |
 | mintable/freezable on `token`                                   | `GET/POST /v1/token/security`                  | tri-state, never faked; deep contract audit via Token Audit                            |
 | `onTokenEventsCreated`, `onEventsCreatedByMaker`                | Streams `trades` channel                       | REST-shaped events                                                                     |
-| `onBarsUpdated` / `onTokenBarsUpdated`                          | Streams `ohlcv` channel                        | candle state per trade                                                                 |
+| `onBarsUpdated` / `onTokenBarsUpdated`                          | `GET /v1/token/ohlcv` + Streams `trades`       | poll bars down to `1s`, or fold the live trade feed                                    |
 | `onPriceUpdated` / `onPricesUpdated`                            | Streams `token-updates` channel                | price + mcap + liquidity together                                                      |
-| `onFilterTokensUpdated`, `onLaunchpadTokenEvent`                | Streams `pulse` channel                        | snapshot + enter/update/leave deltas                                                   |
+| `onFilterTokensUpdated`, `onLaunchpadTokenEvent`                | `GET /v1/pulse`                                | launchpad lifecycle views, poll at your cadence                                        |
 
 Not carried over: Sui/Aptos/Starknet networks, NFT queries, community notes.
 If one of these blocks your migration, tell us.
@@ -151,9 +150,9 @@ surface, and flat credits replace per-endpoint Compute Units.
 | `POST /wallet/v2/tx-first-funded`                                                             | `GET /v1/wallet/funding`                   | first funder + entity tag                                                       |
 | (no equivalent)                                                                               | `GET/POST /v1/wallet/profile`              | identity graph: names, ENS/.sol, socials, 7.6M+ wallets, linked-wallet clusters |
 | `GET /defi/v3/search`                                                                         | `GET /v1/search`                           | cross-chain by default                                                          |
-| WS `SUBSCRIBE_PRICE`                                                                          | Streams `ohlcv` / `token-updates` channels | one connection for all chains, not one per chain                                |
+| WS `SUBSCRIBE_PRICE`                                                                          | Streams `token-updates` channel            | one connection for all chains, not one per chain                                |
 | WS `SUBSCRIBE_TXS` (+ wallet txs)                                                             | Streams `trades` channel                   | REST-shaped events                                                              |
-| WS `SUBSCRIBE_TOKEN_NEW_LISTING`                                                              | Streams `pulse` channel                    | snapshot + deltas                                                               |
+| WS `SUBSCRIBE_TOKEN_NEW_LISTING`                                                              | `GET /v1/pulse`                            | launchpad lifecycle views (new, bonding, graduated)                             |
 
 Not carried over: Sui/Aptos, NFT and gainers/losers leaderboards. If one of
 these blocks your migration, tell us.

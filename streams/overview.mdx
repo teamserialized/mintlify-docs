@@ -1,9 +1,9 @@
 ---
 title: "Streams overview"
-description: "Real-time push over a single WebSocket connection: live trades, candles, token updates and token filter views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged."
+description: "Real-time push over a single WebSocket connection: live trades and token updates. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged."
 ---
 
-Real-time push over a single WebSocket connection: live trades, candles, token updates and token filter views. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged.
+Real-time push over a single WebSocket connection: live trades and token updates. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged.
 
 **Endpoint** : `wss://api.serialized.xyz/v1/stream`
 
@@ -32,11 +32,11 @@ Connection close codes:
 
 ## Reconnect & resume
 
-Delivery is at-most-once: after a reconnect, backfill the gap over REST (trades has `cursor` + `fromAt`, candles have `endTime`), then re-subscribe. Trade events carry a stable identity key (`txHash`, `block`, `logIndex`) for exact dedup.
+Delivery is at-most-once: after a reconnect, backfill the gap over REST (trades has `cursor` + `fromAt`), then re-subscribe. Trade events carry a stable identity key (`txHash`, `block`, `logIndex`) for exact dedup.
 
 ## Limits
 
-Limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 distinct tokens/pools across `trades`/`ohlcv`/`token-updates`. Need more? Ask us.
+Limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 distinct tokens/pools across `trades`/`token-updates`. Need more? Ask us.
 
 ## Billing
 

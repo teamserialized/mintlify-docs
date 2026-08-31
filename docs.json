@@ -132,9 +132,7 @@
             "pages": [
               "streams/overview",
               "streams/trades-stream",
-              "streams/live-candles-ohlcv",
-              "streams/token-updates-stream",
-              "streams/pulse-stream-view"
+              "streams/token-updates-stream"
             ]
           }
         ]
