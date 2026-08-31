@@ -15,6 +15,10 @@ Every position of a wallet with entry price and PnL: amount held, USD value, ave
   Public chain id - `evm:<id>` or `solana`. Omit to infer from the address: a `0x` wallet returns every EVM chain, a base58 wallet returns Solana. Example: `evm:8453`
 </ParamField>
 
+<ParamField query="tokens" type="string">
+  Comma-separated token addresses (1-50) to scope the response to - positions and summary cover only those tokens. Same shape, faster: the lookup narrows to the requested tokens. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+</ParamField>
+
 <Note>Lists the tokens currently held that the wallet has traded. `entryPriceUsd` is the current bag's average entry; `entryPriceLifetimeUsd` is the average over the position's whole life. The realized counterpart of each fully-exited position is on [`/v1/wallet/closed-positions`](/endpoints/wallet-closed-positions) - together the two cover every position exactly once.</Note>
 
 <Note>`meta.summary` carries wallet-level totals (value, realized, unrealized, total PnL, position count). Returns 502 if a holdings source is unavailable.</Note>
