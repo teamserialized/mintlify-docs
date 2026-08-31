@@ -1,0 +1,121 @@
+---
+title: "Pool Updates Stream"
+description: "Live refresh of a single market's mutable fields - price, market cap, liquidity, bonding progress, windowed stats. Instant price on every trade of the pool; fields you already parse from `/v1/pool/data`."
+---
+
+`WS channel: pool-updates`
+
+Live refresh of a single market's mutable fields - price, market cap, liquidity, bonding progress, windowed stats. The price moves instantly on every trade of the pool; the full snapshot refreshes server-side every ~10s. Events are throttled to at most one per second per pool and deduplicated - you only receive an event when something actually changed.
+
+<ParamField body="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `solana`
+</ParamField>
+
+<ParamField body="pool" type="string" required>
+  Pool (market) address. Example: `BqnpCdDLPV2pFdAaLnVidmn3G93RP2p5oRdGEY2sJGez`
+</ParamField>
+
+<Note>The refresh runs server-side through the same engine as [`/v1/pool/data`](/endpoints/market-data), so `stats` carries the identical `5m`/`1h`/`24h` windows and field names as the REST snapshot - re-parse events with the code you already wrote. On subscribe, the last known state is pushed immediately when available.</Note>
+
+## Close codes
+
+| Code | Meaning |
+|---|---|
+| `4401` | Auth - key missing, invalid, or revoked. Live connections are dropped the moment a key is revoked. |
+| `4402` | Monthly credit quota exhausted (the WebSocket mirror of REST `402`). |
+| `1008` | Policy - subscription limits, flooding, or a blocked socket. |
+| `1001` | Idle timeout - no `ping` within the keepalive window. |
+
+<RequestExample>
+```json Subscribe
+{
+  "op": "subscribe",
+  "channel": "pool-updates",
+  "id": "pool-1",
+  "params": {
+    "chain": "solana",
+    "pool": "BqnpCdDLPV2pFdAaLnVidmn3G93RP2p5oRdGEY2sJGez"
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Ack
+{
+  "op": "subscribed",
+  "id": "pool-1",
+  "channel": "pool-updates"
+}
+```
+```json Update
+{
+  "op": "event",
+  "id": "pool-1",
+  "channel": "pool-updates",
+  "data": {
+    "priceNative": "0.000000027894474571",
+    "priceUsd": 0.00000288045,
+    "marketCapUsd": 253463983.91,
+    "liquidityNative": "722.161187853",
+    "liquidityUsd": 74572.08,
+    "bondingProgress": null,
+    "migrated": false,
+    "stats": {
+      "5m": {
+        "volumeNative": 0.489206931,
+        "volumeUsd": 50.51,
+        "buys": 6,
+        "sells": 2,
+        "buyVolumeNative": 0.400091205,
+        "sellVolumeNative": 0.089115726,
+        "txns": 8,
+        "volumeOrganicNative": 0.489206931,
+        "volumeOrganicUsd": 50.51,
+        "buysOrganic": 6,
+        "sellsOrganic": 2,
+        "priceChangePct": 0.42,
+        "traders": 7,
+        "feesNative": 0.000704,
+        "poolFeesNative": 0.004892069
+      },
+      "1h": {
+        "volumeNative": 2.221187931,
+        "volumeUsd": 229.36,
+        "buys": 27,
+        "sells": 0,
+        "buyVolumeNative": 2.221187931,
+        "sellVolumeNative": 0,
+        "txns": 27,
+        "volumeOrganicNative": 1.896568223,
+        "volumeOrganicUsd": 195.84,
+        "buysOrganic": 20,
+        "sellsOrganic": 0,
+        "priceChangePct": 1.58,
+        "traders": 15,
+        "feesNative": 0.002376526,
+        "poolFeesNative": 0.022211894
+      },
+      "24h": {
+        "volumeNative": 7.170081239,
+        "volumeUsd": 740.39,
+        "buys": 28,
+        "sells": 48,
+        "buyVolumeNative": 2.344647931,
+        "sellVolumeNative": 4.825433308,
+        "txns": 76,
+        "volumeOrganicNative": 6.512701056,
+        "volumeOrganicUsd": 672.51,
+        "buysOrganic": 21,
+        "sellsOrganic": 45,
+        "priceChangePct": -1.78,
+        "traders": 41,
+        "feesNative": 0.006465399,
+        "poolFeesNative": 0.072148996
+      }
+    }
+  },
+  "asOf": 1788168160758
+}
+```
+</ResponseExample>

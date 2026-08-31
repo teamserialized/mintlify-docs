@@ -132,7 +132,8 @@
             "pages": [
               "streams/overview",
               "streams/trades-stream",
-              "streams/token-updates-stream"
+              "streams/token-updates-stream",
+              "streams/pool-updates-stream"
             ]
           }
         ]
