@@ -19,6 +19,8 @@ Low-latency token search: exact address (EVM hex, Solana base58, pool addresses)
   1-50, default 12.
 </ParamField>
 
+<Note>`volume24hUsd` and `priceChange1hPct`/`priceChange24hPct` are token-wide - aggregated across every pool of the token - and referenced to the token's close before each window.</Note>
+
 <RequestExample>
 ```bash cURL
 curl 'https://api.serialized.xyz/v1/search?q=degen' -H 'Authorization: YOUR_API_KEY'

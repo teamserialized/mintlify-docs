@@ -1,31 +1,94 @@
 ---
 title: "Market Trades"
-description: "Trade tape of one market: recent + historical, time-bounded, cursor pagination, optional participant filter. Each trade carries a stable id, timestamp (ms), price, size, side, maker and tx hash."
+description: "Trade tape of one market, addressed by pool: recent + historical, time-bounded, opaque cursor pagination, optional participant filter. Same row shape and filters as `/v1/token/trades` - a page here equals `/v1/token/trades?pools=<this pool>`."
 ---
 
 `GET /v1/pool/trades` · **1 credit**
 
-Trade tape of one market: recent + historical, time-bounded, cursor pagination, optional participant filter. Each trade carries a stable id, timestamp (ms), price, size, side, maker and tx hash.
+Trade tape of one market, addressed by pool. Same row shape, badges and filters as [`/v1/token/trades`](/endpoints/trades-tape); the only difference is scope - exactly this pool. Each trade carries a stable `id`, timestamp (ms), price, size, side, `maker`, badges and tx hash.
 
 <ParamField query="chain" type="string" required>
   Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
 </ParamField>
 
 <ParamField query="address" type="string" required>
-  Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
-</ParamField>
-
-<ParamField query="fromAt" type="integer">
-  Only trades at/after this time (epoch ms). Example: `1755000000000`
-</ParamField>
-
-<ParamField query="cursor" type="string">
-  Opaque cursor from `meta.nextCursor`. Example: `eyJ0IjoxNzU1...`
+  Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported; Solana base58, case-sensitive). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
 </ParamField>
 
 <ParamField query="maker" type="string">
-  Filter trades by participant address. Example: `0x16380ab7951906dd53ca6095d51f091ef2614127`
+  Filter trades by a single participant address. Example: `0x16380ab7951906dd53ca6095d51f091ef2614127`
 </ParamField>
 
-<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+<ParamField query="tradeType" type="string">
+  `buy` or `sell`.
+</ParamField>
 
+<ParamField query="usdMin" type="number">
+  Keep trades whose USD volume is at least this (also `usdMax`, `nativeMin`, `nativeMax`, `tokenAmountMin`, `tokenAmountMax`). Example: `100`
+</ParamField>
+
+<ParamField query="fromAt" type="integer">
+  Only trades at/after this time (epoch ms, inclusive). `toAt` bounds the other end. Example: `1755000000000`
+</ParamField>
+
+<ParamField query="sort" type="string">
+  `desc` (default, newest first) or `asc`.
+</ParamField>
+
+<ParamField query="washFilter" type="string">
+  `washOnly` or `organicOnly` (Solana; every row carries `isWash`).
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  1-500, default 100.
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  Opaque - pass `meta.nextCursor` back verbatim to page. Example: `e1:eyJ0IjoxNzU1...`
+</ParamField>
+
+<ParamField query="include" type="string">
+  CSV opt-ins. `traderTxCounts` adds each row's `makerTxCount`.
+</ParamField>
+
+<Note>An unknown pool returns `404` (never a silently-empty 200). `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/pool/trades?chain=evm:8453&address=0x0ca6485b7e9cf814a3fd09d81672b07323535b64&limit=2' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "id": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf:289",
+      "at": 1786718835000,
+      "maker": "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09",
+      "isBuy": true,
+      "amountToken": 77.05662024406023,
+      "amountQuote": 0.000042612402192036,
+      "priceNative": 5.4747124708872e-7,
+      "volumeNative": 0.000042612402192036,
+      "volumeUsd": 0.08021081608014609,
+      "isProTrader": false,
+      "isSniper": false,
+      "isWash": null,
+      "preconfirmed": false,
+      "txHash": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf",
+      "block": 49964744,
+      "logIndex": 289
+    }
+  ],
+  "meta": {
+    "asOf": 1786725098947,
+    "usdBasis": "spot",
+    "hasMore": true,
+    "nextCursor": "e1:eyJ0IjoxNzg2NzE4ODM1MDAwLCJiIjo0OTk2NDc0NCwibCI6Mjg5fQ"
+  }
+}
+```
+</ResponseExample>

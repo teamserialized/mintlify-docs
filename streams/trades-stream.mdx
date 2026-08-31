@@ -47,6 +47,7 @@ Every new trade for a token - all pools by default, or a pool subset - pushed as
   "id": "tape-1",
   "channel": "trades",
   "data": {
+    "id": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf:289",
     "at": 1786718835000,
     "maker": "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09",
     "isBuy": true,
@@ -57,6 +58,7 @@ Every new trade for a token - all pools by default, or a pool subset - pushed as
     "volumeUsd": 0.08021081608014609,
     "isProTrader": false,
     "isSniper": false,
+    "isWash": null,
     "preconfirmed": false,
     "txHash": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf",
     "block": 49964744,
@@ -66,3 +68,9 @@ Every new trade for a token - all pools by default, or a pool subset - pushed as
 }
 ```
 </ResponseExample>
+
+<Note>Events are the exact REST [trades-tape](/endpoints/trades-tape) `Trade` shape, including the stable `id` for dedup. `isWash` is a boolean on Solana and `null` on EVM (no wash tagging there).</Note>
+
+## Close codes
+
+The connection can be closed with: `4401` (auth failure - bad/missing/revoked key), `4402` (quota exceeded), `1008` (policy - subscription limits, floods, slow consumer), `1001` (idle timeout). On a close, backfill the gap over REST (`/v1/token/trades` with `cursor` + `fromAt`), then reconnect and re-subscribe.

@@ -21,6 +21,15 @@ Send `{"op":"ping"}` every 30s; the server replies `{"op":"pong"}`. Connections 
 
 Errors arrive as `{"op":"error","id":"<sub id>","error":{"code","message"}}` - the same machine-readable catalog as REST (`INVALID_PARAM`, `INVALID_CHAIN`, …). A bad subscribe only fails that subscription, never the connection.
 
+Connection close codes:
+
+| Code | Meaning |
+| --- | --- |
+| 4401 | Auth failure — key missing, invalid, or revoked (revoking a key drops its open connections) |
+| 4402 | Monthly credit quota exhausted (the WS mirror of the REST `402`) |
+| 1008 | Policy — limits, floods, or a stuck socket |
+| 1001 | Idle timeout (no traffic for ~60s) |
+
 ## Reconnect & resume
 
 Delivery is at-most-once: after a reconnect, backfill the gap over REST (trades has `cursor` + `fromAt`, candles have `endTime`), then re-subscribe. Trade events carry a stable identity key (`txHash`, `block`, `logIndex`) for exact dedup.

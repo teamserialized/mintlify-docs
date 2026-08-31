@@ -1,24 +1,24 @@
 ---
 title: "Token Security: batch"
-description: "Per-family security fields. Solana: mint/freeze authority state (on-chain truth). EVM: holders count, top-10 concentration (CEX-custody excluded), dev/snipers/bundlers holdings %, token burn %, buy/sell/transfer tax (on-chain simulation), dexPaid. null always means unknown, never a fake zero."
+description: "Security fields for up to 500 tokens in one call, one union shape across EVM and Solana: mint/freeze authority state, holders count, top-10 concentration, dev/sniper/bundler holdings %, token burn, LP burn/lock, buy/sell/transfer tax, dexPaid + dexPaidAt. Billed per item. null always means unknown, never a fake zero."
 sidebarTitle: "Batch"
 ---
 
 `POST /v1/token/security` · **10 credits**
 
-Per-family security fields. Solana: mint/freeze authority state (on-chain truth). EVM: holders count, top-10 concentration (CEX-custody excluded), dev/snipers/bundlers holdings %, token burn %, buy/sell/transfer tax (on-chain simulation), dexPaid. null always means unknown, never a fake zero.
+The batch twin of [Token Security](/endpoints/token-security) - screen a whole watchlist in a single call. The response array is in input order with per-item `{error}` slots, and every item carries the same union shape (authorities, concentration, launch quality, liquidity safety, taxes, dexPaid). Mixed EVM and Solana in one call is fine.
 
 <ParamField body="items" type="array" required>
   Up to 500 of `{chain, address}`. Response array is in input order with per-item `{error}` slots. Billed per item. Example: `[{"chain":"solana","address":"DezXAZ…"}]`
 </ParamField>
 
-<Note>BONK: both authorities revoked (safe). USDC: both ACTIVE (Circle can mint & freeze - expected for a stablecoin, a red flag on a memecoin).</Note>
+<Note>Authority tri-state: `mintRevoked: true` = renounced (safe), `false` = active, `null` = unknown. USDC keeps both authorities active (Circle can mint & freeze - expected for a regulated stablecoin, a red flag on a memecoin); BONK has both revoked.</Note>
 
 <Note>Batch: up to 500 Solana items; EVM capped at 100 items per call (per-token holder scans).</Note>
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://api.serialized.xyz/v1/token/security' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"items":[{"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"},{"chain":"solana","address":"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"}]}'
+curl -X POST 'https://api.serialized.xyz/v1/token/security' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"items":[{"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"},{"chain":"evm:8453","address":"0x4ed4e862860bed51a9570b96d89af5e1b0efefed"}]}'
 ```
 </RequestExample>
 
@@ -30,6 +30,20 @@ curl -X POST 'https://api.serialized.xyz/v1/token/security' -H 'Authorization: Y
       "data": {
         "chain": "solana",
         "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+        "holdersCount": 892341,
+        "top10HoldersPct": 24.83,
+        "devHoldingsPct": 0,
+        "snipersHoldingsPct": 0,
+        "bundlersHoldingsPct": 0,
+        "tokenBurnedPct": null,
+        "lpBurnedPct": null,
+        "lpLockedPct": null,
+        "lpSource": "unknown",
+        "dexPaid": true,
+        "dexPaidAt": 1740046431000,
+        "buyTaxBps": null,
+        "sellTaxBps": null,
+        "transferTaxBps": null,
         "mintAuthority": null,
         "mintRevoked": true,
         "freezeAuthority": null,
@@ -38,12 +52,26 @@ curl -X POST 'https://api.serialized.xyz/v1/token/security' -H 'Authorization: Y
     },
     {
       "data": {
-        "chain": "solana",
-        "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-        "mintAuthority": "BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG",
-        "mintRevoked": false,
-        "freezeAuthority": "7dGbd2QZcCKcTndnHcTL8q7SMVXAkp688NTQYwrRCrar",
-        "freezeRevoked": false
+        "chain": "evm:8453",
+        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+        "holdersCount": 1192454,
+        "top10HoldersPct": 41.52,
+        "devHoldingsPct": 0.81,
+        "snipersHoldingsPct": 2.14,
+        "bundlersHoldingsPct": 3.37,
+        "tokenBurnedPct": 12.04,
+        "lpBurnedPct": 100,
+        "lpLockedPct": 0,
+        "lpSource": "measured",
+        "dexPaid": true,
+        "dexPaidAt": 1712345678000,
+        "buyTaxBps": 0,
+        "sellTaxBps": 0,
+        "transferTaxBps": 0,
+        "mintAuthority": null,
+        "mintRevoked": null,
+        "freezeAuthority": null,
+        "freezeRevoked": null
       }
     }
   ],

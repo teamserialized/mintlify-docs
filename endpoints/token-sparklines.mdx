@@ -1,0 +1,51 @@
+---
+title: "Token Sparklines"
+description: "Small native-price arrays for token list rows - one call for up to 100 tokens on a chain. We resolve each token's best pool (curve history stitched in) and return one line per token. Timeframes 1m|5m|30m|1h|24h|7d. Unknown tokens return [] - we never invent data."
+---
+
+`POST /v1/token/sparklines` · **1 per token credit**
+
+Small native-price arrays for token list rows - one call for up to 100 tokens. We resolve each token's best pool for you and stitch bonding-curve history onto it, so a freshly graduated token draws one continuous line. The response is keyed by token address. To spark specific pools instead, use [`POST /v1/pools/sparklines`](/endpoints/sparklines-batch).
+
+<ParamField body="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
+</ParamField>
+
+<ParamField body="tokens" type="array" required>
+  Token addresses (up to 100, same chain). Billing is per token; an unknown token returns `[]`. Example: `["0x4ed4e862860bed51a9570b96d89af5e1b0efefed"]`
+</ParamField>
+
+<ParamField body="timeframe" type="string">
+  `1m`|`5m`|`30m`|`1h`|`24h`|`7d` (default `24h`). Example: `24h`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/token/sparklines' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"chain": "evm:8453", "tokens": ["0x4ed4e862860bed51a9570b96d89af5e1b0efefed"], "timeframe": "24h"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "0x4ed4e862860bed51a9570b96d89af5e1b0efefed": [
+      5.249040755790959e-7,
+      5.299419269878368e-7,
+      5.341024278723588e-7,
+      5.353384270094856e-7,
+      5.367245992625111e-7,
+      5.382859734840854e-7,
+      "…"
+    ]
+  },
+  "meta": {
+    "asOf": 1786725098728,
+    "timeframe": "24h",
+    "quote": "native"
+  }
+}
+```
+</ResponseExample>

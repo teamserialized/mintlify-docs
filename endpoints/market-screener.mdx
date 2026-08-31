@@ -23,7 +23,78 @@ Every tradable market, paginated: filters by chain and token, sort by volume, ma
   Opaque cursor from `meta.nextCursor`. Example: `eyJvIjozMH0`
 </ParamField>
 
-<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+<Note>Each row is a market (chain + pool): token and quote identity, `priceNative`/`priceUsd`, `marketCapUsd`, `liquidityUsd`, `volume24hUsd`, `priceChange24hPct`, `txns`, `buys`, `sells`, `createdAt`.</Note>
 
-<Note>Mobula gates its screener behind Growth+ plans; we bill it as a plain call instead.</Note>
+<Note>For `volume`/`marketCap`, rows are ranked within a warmed universe of the top markets by 24h USD volume, named in `meta.universe` (e.g. `top1000ByVolume24hUsd`); `sortBy=createdAt` is a live indexed walk of newest markets on one chain.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/screener?chains=evm:8453,solana&sortBy=volume&limit=2' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "evm:8453",
+      "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+      "type": "UNISWAP_V3",
+      "token": {
+        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+        "name": "Degen",
+        "symbol": "DEGEN"
+      },
+      "quote": {
+        "address": "0x4200000000000000000000000000000000000006",
+        "symbol": "WETH"
+      },
+      "priceNative": "0.000000547821",
+      "priceUsd": 0.0010305242898887457,
+      "marketCapUsd": 37436168.14123417,
+      "liquidityUsd": 239687.07091684965,
+      "volume24hUsd": 1284561.72,
+      "priceChange24hPct": 3.747121113042337,
+      "txns": 4821,
+      "buys": 2610,
+      "sells": 2211,
+      "createdAt": 1705088299000
+    },
+    {
+      "chain": "solana",
+      "address": "48WkwrpuxrjunUiWPjKE6mwt72L8Jt44ZKDzeoxfpJFq",
+      "type": "PUMP_FUN",
+      "token": {
+        "address": "Gy5norvZpbgv69cxuLnLg27FBj7f13yXr9g5oLEQpump",
+        "name": "Abdul El-Sayed",
+        "symbol": "SAYED"
+      },
+      "quote": {
+        "address": "So11111111111111111111111111111111111111112",
+        "symbol": "SOL"
+      },
+      "priceNative": "0.000000004137723910209546",
+      "priceUsd": 3.108043618992381e-7,
+      "marketCapUsd": 432.6024893944764,
+      "liquidityUsd": 2330.4088733171225,
+      "volume24hUsd": 918342.11,
+      "priceChange24hPct": -12.63,
+      "txns": 3140,
+      "buys": 1702,
+      "sells": 1438,
+      "createdAt": 1786046774000
+    }
+  ],
+  "meta": {
+    "asOf": 1787163135004,
+    "sortBy": "volume",
+    "hasMore": true,
+    "nextCursor": "eyJvIjoyfQ",
+    "universe": "top1000ByVolume24hUsd"
+  }
+}
+```
+</ResponseExample>
 

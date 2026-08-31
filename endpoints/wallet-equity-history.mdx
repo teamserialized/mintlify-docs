@@ -23,7 +23,30 @@ Total wallet value (USD) as a time series over a chosen window - the equity curv
   Window end (epoch ms, default now). Example: `1787800000000`
 </ParamField>
 
-<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+<Note>`currentValueUsd` is the latest total value; `points` is the equity curve (`at` in ms, `valueUsd`). Billed per chain queried.</Note>
 
-<Note>Billed per chain queried (Mobula wallet/history convention).</Note>
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/wallet/equity/history?chain=evm:8453&wallet=0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "currentValueUsd": 18432.57,
+    "points": [
+      { "at": 1786752000000, "valueUsd": 15120.44 },
+      { "at": 1786838400000, "valueUsd": 16890.02 },
+      { "at": 1786924800000, "valueUsd": 18432.57 }
+    ]
+  },
+  "meta": {
+    "asOf": 1787163134667
+  }
+}
+```
+</ResponseExample>
 

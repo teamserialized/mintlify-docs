@@ -1,27 +1,25 @@
 ---
-title: "Sparklines"
-description: "Small native-price arrays for list rows - one call for up to 100 pools. Timeframes 1m|5m|30m|1h|24h|7d. Missing pools return [] - we never invent data."
+title: "Market Sparklines"
+description: "Small native-price arrays for list rows - one call for up to 100 markets, cross-chain, keyed by pool. Timeframes 1m|5m|30m|1h|24h|7d. Missing pools return [] - we never invent data."
 ---
 
-`POST /v1/token/sparklines` · **1 per pool credit**
+`POST /v1/pools/sparklines` · **1 per market credit**
 
-Small native-price arrays for list rows - one call for up to 100 pools. Timeframes 1m|5m|30m|1h|24h|7d. Missing pools return [] - we never invent data.
+Small native-price arrays for list rows - one call for up to 100 markets in one request, each `{chain, address}` so the batch can span chains. The response is keyed by pool address. For token-level sparklines (best pool resolved for you), use [`POST /v1/token/sparklines`](/endpoints/token-sparklines).
 
-<ParamField body="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
-</ParamField>
-
-<ParamField body="pools" type="array" required>
-  Pool addresses (up to 100). Billing is per pool; missing pools return `[]`.
+<ParamField body="markets" type="array" required>
+  List of `{chain, address}` pools (up to 100 per call, cross-chain). Billing is per market; a missing pool returns `[]`. Example: `[{"chain":"evm:8453","address":"0x0ca6485b7e9cf814a3fd09d81672b07323535b64"}]`
 </ParamField>
 
 <ParamField body="timeframe" type="string">
-  `1m`|`5m`|`30m`|`1h`|`24h`|`7d`. Example: `24h`
+  `1m`|`5m`|`30m`|`1h`|`24h`|`7d` (default `24h`). Example: `24h`
 </ParamField>
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://api.serialized.xyz/v1/token/sparklines' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"chain": "evm:8453", "pools": ["0x0ca6485b7e9cf814a3fd09d81672b07323535b64"], "timeframe": "24h"}'
+curl -X POST 'https://api.serialized.xyz/v1/pools/sparklines' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"markets": [{"chain": "evm:8453", "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"}], "timeframe": "24h"}'
 ```
 </RequestExample>
 

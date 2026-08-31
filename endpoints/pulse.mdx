@@ -12,18 +12,18 @@ Axiom-style launchpad lifecycle columns: `new` (created under 24h), `bonding` (a
 </ParamField>
 
 <ParamField query="chains" type="string" required>
-  CSV of chain ids (≤8). Example: `evm:8453`
+  CSV of chain ids (≤8), EVM and Solana mixable. Example: `evm:8453,solana`
 </ParamField>
 
 <ParamField query="limit" type="integer">
   1-100, default 30.
 </ParamField>
 
-<Note>`bondingProgress` is consistent with the token endpoint - same factory registry, same thresholds.</Note>
+<Note>Each card is the token identity plus the live figures of the displayed pool over the view window (24h for `new`/`bonding`, 7d for `graduated`): `priceChangePct`, `volumeUsd`, `txns`, `buys`, `sells`, `feesUsd`. `priceChangePct` is referenced to the token's close before the window.</Note>
 
-<Note>`graduatedAt` uses the authoritative migration event, not the pool creation time.</Note>
+<Note>`bondingProgress` is consistent with the token endpoint - same factory registry, same thresholds. `graduatedAt` uses the authoritative migration event, not the pool creation time.</Note>
 
-<Note>chains=solana serves the Pump.fun / Raydium LaunchLab / Meteora DBC lifecycles with the same views (new, bonding, graduated).</Note>
+<Note>EVM and Solana chains combine in one call - list them together in `chains` and the merged feed is ranked on the view's sort key. `chains=solana` serves the Pump.fun / Raydium LaunchLab / Meteora DBC lifecycles with the same views.</Note>
 
 <RequestExample>
 ```bash cURL (EVM)
@@ -68,6 +68,7 @@ curl 'https://api.serialized.xyz/v1/pulse?view=bonding&chains=solana' -H 'Author
       "sells": 0,
       "volumeUsd": 1.1411323915032607,
       "feesUsd": 0.01643934738875,
+      "priceChangePct": 12.42,
       "metadata": {
         "iconUrl": "https://s3.ap-southeast-1.amazonaws.com/virtualprotocolcdn/f71c3976-f1f7-438a-a895-1dd014869b33.jpeg",
         "websiteUrl": null,
@@ -111,6 +112,7 @@ curl 'https://api.serialized.xyz/v1/pulse?view=bonding&chains=solana' -H 'Author
       "sells": 0,
       "volumeUsd": 0,
       "feesUsd": 0,
+      "priceChangePct": null,
       "metadata": {
         "iconUrl": "https://s3.ap-southeast-1.amazonaws.com/virtualprotocolcdn/e2a5d275-6765-4b20-9dbe-4a8ad3bc87b4.png",
         "websiteUrl": null,
@@ -164,6 +166,7 @@ curl 'https://api.serialized.xyz/v1/pulse?view=bonding&chains=solana' -H 'Author
       "sells": 0,
       "volumeUsd": 72.86310307979362,
       "feesUsd": 0,
+      "priceChangePct": 34.71,
       "metadata": {
         "iconUrl": null,
         "websiteUrl": null,
@@ -207,6 +210,7 @@ curl 'https://api.serialized.xyz/v1/pulse?view=bonding&chains=solana' -H 'Author
       "sells": 0,
       "volumeUsd": 4.886580253422385,
       "feesUsd": 0,
+      "priceChangePct": 5.18,
       "metadata": {
         "iconUrl": null,
         "websiteUrl": null,

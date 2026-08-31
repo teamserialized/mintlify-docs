@@ -15,6 +15,17 @@ Live refresh of the mutable Token Details fields - price, market cap, liquidity,
   Token address. Example: `CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump`
 </ParamField>
 
+<Note>The refresh runs server-side through the same engine as [`/v1/token`](/endpoints/token-details), so `stats24h` carries the identical fields and numbers as the REST snapshot - re-parse events with the code you already wrote.</Note>
+
+## Close codes
+
+| Code | Meaning |
+|---|---|
+| `4401` | Auth - key missing, invalid, or revoked. Live connections are dropped the moment a key is revoked. |
+| `4402` | Monthly credit quota exhausted (the WebSocket mirror of REST `402`). |
+| `1008` | Policy - subscription limits, flooding, or a blocked socket. |
+| `1001` | Idle timeout - no `ping` within the keepalive window. |
+
 <RequestExample>
 ```json Subscribe
 {
@@ -47,16 +58,22 @@ Live refresh of the mutable Token Details fields - price, market cap, liquidity,
     "priceUsd": 0.0000021952461580276,
     "marketCapUsd": 2195.24,
     "fdvUsd": 2195.24,
+    "liquidityNative": "30.466812",
     "liquidityUsd": 2348.64,
     "launchpad": {
       "migrated": false,
       "bondingProgress": 38.6,
-      "graduatedAt": null
+      "graduatedAt": null,
+      "launchpadPoolAddress": "CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump"
     },
     "stats24h": {
+      "volumeNative": 217.201948,
       "volumeUsd": 16738.29,
       "buys": 412,
       "sells": 389,
+      "buyVolumeNative": 112.043901,
+      "sellVolumeNative": 105.158047,
+      "txns": 792,
       "priceChangePct": -71.5
     }
   },

@@ -1,21 +1,31 @@
 ---
 title: "Token Security"
-description: "Per-family security fields. Solana: mint/freeze authority state (on-chain truth). EVM: holders count, top-10 concentration (CEX-custody excluded), dev/snipers/bundlers holdings %, token burn %, buy/sell/transfer tax (on-chain simulation), dexPaid. null always means unknown, never a fake zero."
+description: "Security fields for any token in one union shape: mint/freeze authority state, holders count, top-10 concentration (CEX-custody excluded), dev/sniper/bundler holdings %, token burn, LP burn/lock, buy/sell/transfer tax, and dexPaid + dexPaidAt. EVM and Solana. null always means unknown, never a fake zero."
 ---
 
 `GET /v1/token/security` · **10 credits**
 
-Per-family security fields. Solana: mint/freeze authority state (on-chain truth). EVM: holders count, top-10 concentration (CEX-custody excluded), dev/snipers/bundlers holdings %, token burn %, buy/sell/transfer tax (on-chain simulation), dexPaid. null always means unknown, never a fake zero.
+Everything you need to screen a token before trading it, in one call and one shape across EVM and Solana:
+
+- **Authorities** - `mintAuthority` / `mintRevoked`, `freezeAuthority` / `freezeRevoked`: an active mint or freeze authority is the classic honeypot flag.
+- **Concentration** - `holdersCount`, `top10HoldersPct` (CEX-custody and pool/burn wallets excluded - the exclusion *is* the signal), `devHoldingsPct`.
+- **Launch quality** - `snipersHoldingsPct`, `bundlersHoldingsPct`, `tokenBurnedPct`.
+- **Liquidity safety** - `lpBurnedPct`, `lpLockedPct`, `lpSource`.
+- **Taxes & listing** - `buyTaxBps`, `sellTaxBps`, `transferTaxBps`, `dexPaid`, `dexPaidAt`.
+
+`null` always means unknown, never a fabricated zero or false.
 
 <ParamField query="chain" type="string" required>
-  Public chain id. `solana` for now; EVM ships with the LP burn/lock indexing (explicit 400 until then, never silent nulls). Example: `solana`
+  Public chain id - `evm:<id>` or `solana`. Example: `solana`
 </ParamField>
 
 <ParamField query="address" type="string" required>
-  Token mint (base58, case-sensitive). Example: `DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263`
+  Token address (base58 mint on Solana, case-sensitive; `0x…` on EVM). Example: `DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263`
 </ParamField>
 
-<Note>Batch: up to 500 Solana items; EVM capped at 100 items per call (per-token holder scans).</Note>
+<Note>Authority tri-state: `mintRevoked: true` means the authority is renounced (safe), `false` means it is still active, `null` means unknown. Same for freeze.</Note>
+
+<Note>Available as a batch: `POST /v1/token/security` with `items[]` - up to 500 Solana items, EVM capped at 100 items per call.</Note>
 
 <RequestExample>
 ```bash cURL
@@ -30,6 +40,20 @@ curl 'https://api.serialized.xyz/v1/token/security?chain=solana&address=DezXAZ8z
   "data": {
     "chain": "solana",
     "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "holdersCount": 892341,
+    "top10HoldersPct": 24.83,
+    "devHoldingsPct": 0,
+    "snipersHoldingsPct": 0,
+    "bundlersHoldingsPct": 0,
+    "tokenBurnedPct": null,
+    "lpBurnedPct": null,
+    "lpLockedPct": null,
+    "lpSource": "unknown",
+    "dexPaid": true,
+    "dexPaidAt": 1740046431000,
+    "buyTaxBps": null,
+    "sellTaxBps": null,
+    "transferTaxBps": null,
     "mintAuthority": null,
     "mintRevoked": true,
     "freezeAuthority": null,

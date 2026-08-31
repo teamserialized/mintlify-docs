@@ -5,7 +5,7 @@ description: "The contract every endpoint follows"
 
 ## One envelope
 
-Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). Partial sources appear in `meta.degraded` - data is never silently faked.
+Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). A field that can't be computed is `null` (never a fabricated value — see [null means unknown](#null-means-unknown)); when an upstream is momentarily unavailable the endpoint returns a neutral `502` rather than partial data.
 
 ## Chain ids
 
@@ -25,7 +25,7 @@ Unknown params or invalid enums return 400 with a machine-readable `error.code` 
 
 ## Native + USD
 
-On-chain amounts are native-denominated (`priceNative`, `liquidityNative` as strings for precision); USD fields are computed at the edge from live native prices. Amounts are GROSS on-chain (Mobula was net-of-fee: a ~0.3-1% systematic difference is expected).
+On-chain amounts are native-denominated (`priceNative`, `liquidityNative` as strings for precision); USD fields are computed from native prices. On Solana, trade/volume USD figures use the rate at the time of each trade (`meta.usdBasis: "trade"`); EVM uses the current spot (`"spot"`). Amounts are GROSS on-chain (the exact swapped amounts).
 
 ## Batch twins
 
@@ -33,4 +33,4 @@ Hot single-GET endpoints have a POST twin on the same path taking `items[]`; the
 
 ## Solana included
 
-Every REST endpoint and stream also serves Solana with the same shapes: chain=solana, base58 addresses (case-sensitive), tx identity is the signature (carried in txHash). Solana volumes and counts are organic (wash-trading filtered); trades aggregate multihop legs per transaction (effective VWAP).
+Every REST endpoint and stream also serves Solana with the same shapes: chain=solana, base58 addresses (case-sensitive), tx identity is the signature (carried in txHash). Displayed Solana volumes and counts are the full on-chain figures; organic twins (wash-filtered) are available as separate `*Organic` fields where provided. Solana trades aggregate multihop legs per transaction (effective VWAP).

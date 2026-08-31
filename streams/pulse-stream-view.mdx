@@ -12,7 +12,7 @@ A live token filter view: the server maintains the filtered, sorted launchpad vi
 </ParamField>
 
 <ParamField body="chains" type="string" required>
-  Comma-separated public chain ids. `solana` is not mixable with EVM chains yet - subscribe separately. Example: `evm:8453`
+  Comma-separated public chain ids (≤8), EVM and Solana mixable in one subscription. Example: `evm:8453,solana`
 </ParamField>
 
 <ParamField body="limit" type="number">
@@ -20,6 +20,8 @@ A live token filter view: the server maintains the filtered, sorted launchpad vi
 </ParamField>
 
 <Note>Every ~30s the server re-sends an authoritative `snapshot` - replace your local state with it, never merge. Deltas between snapshots keep the view live.</Note>
+
+<Note>Close codes: `4401` (auth - key missing, invalid or revoked; a revoke also closes open connections), `4402` (monthly credit quota exhausted, the WS mirror of REST `402`), `1008` (policy - connection/subscription limits, frame floods, a stalled socket), `1001` (idle timeout - send `{"op":"ping"}` every 30s).</Note>
 
 <RequestExample>
 ```json Subscribe
@@ -81,6 +83,7 @@ A live token filter view: the server maintains the filtered, sorted launchpad vi
         "sells": 0,
         "volumeUsd": 1.1411323915032607,
         "feesUsd": 0.01643934738875,
+        "priceChangePct": 12.42,
         "metadata": {
           "iconUrl": "https://s3.ap-southeast-1.amazonaws.com/virtualprotocolcdn/f71c3976-f1f7-438a-a895-1dd014869b33.jpeg",
           "websiteUrl": null,

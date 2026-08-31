@@ -1,11 +1,11 @@
 ---
 title: "Wallet Trades"
-description: "Trade history of a wallet, newest first - multihop-deduplicated (one event per transaction, token and side; never doubled volumes). Keyset pagination on EVM via `beforeAt` (strictly older than the cursor, `meta.oldestAt` feeds the next page)."
+description: "Trade history of a wallet, newest first - multihop-deduplicated (one event per transaction, token and side; never doubled volumes). Paginate with the opaque `cursor` from `meta.nextCursor` on both EVM and Solana: exact keyset pagination that never skips or repeats a trade. Routed intermediate legs (the wSOL or stable a route passes through) are excluded by default and flagged `isRoutingHop`; on Solana pass `includeRoutingHops=true` to include them. Wash/MEV rows are kept and carry the `isWash` badge (Solana) so consumers choose."
 ---
 
 `GET /v1/wallet/trades` · **1 credit**
 
-Trade history of a wallet, newest first - multihop-deduplicated (one event per transaction, token and side; never doubled volumes). Keyset pagination on EVM via `beforeAt` (strictly older than the cursor, `meta.oldestAt` feeds the next page).
+Trade history of a wallet, newest first - multihop-deduplicated (one event per transaction, token and side; never doubled volumes). Paginate with the opaque `cursor` from `meta.nextCursor` on both EVM and Solana: exact keyset pagination that never skips or repeats a trade. Routed intermediate legs (the wSOL or stable a route passes through) are excluded by default and flagged `isRoutingHop`; on Solana pass `includeRoutingHops=true` to include them. Wash/MEV rows are kept and carry the `isWash` badge (Solana) so consumers choose.
 
 <ParamField query="chain" type="string" required>
   Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
@@ -19,9 +19,23 @@ Trade history of a wallet, newest first - multihop-deduplicated (one event per t
   1-100. Default 50.
 </ParamField>
 
-<ParamField query="beforeAt" type="number">
-  Keyset cursor (ms): only trades strictly older. EVM only for now.
+<ParamField query="cursor" type="string">
+  Opaque resume token from `meta.nextCursor` - exact keyset pagination, no skip or duplicate. Works on both EVM and Solana.
 </ParamField>
+
+<ParamField query="beforeAt" type="number">
+  Upper time bound (ms): only trades strictly older. Prefer `cursor` for exact paging.
+</ParamField>
+
+<ParamField query="fromAt" type="number">
+  Inclusive lower time bound (ms).
+</ParamField>
+
+<ParamField query="includeRoutingHops" type="boolean">
+  Solana only. Also serve the intermediate legs of routed swaps. Default false.
+</ParamField>
+
+<Note>Each trade carries `isRoutingHop` (a routed intermediate leg) and `isWash` (Solana wash/MEV flag; `null` on EVM). `volumeUsd` is at the current native price on EVM; on Solana it is valued at trade time and `meta.usdBasis` reports `trade` (or `spot` on fallback). `meta.nextCursor` is present while `meta.hasMore` is true.</Note>
 
 <RequestExample>
 ```bash cURL (EVM)
@@ -39,27 +53,35 @@ curl 'https://api.serialized.xyz/v1/wallet/trades?chain=solana&wallet=GuhieZDx6n
 {
   "data": [
     {
+      "id": "0x18ec69970caef3c490d8276810f56083c9156c670e8c68eada72853a4d6e9b83:291",
       "at": 1787000365000,
       "chain": "evm:8453",
       "tokenAddress": "0xecaf81eb42cd30014eb44130b89bcd6d4ad98b92",
+      "poolAddress": "0x9f4a0c8e3f0b5a2f6c5b8b9c0d1e2f3a4b5c6d7e",
       "isBuy": false,
       "amountToken": 609087.0435973641,
       "priceNative": 2.46340612952e-9,
       "volumeNative": 0.001500827331112315,
       "volumeUsd": 3.120677773718492,
+      "isWash": null,
+      "isRoutingHop": false,
       "txHash": "0x18ec69970caef3c490d8276810f56083c9156c670e8c68eada72853a4d6e9b83",
       "block": 50105509,
       "logIndex": 291
     },
     {
+      "id": "0x18ec69970caef3c490d8276810f56083c9156c670e8c68eada72853a4d6e9b83:286",
       "at": 1787000365000,
       "chain": "evm:8453",
       "tokenAddress": "0xecaf81eb42cd30014eb44130b89bcd6d4ad98b92",
+      "poolAddress": "0x9f4a0c8e3f0b5a2f6c5b8b9c0d1e2f3a4b5c6d7e",
       "isBuy": true,
       "amountToken": 609087.0435973641,
       "priceNative": 2.2864562986700003e-9,
       "volumeNative": 0.001406562274237914,
       "volumeUsd": 2.9246719696342653,
+      "isWash": null,
+      "isRoutingHop": false,
       "txHash": "0x18ec69970caef3c490d8276810f56083c9156c670e8c68eada72853a4d6e9b83",
       "block": 50105509,
       "logIndex": 286
@@ -67,6 +89,8 @@ curl 'https://api.serialized.xyz/v1/wallet/trades?chain=solana&wallet=GuhieZDx6n
   ],
   "meta": {
     "asOf": 1787163134462,
+    "hasMore": true,
+    "nextCursor": "MTc4NzAwMDM2NXw1MDEwNTUwOXwyODZ8MHgxOGVjNjk5NzBjYWVmM2M0OTBkODI3NjgxMGY1NjA4M2M5MTU2YzY3MGU4YzY4ZWFkYTcyODUzYTRkNmU5Yjgz",
     "oldestAt": 1787000365000
   }
 }
@@ -75,32 +99,46 @@ curl 'https://api.serialized.xyz/v1/wallet/trades?chain=solana&wallet=GuhieZDx6n
 {
   "data": [
     {
+      "id": "3GNhPPcE61UCifVQ5dZtfWB2yTnaVPiNA89a3X5KRQ4ySxJbWnjUABmHQTHFppxk8QKGwZNViQYtnYizCpthN9cP:GFQLVG2UKYydSCJ2WjkuMXijpgJ6hbs2nEsNwdZFpump:b",
       "at": 1786907834306,
       "chain": "solana",
       "tokenAddress": "GFQLVG2UKYydSCJ2WjkuMXijpgJ6hbs2nEsNwdZFpump",
-      "tokenSymbol": "Tortuga",
+      "poolAddress": "48WkwrpuxrjunUiWPjKE6mwt72L8Jt44ZKDzeoxfpJFq",
       "isBuy": true,
       "amountToken": 786309.646509,
-      "priceUsd": 0.000009468050745542354,
+      "priceNative": 1.2603e-8,
+      "volumeNative": 0.009909,
       "volumeUsd": 7.444819634856682,
+      "isWash": false,
+      "isRoutingHop": false,
       "txHash": "3GNhPPcE61UCifVQ5dZtfWB2yTnaVPiNA89a3X5KRQ4ySxJbWnjUABmHQTHFppxk8QKGwZNViQYtnYizCpthN9cP",
-      "maker": "GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E"
+      "block": 298541122,
+      "logIndex": 0
     },
     {
+      "id": "5QCmyqayK3StL4ixLHpPmUm7dCDKtVFjDcVRjWBjWbHqKfwM5gZ6ukTQ3rkRRgRyPxUoNg62szAXSGKZdUVRUgjG:9x4EQVaPRWSw4jKoWTpRzMP7YAu5sZwHyLJ9tbJYpump:s",
       "at": 1786906537718,
       "chain": "solana",
       "tokenAddress": "9x4EQVaPRWSw4jKoWTpRzMP7YAu5sZwHyLJ9tbJYpump",
-      "tokenSymbol": "JOKE",
+      "poolAddress": "C9uSZfFvXF2G9Fz1wamUpP7xveWYYqcJXgzgDEfn4oY5",
       "isBuy": false,
       "amountToken": 1694349.271433,
-      "priceUsd": 0.000002247097190226015,
+      "priceNative": 3.0027e-9,
+      "volumeNative": 0.005088,
       "volumeUsd": 3.807367487098589,
+      "isWash": false,
+      "isRoutingHop": false,
       "txHash": "5QCmyqayK3StL4ixLHpPmUm7dCDKtVFjDcVRjWBjWbHqKfwM5gZ6ukTQ3rkRRgRyPxUoNg62szAXSGKZdUVRUgjG",
-      "maker": "GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E"
+      "block": 298540012,
+      "logIndex": 0
     }
   ],
   "meta": {
-    "asOf": 1787163134616
+    "asOf": 1787163134616,
+    "hasMore": true,
+    "usdBasis": "trade",
+    "nextCursor": "MTc4NjkwNjUzN3w1UUNteXFheUszU3RMNGl4TEhwUG1VbTdkQ0RLdFZGakRjVlJqV0JqV2JIcUtmd001Z1o2dWtUUTNya1JSZ1J5UHhVb05nNjJzekFYU0dLWmRVVlJVZ2pHfDl4NEVRVmFQUldTdzRqS29XVHBSek1QN1lBdTVzWndIeUxKOXRiSllwdW1wfDA",
+    "oldestAt": 1786906537718
   }
 }
 ```

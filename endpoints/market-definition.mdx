@@ -1,11 +1,11 @@
 ---
 title: "Market Definition"
-description: "Static definition of one market (pool): pair address, venue/DEX, base & quote token metadata, fee tier, created-at. Slow-changing - cache-friendly. A market id is simply chain + pool address: stable, unique on its venue, never reused."
+description: "Static definition of one market (pool): venue/type, launchpad/factory of origin, fee tier (bps), base & quote token metadata, price, liquidity, launchpad + bonding state, created-at. Slow-changing, cache-friendly. A market id is simply chain + pool address: stable, unique on its venue, never reused."
 ---
 
 `GET /v1/pool` · **1 credit**
 
-Static definition of one market (pool): pair address, venue/DEX, base & quote token metadata, fee tier, created-at. Slow-changing - cache-friendly. A market id is simply chain + pool address: stable, unique on its venue, never reused.
+Static definition of one market (pool): venue/type, the launchpad or factory it came from, fee tier, base & quote token metadata, price, liquidity, launchpad + bonding state, and created-at. Slow-changing, so cache it freely. A market id is simply chain + pool address: stable, unique on its venue, never reused.
 
 <ParamField query="chain" type="string" required>
   Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
@@ -15,5 +15,47 @@ Static definition of one market (pool): pair address, venue/DEX, base & quote to
   Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
 </ParamField>
 
-<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+<Note>`factory` is the launchpad/factory of origin from our registry (e.g. `CLANKER`, `ZORA`, `PUMPFUN`), or `null` for a plain AMM pool. `feeBps` is the fee tier for concentrated-liquidity venues (Uniswap V3/V4, PancakeSwap V3, Aerodrome Slipstream); `null` when the fee is dynamic or the venue's fee units aren't certain, never a guess.</Note>
 
+<Note>`bondingProgress` (0-100) is only present while `isLaunchpad` is true; `migrated` flips true once the token graduates to its AMM pool.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/pool?chain=evm:8453&address=0x0ca6485b7e9cf814a3fd09d81672b07323535b64' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+    "type": "UNISWAP_V3",
+    "factory": null,
+    "feeBps": 30,
+    "token": {
+      "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+      "name": "Degen",
+      "symbol": "DEGEN",
+      "decimals": 18,
+      "totalSupply": "37000000000"
+    },
+    "quote": {
+      "address": "0x4200000000000000000000000000000000000006",
+      "symbol": "WETH"
+    },
+    "priceNative": "0.00000053241",
+    "liquidityNative": "412.882",
+    "isLaunchpad": false,
+    "bondingProgress": null,
+    "migrated": false,
+    "createdAt": 1712345678000
+  },
+  "meta": {
+    "asOf": 1786901933078
+  }
+}
+```
+</ResponseExample>

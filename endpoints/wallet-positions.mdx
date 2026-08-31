@@ -7,17 +7,17 @@ description: "Every position of a wallet with entry price and PnL: amount held, 
 
 Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana.
 
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
 <ParamField query="wallet" type="string" required>
   Wallet address (EVM hex, case-insensitive; Solana base58).
 </ParamField>
 
-<Note>Billed per chain queried.</Note>
+<ParamField query="chain" type="string">
+  Public chain id - `evm:<id>` or `solana`. Omit to infer from the address: a `0x` wallet returns every EVM chain, a base58 wallet returns Solana. Example: `evm:8453`
+</ParamField>
 
-<Note>EVM lists TRADED tokens currently held (closed positions excluded; native coin balances not tracked). `meta.summary` carries wallet-level totals + `usdBasis`.</Note>
+<Note>Lists the tokens currently held that the wallet has traded. `entryPriceUsd` is the current bag's average entry; `entryPriceLifetimeUsd` is the average over the position's whole life. The realized counterpart of each fully-exited position is on [`/v1/wallet/closed-positions`](/endpoints/wallet-closed-positions) - together the two cover every position exactly once.</Note>
+
+<Note>`meta.summary` carries wallet-level totals (value, realized, unrealized, total PnL, position count). Returns 502 if a holdings source is unavailable.</Note>
 
 <RequestExample>
 ```bash cURL
@@ -38,6 +38,7 @@ curl 'https://api.serialized.xyz/v1/wallet/positions?chain=solana&wallet=GuhieZD
       "amount": "786309.646509",
       "amountUsd": 1.542082323211693,
       "entryPriceUsd": 0.0000094681,
+      "entryPriceLifetimeUsd": 0.0000094681,
       "currentPriceUsd": 0.0000019611641928318152,
       "realizedPnlUsd": 0,
       "unrealizedPnlUsd": -5.90277604090017,
@@ -52,21 +53,29 @@ curl 'https://api.serialized.xyz/v1/wallet/positions?chain=solana&wallet=GuhieZD
       "address": "9x4EQVaPRWSw4jKoWTpRzMP7YAu5sZwHyLJ9tbJYpump",
       "symbol": "JOKE",
       "name": "Jokecoin",
-      "amount": "0",
-      "amountUsd": 0,
+      "amount": "412500.128401",
+      "amountUsd": 0.938454937,
       "entryPriceUsd": 0.0000043767,
+      "entryPriceLifetimeUsd": 0.0000039912,
       "currentPriceUsd": 0.0000022750068945288,
-      "realizedPnlUsd": -3.6082862084,
-      "unrealizedPnlUsd": 0,
-      "totalPnlUsd": -3.6082862084,
-      "buys": 1,
-      "sells": 1,
+      "realizedPnlUsd": 6.184,
+      "unrealizedPnlUsd": -0.8663,
+      "totalPnlUsd": 5.3177,
+      "buys": 3,
+      "sells": 2,
       "firstTradeAt": 1786906521018,
-      "lastTradeAt": 1786906537718
+      "lastTradeAt": 1786940537718
     }
   ],
   "meta": {
-    "asOf": 1787163134247
+    "asOf": 1787163134247,
+    "summary": {
+      "totalValueUsd": 2.480537260211693,
+      "realizedPnlUsd": 6.184,
+      "unrealizedPnlUsd": -6.76907604090017,
+      "totalPnlUsd": -0.5850760409001705,
+      "positions": 2
+    }
   }
 }
 ```

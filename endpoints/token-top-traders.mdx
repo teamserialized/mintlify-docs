@@ -1,0 +1,99 @@
+---
+title: "Token Top Traders"
+description: "Ranked traders of a token from our own PnL fold: realized PnL in native and USD, tokens and native bought/sold, open position, average entry, win rate over closed positions, first/last trade, and dev/sniper/pro-trader badges. Lifetime by default, or any rolling window (1h → 30d)."
+---
+
+`GET /v1/token/top-traders` · **2 credits**
+
+Ranked traders of a token from our own PnL fold: realized PnL in native and USD, tokens and native bought/sold, open position, average entry, win rate over closed positions, first/last trade, and dev/sniper/pro-trader badges. Lifetime by default, or any rolling window (`1h` → `30d`). EVM and Solana, one shape.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="address" type="string" required>
+  Token address. Example: `0x3c5cd672b204ba0fc48e93b98c0922920a87912d`
+</ParamField>
+
+<ParamField query="timeframe" type="string">
+  `all` (default, lifetime) or a rolling window: `1h`, `4h`, `1d`, `7d`, `30d`.
+</ParamField>
+
+<ParamField query="sortBy" type="string">
+  `pnl` (default), `bought`, `sold`, or `txns`.
+</ParamField>
+
+<ParamField query="order" type="string">
+  `asc` or `desc`. Default: `desc`.
+</ParamField>
+
+<ParamField query="limit" type="number">
+  1-100. Default 20.
+</ParamField>
+
+<Note>`meta` echoes the resolved `timeframe`, `sortBy` and `order`, plus `usdBasis` - the basis of every USD figure in the response.</Note>
+
+<Note>On a rolling window, `realizedPnlNative` is the wallet's net native cashflow over the window (sold − bought) and `winRatePct` is `null`; win rate is measured over fully closed lifetime positions (`timeframe=all`).</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/token/top-traders?chain=evm:8453&address=0x3c5cd672b204ba0fc48e93b98c0922920a87912d&limit=3' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "rank": 1,
+      "address": "0x16380ab7951906dd53ca6095d51f091ef2614127",
+      "buys": 42,
+      "sells": 18,
+      "boughtTokens": "184320551.884",
+      "soldTokens": "151002317.9",
+      "boughtNative": 6.421889,
+      "soldNative": 11.038742,
+      "openTokens": "33318233.984",
+      "realizedPnlNative": 4.616853,
+      "realizedPnlUsd": 8679.31,
+      "avgBuyPriceNative": 0.0000000348,
+      "winRatePct": 71.42857142857143,
+      "isDev": false,
+      "isSniper": true,
+      "isProTrader": true,
+      "firstTradeAt": 1785903211000,
+      "lastTradeAt": 1786901550000
+    },
+    {
+      "rank": 2,
+      "address": "0x82d4cd9bf16017fd518511d8bbe6d0493af31a10",
+      "buys": 9,
+      "sells": 7,
+      "boughtTokens": "52140339.11",
+      "soldTokens": "52140339.11",
+      "boughtNative": 1.884201,
+      "soldNative": 3.201778,
+      "openTokens": "0",
+      "realizedPnlNative": 1.317577,
+      "realizedPnlUsd": 2477.02,
+      "avgBuyPriceNative": 0.0000000361,
+      "winRatePct": 85.71428571428571,
+      "isDev": false,
+      "isSniper": false,
+      "isProTrader": null,
+      "firstTradeAt": 1786010044000,
+      "lastTradeAt": 1786877301000
+    }
+  ],
+  "meta": {
+    "asOf": 1786901933078,
+    "usdBasis": "spot",
+    "sortBy": "pnl",
+    "order": "desc",
+    "timeframe": "all"
+  }
+}
+```
+</ResponseExample>

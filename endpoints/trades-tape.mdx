@@ -1,22 +1,67 @@
 ---
 title: "Trades Tape"
-description: "Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with isProTrader/isSniper badges on every row. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Filters: tradeType, USD/native/token amount ranges, date range, makers (POST twin, ≤2000). Cursor pagination."
+description: "Real-time trade tape, token-wide by default or restricted to specific pools. `maker` is the REAL trader (relay/solver-resolved), with isProTrader/isSniper badges on every row and isWash on Solana. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Rich filters (side, USD/native/token size, date range, makers) and opaque cursor pagination."
 ---
 
 `GET /v1/token/trades` · **1 credit**
+`POST /v1/token/trades` · **1 credit**
 
-Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with isProTrader/isSniper badges on every row. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Filters: tradeType, USD/native/token amount ranges, date range, makers (POST twin, ≤2000). Cursor pagination.
+Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with `isProTrader`/`isSniper` badges on every row and `isWash` on Solana. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. **Token-wide by default** - pass `pools=` to restrict. Use the `POST` twin for the `makers[]` filter (up to 2000 addresses, beyond the URL length cap).
 
 <ParamField query="chain" type="string" required>
-  Public chain id. Example: `evm:8453`
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
 </ParamField>
 
 <ParamField query="address" type="string" required>
-  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
+  Token address (EVM hex, case-insensitive; Solana base58, case-sensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
 </ParamField>
 
-<ParamField query="pools" type="string" required>
-  CSV of pool addresses (≤50). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+<ParamField query="pools" type="string">
+  Optional. CSV of pool addresses (≤50) restricting the scope. Omit for the token-wide default (every pool of the token). Each pool listed must belong to the token. Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+</ParamField>
+
+<ParamField query="tradeType" type="string">
+  `buy` or `sell`. Example: `buy`
+</ParamField>
+
+<ParamField query="usdMin" type="number">
+  Keep trades whose USD volume is at least this. Example: `100`
+</ParamField>
+
+<ParamField query="usdMax" type="number">
+  Keep trades whose USD volume is at most this.
+</ParamField>
+
+<ParamField query="nativeMin" type="number">
+  Keep trades whose native-quote volume is at least this.
+</ParamField>
+
+<ParamField query="nativeMax" type="number">
+  Keep trades whose native-quote volume is at most this.
+</ParamField>
+
+<ParamField query="tokenAmountMin" type="number">
+  Keep trades of at least this many tokens.
+</ParamField>
+
+<ParamField query="tokenAmountMax" type="number">
+  Keep trades of at most this many tokens.
+</ParamField>
+
+<ParamField query="fromAt" type="integer">
+  Only trades at/after this time (epoch ms, inclusive). Example: `1755000000000`
+</ParamField>
+
+<ParamField query="toAt" type="integer">
+  Only trades at/before this time (epoch ms, inclusive).
+</ParamField>
+
+<ParamField query="sort" type="string">
+  `desc` (default, newest first) or `asc`. Example: `desc`
+</ParamField>
+
+<ParamField query="washFilter" type="string">
+  `washOnly` or `organicOnly` - filter by the per-transaction wash badge (Solana; every row carries `isWash`). Example: `organicOnly`
 </ParamField>
 
 <ParamField query="limit" type="integer">
@@ -24,24 +69,30 @@ Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with i
 </ParamField>
 
 <ParamField query="cursor" type="string">
-  Opaque - from meta.nextCursor.
+  Opaque - pass `meta.nextCursor` back verbatim to page. Example: `e1:eyJ0IjoxNzg2...`
 </ParamField>
 
 <ParamField query="include" type="string">
-  Opt-ins: traderTxCounts.
+  CSV opt-ins. `traderTxCounts` adds each row's `makerTxCount` (that trader's tx count within the page's time window). Example: `traderTxCounts`
 </ParamField>
 
-<ParamField query="washFilter" type="string">
-  `washOnly` or `organicOnly` - filter by the per-transaction wash badge (solana; every row carries `isWash`). Example: `organicOnly`
+<ParamField body="makers" type="array">
+  POST only. Filter to these trader addresses (up to 2000). Example: `["0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09"]`
 </ParamField>
 
-<Note>Amounts are GROSS on-chain (Mobula was net-of-fee - expect a ~0.3-1% systematic diff).</Note>
+<Note>An unknown token returns `404`. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` (the rate at the moment of the trade) on Solana.</Note>
 
-<Note>Preconfirmed rows can be phantoms if the tx reverts (~0.5-1%) - they disappear within 30s; dedup by txHash.</Note>
+<Note>Amounts are GROSS on-chain (the exact swapped value). `isWash` is a boolean on Solana. On Base, the forming candle can include preconfirmed (flashblocks) swaps ahead of block commit; dedup by `id` or `txHash`.</Note>
 
 <RequestExample>
 ```bash cURL
-curl 'https://api.serialized.xyz/v1/token/trades?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed&pools=0x0ca6485b7e9cf814a3fd09d81672b07323535b64&limit=3' -H 'Authorization: YOUR_API_KEY'
+curl 'https://api.serialized.xyz/v1/token/trades?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed&limit=3' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+```bash cURL (makers[], POST)
+curl -X POST 'https://api.serialized.xyz/v1/token/trades' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"chain":"evm:8453","address":"0x4ed4e862860bed51a9570b96d89af5e1b0efefed","makers":["0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09"],"limit":3}'
 ```
 </RequestExample>
 
@@ -50,6 +101,7 @@ curl 'https://api.serialized.xyz/v1/token/trades?chain=evm:8453&address=0x4ed4e8
 {
   "data": [
     {
+      "id": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf:289",
       "at": 1786718835000,
       "maker": "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09",
       "isBuy": true,
@@ -60,28 +112,14 @@ curl 'https://api.serialized.xyz/v1/token/trades?chain=evm:8453&address=0x4ed4e8
       "volumeUsd": 0.08021081608014609,
       "isProTrader": false,
       "isSniper": false,
+      "isWash": null,
       "preconfirmed": false,
       "txHash": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf",
       "block": 49964744,
       "logIndex": 289
     },
     {
-      "at": 1786704145000,
-      "maker": "0x874a50b0d82b0258e2849c5a8d6f8926e5393748",
-      "isBuy": false,
-      "amountToken": 8926.68959914344,
-      "amountQuote": 0.004838309934296527,
-      "priceNative": 5.4747109625568e-7,
-      "volumeNative": 0.004838309934296527,
-      "volumeUsd": 9.107320130174054,
-      "isProTrader": false,
-      "isSniper": false,
-      "preconfirmed": false,
-      "txHash": "0x2ab1a0e9706e1c5570932cb934f792a9818329af1827cc8cec45076d151bd12c",
-      "block": 49957399,
-      "logIndex": 210
-    },
-    {
+      "id": "0xfe19670bf678d0a83f9ef9227e34f3a76462a924603a31ec2481fac34c7be319:407",
       "at": 1786695809000,
       "maker": "0x6011b76b4b7badc0c4aa28a703a7eedc28334181",
       "isBuy": true,
@@ -92,6 +130,7 @@ curl 'https://api.serialized.xyz/v1/token/trades?chain=evm:8453&address=0x4ed4e8
       "volumeUsd": 28.97104483687929,
       "isProTrader": true,
       "isSniper": false,
+      "isWash": null,
       "preconfirmed": false,
       "txHash": "0xfe19670bf678d0a83f9ef9227e34f3a76462a924603a31ec2481fac34c7be319",
       "block": 49953231,
@@ -100,8 +139,9 @@ curl 'https://api.serialized.xyz/v1/token/trades?chain=evm:8453&address=0x4ed4e8
   ],
   "meta": {
     "asOf": 1786725098947,
+    "usdBasis": "spot",
     "hasMore": true,
-    "nextCursor": "eyJ0IjoxNzg2Njk1ODA5MDAwLCJiIjo0OTk1MzIzMSwibCI6NDA3fQ"
+    "nextCursor": "e1:eyJ0IjoxNzg2Njk1ODA5MDAwLCJiIjo0OTk1MzIzMSwibCI6NDA3fQ"
   }
 }
 ```

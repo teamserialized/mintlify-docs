@@ -19,6 +19,10 @@ Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liq
 
 <Note>`deployer` is resolved through the original launchpad pool owner - not the migration transaction sender.</Note>
 
+<Note>`stats24h` is the token-wide 24h window - the exact same numbers as the `24h` block of [`/v1/token/stats`](/endpoints/token-stats-windowed). `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction; `txns` is the exact transaction count. `priceChangePct` is the move across the window: the latest price against the price the token had 24h ago - the last close before the window opened. `null` when the window carries no priced trades.</Note>
+
+<Note>`metadata.dexPaid` is `true`, `false`, or `null` (status unknown) - never a fabricated `false`. `metadata.dexPaidAt` is the payment time in ms, or `null`.</Note>
+
 <RequestExample>
 ```bash cURL (EVM)
 curl 'https://api.serialized.xyz/v1/token?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
@@ -64,6 +68,8 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
       "volumeUsd": 23448.59872596349,
       "buys": 176,
       "sells": 5,
+      "buyVolumeNative": 11.839201571847,
+      "sellVolumeNative": 0.633623186973,
       "priceChangePct": 7.328276263872449
     },
     "metadata": {
@@ -117,6 +123,9 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
       "volumeUsd": 185331.95492098268,
       "buys": 7534,
       "sells": 8681,
+      "buyVolumeNative": 1244.830172419,
+      "sellVolumeNative": 1221.290093419,
+      "txns": 16108,
       "priceChangePct": 3.636601730081284
     },
     "metadata": {
@@ -127,7 +136,7 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
       "telegramUrl": null,
       "discordUrl": null,
       "description": "The Official Bonk Inu token",
-      "dexPaid": false,
+      "dexPaid": null,
       "dexPaidAt": null
     }
   },

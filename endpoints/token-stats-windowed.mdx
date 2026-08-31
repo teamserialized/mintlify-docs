@@ -1,38 +1,46 @@
 ---
 title: "Token Stats"
-description: "Windowed volume, buy/sell counts and volumes, price change - 5m/1h/6h/24h in one call."
+description: "Windowed volume, buy/sell counts and volumes, transactions and price change - 5m/1h/6h/24h in one call. Token-wide across every pool by default."
 ---
 
 `GET /v1/token/stats` · **1 credit**
 
-Windowed volume, buy/sell counts and volumes, price change - 5m/1h/6h/24h in one call.
+Windowed volume, buy/sell counts and volumes, transactions and price change - 5m/1h/6h/24h in one call.
 
 <ParamField query="chain" type="string" required>
-  Public chain id. Example: `evm:8453`
+  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
 </ParamField>
 
 <ParamField query="address" type="string" required>
   Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
 </ParamField>
 
-<ParamField query="pools" type="string" required>
-  CSV of pool addresses (≤50). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
+<ParamField query="pools" type="string">
+  CSV of pool addresses (≤50) to scope the stats to specific markets. **Omit for token-wide stats across every pool** - the default, and what a single token figure should be. Every pool passed must belong to the token, or the request is rejected with 400.
 </ParamField>
 
 <ParamField query="windows" type="string">
-  CSV of 5m|1h|6h|24h (default all).
+  CSV of `5m`|`1h`|`6h`|`24h`. Default: all four.
 </ParamField>
 
-<Note>Unique traders per window is rolling out.</Note>
+<Note>The `24h` window here is the exact same figure as `stats24h` on [`/v1/token`](/endpoints/token-details) - one 24h number across the whole product.</Note>
+
+<Note>`txns` is the exact count of transactions in the window. `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction. `priceChangePct` is the move across the window: the latest price against the price the token had one window-length ago - the last close before the window opened. `null` when the window carries no priced trades.</Note>
 
 <RequestExample>
-```bash cURL
-curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed&pools=0x0ca6485b7e9cf814a3fd09d81672b07323535b64' -H 'Authorization: YOUR_API_KEY'
+```bash cURL (EVM, token-wide)
+curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' -H 'Authorization: YOUR_API_KEY'
+```
+```bash cURL (Solana, token-wide)
+curl 'https://api.serialized.xyz/v1/token/stats?chain=solana&address=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263' -H 'Authorization: YOUR_API_KEY'
+```
+```bash cURL (explicit pools)
+curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed&pools=0x0ca6485b7e9cf814a3fd09d81672b07323535b64&windows=1h,24h' -H 'Authorization: YOUR_API_KEY'
 ```
 </RequestExample>
 
 <ResponseExample>
-```json Response
+```json Response (EVM)
 {
   "data": {
     "5m": {
@@ -45,35 +53,64 @@ curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e86
       "priceChangePct": null
     },
     "1h": {
-      "volumeNative": 0,
-      "volumeUsd": 0,
-      "buys": 0,
-      "sells": 0,
-      "buyVolumeNative": 0,
-      "sellVolumeNative": 0,
-      "priceChangePct": null
+      "volumeNative": 0.412094882336,
+      "volumeUsd": 775.71,
+      "buys": 4,
+      "sells": 2,
+      "buyVolumeNative": 0.398210102336,
+      "sellVolumeNative": 0.01388478,
+      "priceChangePct": 0.31844021
     },
     "6h": {
-      "volumeNative": 0.004880922336488563,
-      "volumeUsd": 9.1875309462542,
-      "buys": 1,
-      "sells": 1,
-      "buyVolumeNative": 0.000042612402192036,
-      "sellVolumeNative": 0.004838309934296527,
-      "priceChangePct": 0.000027550868166244168
+      "volumeNative": 3.284880922336,
+      "volumeUsd": 6183.15,
+      "buys": 41,
+      "sells": 3,
+      "buyVolumeNative": 3.107442612402,
+      "sellVolumeNative": 0.177438309934,
+      "priceChangePct": 1.20455082
     },
     "24h": {
-      "volumeNative": 9.021983006372073,
-      "volumeUsd": 16982.394382299375,
-      "buys": 112,
+      "volumeNative": 12.472824758820,
+      "volumeUsd": 23448.598725963,
+      "buys": 176,
       "sells": 5,
-      "buyVolumeNative": 8.238944806734882,
-      "sellVolumeNative": 0.7830381996371939,
-      "priceChangePct": 4.961733381601848
+      "buyVolumeNative": 11.839201571847,
+      "sellVolumeNative": 0.633623186973,
+      "priceChangePct": 7.328276263872
     }
   },
   "meta": {
     "asOf": 1786725098444
+  }
+}
+```
+```json Response (Solana)
+{
+  "data": {
+    "1h": {
+      "volumeNative": 121.884073442,
+      "volumeUsd": 9160.42,
+      "buys": 388,
+      "sells": 402,
+      "buyVolumeNative": 61.402113,
+      "sellVolumeNative": 60.481960,
+      "txns": 784,
+      "priceChangePct": 0.492817
+    },
+    "24h": {
+      "volumeNative": 2466.120265838,
+      "volumeUsd": 185331.954920982,
+      "buys": 7534,
+      "sells": 8681,
+      "buyVolumeNative": 1244.830172419,
+      "sellVolumeNative": 1221.290093419,
+      "txns": 16108,
+      "priceChangePct": 3.636601730081
+    }
+  },
+  "meta": {
+    "asOf": 1786745258937
   }
 }
 ```

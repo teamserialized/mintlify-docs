@@ -15,6 +15,10 @@ Socials, description, images, dex-paid status. POST twin on the same path for ba
   Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
 </ParamField>
 
+<Note>`iconUrl` and `headerUrl` point at the image's source URL, ready to render directly. `null` means no image is available.</Note>
+
+<Note>`dexPaid` is `true`, `false`, or `null` (status unknown); `dexPaidAt` is the payment time in ms, or `null`.</Note>
+
 <RequestExample>
 ```bash cURL
 curl 'https://api.serialized.xyz/v1/token/metadata?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' -H 'Authorization: YOUR_API_KEY'

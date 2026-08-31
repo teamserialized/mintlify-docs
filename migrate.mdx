@@ -21,11 +21,11 @@ API key in the `Authorization` header) and the credit model is aligned.
 | `blockchain`/`chainId` mixed (`evm:56`, `solana:solana`, names) | `chain` param, always `evm:<id>` or `solana` (`solana:solana` accepted on input) | one format everywhere                            |
 | HyperEVM = `999`                                                | HyperEVM = `evm:645749` (canonical EIP-155)                                      | no invented ids                                  |
 | `priceUSD`, `marketCapUSD` (USD-suffix)                         | `priceUsd`, `marketCapUsd` (camelCase)                                           | consistent casing                                |
-| Missing data, often `0` or absent                               | `null` + `meta.degraded`, never a fake 0                                         | you can trust a zero                             |
+| Missing data, often `0` or absent                               | `null` when unknown, never a fake `0`                                            | you can trust a zero                             |
 | Unknown params silently ignored                                 | 400 with machine-readable `error.code`                                           | fail loud                                        |
 | GET `{data}` / batch POST `{payload}` wrappers                  | always `{ data, meta }`                                                          | one envelope                                     |
 | Timestamps: mixed seconds/ms                                    | always unix **milliseconds**, fields end in `At`                                 | no guessing                                      |
-| Amounts net-of-fee (Solana)                                     | GROSS on-chain amounts                                                           | a ~0.3-1% systematic diff is expected, not a bug |
+| Amounts net-of-fee (Solana)                                     | GROSS on-chain amounts (the exact swapped value)                                | matches the chain exactly                        |
 
 ### Endpoint map
 
@@ -35,16 +35,16 @@ API key in the `Authorization` header) and the credit model is aligned.
 | `POST /api/2/token/details` (batch)                | `POST /v1/token` (full) or `POST /v1/token/price` (lean) | response array in input order, per-item `{error}` slots                                      |
 | `GET /api/2/token/price`                           | `GET /v1/token/price`                                    | + `marketCapUsd`, `liquidityUsd` included                                                    |
 | `GET /api/2/token/market-data` pairs               | `GET /v1/token/pools`                                    | ranked by canonical pool priority                                                            |
-| `GET/POST /api/2/token/ohlcv-history`              | `GET /v1/token/ohlcv`                                    | intervals `1s` to `1M`; `quote=usd` on Solana; paginate with `endTime` while `meta.hasMore`  |
-| `GET /api/2/token/market-details` (windowed stats) | `GET /v1/token/stats?windows=5m,1h,24h`                  | token-wide by default, `pools=` to restrict; raw + organic families                          |
-| `GET /api/2/token/trades`                          | `GET /v1/token/trades`                                   | token-wide or `pools=`; cursor + `fromAt`; `isWash` flag on Solana                           |
+| `GET/POST /api/2/token/ohlcv-history`              | `GET /v1/token/ohlcv`                                    | `pools` optional — defaults to the best pool followed through migration; intervals `1s` to `1M`; `quote=usd` on Solana; paginate with `endTime` while `meta.hasMore` |
+| `GET /api/2/token/market-details` (windowed stats) | `GET /v1/token/stats?windows=5m,1h,24h`                  | token-wide by default, `pools=` to restrict; per-window `txns`, buy/sell split; close-ref `priceChangePct` |
+| `GET /api/2/token/trades`                          | `GET /v1/token/trades`                                   | token-wide by default (no `mode=pair` to unlearn); cursor + `fromAt`; `isWash` on Solana; `meta.usdBasis` |
 | `GET /api/2/token/holders`                         | `GET /v1/token/holders`                                  | top holders with supply share                                                                |
 | `GET /api/2/search`                                | `GET /v1/search?q=`                                      | tokens + pools, cross-chain                                                                  |
 | `GET /api/2/token/metadata`                        | `GET /v1/token/metadata`                                 | socials, icon, description, dex-paid                                                         |
 | (sparklines inside details)                        | `POST /v1/token/sparklines`                              | batch, per-timeframe price lines                                                             |
-| (no batch security)                                | `GET/POST /v1/token/security`                            | mint/freeze authority, batch up to 500                                                       |
+| (no batch security)                                | `GET/POST /v1/token/security`                            | mint/freeze authority, top-10 holder concentration, snipers/bundlers, dex-paid; batch up to 500 |
 | `POST /api/2/pulse` (views[])                      | `GET /v1/pulse?view=new\|bonding\|graduated&chains=`     | consistent bondingProgress with the token endpoint                                           |
-| `GET /api/2/wallet/positions`                      | `GET /v1/wallet/positions`                               | entry price + realized/unrealized/total PnL                                                  |
+| `GET /api/2/wallet/positions`                      | `GET /v1/wallet/positions`                               | entry price + realized/unrealized/total PnL; `GET /v1/wallet/closed-positions` is the exact complement |
 | `GET /api/2/wallet/trades`                         | `GET /v1/wallet/trades`                                  | multihop-deduplicated (one event per tx, token and side)                                     |
 | `GET /api/2/wallet/analysis`                       | `GET /v1/wallet/pnl`                                     | daily curve + summary (win rate); explicit `usdBasis`                                        |
 | `GET /api/2/wallet/labels`                         | `GET/POST /v1/wallet/profile`                            | full identity graph, 7.6M+ labeled wallets, `linkedWallets` clusters                         |
@@ -97,7 +97,7 @@ REST counterpart below.
 | `detailedWalletStats`, `walletChart`                            | `GET /v1/wallet/pnl`                           | daily curve + summary, explicit `usdBasis`                                             |
 | `pairMetadata`, `getDetailedPairStats`, `getDetailedTokenStats` | `GET /v1/token/stats`, `GET /v1/token/pools`   | windowed stats token-wide or per pool                                                  |
 | `listPairsForToken`                                             | `GET /v1/token/pools`                          | ranked, rank 1 = the pool we price from                                                |
-| `filterTokens` (screener/trending)                              | `GET /v1/pulse` + `GET /v1/search`             | launchpad lifecycle views live; the full filter surface is rolling out                 |
+| `filterTokens` (screener/trending)                              | `GET /v1/screener` + `GET /v1/pulse` + `GET /v1/search` | ranked markets, launchpad lifecycle views, and text search                     |
 | `filterLaunchpads`                                              | `GET /v1/pulse`                                | per-launchpad views via `chains`/factories                                             |
 | `getNetworks`, `getNetworkStatus`                               | `GET /v1/meta/chains`                          | indexing status included                                                               |
 | mintable/freezable on `token`                                   | `GET/POST /v1/token/security`                  | tri-state, never faked; deep contract audit via Token Audit                            |
@@ -155,9 +155,8 @@ surface, and flat credits replace per-endpoint Compute Units.
 | WS `SUBSCRIBE_TXS` (+ wallet txs)                                                             | Streams `trades` channel                   | REST-shaped events                                                              |
 | WS `SUBSCRIBE_TOKEN_NEW_LISTING`                                                              | Streams `pulse` channel                    | snapshot + deltas                                                               |
 
-Not carried over: Sui/Aptos, NFT and gainers/losers leaderboards (top-traders
-intelligence is on our roadmap). If one of these blocks your migration, tell
-us.
+Not carried over: Sui/Aptos, NFT and gainers/losers leaderboards. If one of
+these blocks your migration, tell us.
 
   </Tab>
 </Tabs>

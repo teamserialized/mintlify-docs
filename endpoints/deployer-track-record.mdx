@@ -1,0 +1,82 @@
+---
+title: "Deployer Track Record"
+description: "Every token deployed by a wallet, with a verdict on each (`active`, `migrated`, `rugged`, `abandoned`) and an aggregate risk read on the deployer: totals per status, graduation success rate, risk level, first and last deploy. Pass `address` to evaluate the deployer BEHIND a token (we resolve it), or `wallet` to query a deployer directly."
+---
+
+`GET /v1/token/dev-tokens` · **2 credits**
+
+Every token deployed by a wallet, with a verdict on each (`active`, `migrated`, `rugged`, `abandoned`) and an aggregate risk read on the deployer: totals per status, graduation success rate, risk level, first and last deploy. Pass `address` to evaluate the deployer BEHIND a token (we resolve it), or `wallet` to query a deployer directly.
+
+<ParamField query="chain" type="string" required>
+  Public chain id - `evm:<id>` or `solana`. Example: `solana`
+</ParamField>
+
+<ParamField query="address" type="string">
+  Token address - its deployer is resolved first. Required unless `wallet` is given.
+</ParamField>
+
+<ParamField query="wallet" type="string">
+  Deployer address, skipping resolution.
+</ParamField>
+
+<ParamField query="limit" type="number">
+  1-100. Default 50.
+</ParamField>
+
+<Note>Each token's verdict is judged on its **best pool right now**: liquidity below $100 within a day of deploy reads `rugged`, below $500 within a week reads `abandoned`, a graduated launchpad token reads `migrated`, everything else `active`. `meta.stats.totalTokens` is the deployer's true deploy count; when you query by `address`, that token is left out of both the list and the stats so the record reflects the deployer's other work.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/token/dev-tokens?chain=solana&wallet=13NVKRbQFY2mABpgw2sVadDqpstNqyRLL3bmdNGdHXua&limit=40' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "solana",
+      "address": "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+      "name": "Sample One",
+      "symbol": "SMPL",
+      "createdAt": 1782001440000,
+      "migrated": true,
+      "isLaunchpad": true,
+      "liquidityNative": "812.4471903",
+      "liquidityUsd": 61050.13,
+      "status": "migrated"
+    },
+    {
+      "chain": "solana",
+      "address": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+      "name": "Sample Two",
+      "symbol": "SMP2",
+      "createdAt": 1780456020000,
+      "migrated": false,
+      "isLaunchpad": true,
+      "liquidityNative": "0.4013",
+      "liquidityUsd": 30.15,
+      "status": "rugged"
+    }
+  ],
+  "meta": {
+    "asOf": 1786927094821,
+    "deployer": "13NVKRbQFY2mABpgw2sVadDqpstNqyRLL3bmdNGdHXua",
+    "stats": {
+      "totalTokens": 40,
+      "active": 6,
+      "migrated": 9,
+      "rugged": 21,
+      "abandoned": 4,
+      "successRatePct": 22.5,
+      "riskLevel": "high",
+      "firstDeployAt": 1776623040000,
+      "lastDeployAt": 1786552980000
+    }
+  }
+}
+```
+</ResponseExample>
+

@@ -58,6 +58,8 @@
               "endpoints/token-stats-windowed",
               "endpoints/token-metadata",
               "endpoints/token-holders",
+              "endpoints/token-top-traders",
+              "endpoints/deployer-track-record",
               {
                 "group": "Token Security",
                 "pages": [
@@ -65,14 +67,20 @@
                   "endpoints/token-security-batch"
                 ]
               },
-              "endpoints/contract-audit",
-              "endpoints/audit-coverage"
+              {
+                "group": "Token Security Audit",
+                "pages": [
+                  "endpoints/contract-audit",
+                  "endpoints/audit-coverage"
+                ]
+              }
             ]
           },
           {
             "group": "Wallets",
             "pages": [
               "endpoints/wallet-positions",
+              "endpoints/wallet-closed-positions",
               "endpoints/wallet-trades",
               "endpoints/wallet-pnl",
               {
@@ -94,13 +102,16 @@
               "endpoints/candles-ohlcv",
               "endpoints/trades-tape",
               "endpoints/sparklines-batch",
+              "endpoints/token-sparklines",
               "endpoints/native-prices",
               "endpoints/chains",
               "endpoints/market-definition",
               "endpoints/market-data",
+              "endpoints/pools-data-batch",
               "endpoints/market-candles",
               "endpoints/market-trades",
-              "endpoints/batch-market-trades"
+              "endpoints/batch-market-trades",
+              "endpoints/pool-top-traders"
             ]
           },
           {

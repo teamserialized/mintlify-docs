@@ -1,0 +1,89 @@
+---
+title: "Market Data: batch"
+description: "Live snapshot of up to 100 markets in one call - the whole market-poll fan-out in a single request. Per-market shape identical to /v1/pool/data. Response is in input order, unknown markets slot in as null. Billed per market."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/pools/data` · **1 credit**
+
+The batch twin of [Market Data](/endpoints/market-data): poll up to 100 markets - across chains - in one request instead of a fan-out of single calls. Each item carries the same shape as `/v1/pool/data`; the response array is in input order, and an unknown market slots in as `null`. Billed per market in the call.
+
+<ParamField body="markets" type="array" required>
+  Up to 100 of `{chain, address}`. Response array is in input order; an unknown market is `null`. Billed per market. Example: `[{"chain":"evm:8453","address":"0x..."}]`
+</ParamField>
+
+<ParamField body="windows" type="string">
+  Comma-separated stat windows: `5m`, `1h`, `6h`, `24h`. Default `5m,1h,24h`.
+</ParamField>
+
+<Note>`circulatingSupply` is `null` on the batch (it comes from a slower upstream that would stall a fan-poll); fetch it per market on `/v1/pool/data` when you need it.</Note>
+
+<Note>`meta.count` echoes the number of markets in the request (the per-market billing count).</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/pools/data' -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' -d '{"markets":[{"chain":"evm:8453","address":"0x0ca6485b7e9cf814a3fd09d81672b07323535b64"},{"chain":"solana","address":"58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"}],"windows":"1h,24h"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "evm:8453",
+      "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+      "type": "UNISWAP_V3",
+      "token": {
+        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+        "name": "Degen",
+        "symbol": "DEGEN",
+        "decimals": 18,
+        "totalSupply": "37000000000"
+      },
+      "quote": {
+        "address": "0x4200000000000000000000000000000000000006",
+        "symbol": "WETH"
+      },
+      "priceNative": "0.00000053241",
+      "priceUsd": 0.001001,
+      "liquidityNative": "412.882",
+      "liquidityUsd": 776218.24,
+      "marketCapUsd": 37037000,
+      "circulatingSupply": null,
+      "bondingProgress": null,
+      "migrated": false,
+      "stats": {
+        "1h": {
+          "volumeNative": 1.204518,
+          "volumeUsd": 2264.49,
+          "buys": 41,
+          "sells": 27,
+          "buyVolumeNative": 0.812337,
+          "sellVolumeNative": 0.392181,
+          "traders": 52,
+          "feesNative": 0.003613,
+          "priceChangePct": 1.87
+        },
+        "24h": {
+          "volumeNative": 9.021983,
+          "volumeUsd": 16961.28,
+          "buys": 512,
+          "sells": 388,
+          "buyVolumeNative": 5.118442,
+          "sellVolumeNative": 3.903541,
+          "traders": 641,
+          "feesNative": 0.027065,
+          "priceChangePct": 4.96
+        }
+      }
+    },
+    null
+  ],
+  "meta": {
+    "asOf": 1786901933078,
+    "count": 2
+  }
+}
+```
+</ResponseExample>

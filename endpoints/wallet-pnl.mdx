@@ -16,12 +16,10 @@ Realized PnL of a wallet: daily curve plus summary (total realized, win rate, tr
 </ParamField>
 
 <ParamField query="period" type="string">
-  `1d`, `7d`, `30d` (default) or `all`.
+  `1d`, `7d`, `30d` (default) or `all`. On EVM `all` spans the wallet's full history.
 </ParamField>
 
-<Note>`usdBasis` tells you how USD values were computed and is never hidden: `spot` (EVM today - native PnL valued at the current native price; historical-rate valuation ships with the native-USD history) or `trade` (valued at trade time).</Note>
-
-<Note>Unrealized PnL series is rolling out alongside the realized series.</Note>
+<Note>Solana responses carry `usdBasis`: `trade` (each day valued at that day's native/USD rate) or `spot` (valued at the current native price). EVM PnL is valued at the current native price.</Note>
 
 <RequestExample>
 ```bash cURL
@@ -34,7 +32,6 @@ curl 'https://api.serialized.xyz/v1/wallet/pnl?wallet=0x95d955179a7cd45aeef394ed
 ```json Response
 {
   "data": {
-    "usdBasis": "spot",
     "history": [
       {
         "at": 1786492800000,

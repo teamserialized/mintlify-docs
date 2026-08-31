@@ -1,11 +1,11 @@
 ---
 title: "Market Data"
-description: "Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, circulating + total supply, buys/sells and unique traders per window (5m/1h/24h). Buy/sell tax and the full security fields live on `/v1/token/security`."
+description: "Live snapshot of one market, safe to poll at high frequency: price (native + USD), liquidity, market cap, circulating + total supply, and per-window volume, buy/sell counts and volumes, unique traders, fees and price change (5m / 1h / 24h). One call per market poll."
 ---
 
 `GET /v1/pool/data` · **1 credit**
 
-Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, circulating + total supply, buys/sells and unique traders per window (5m/1h/24h). Buy/sell tax and the full security fields live on `/v1/token/security`.
+Live snapshot of one market, safe to poll at high frequency: price (native + USD), liquidity, market cap, circulating + total supply, and per-window stats - volume, buy/sell counts and volumes, unique traders, fees and price change. Windowed stats come from the same engine as [Token Stats](/endpoints/token-stats-windowed), scoped to this pool. The full security fields (authorities, taxes, concentration) live on [Token Security](/endpoints/token-security).
 
 <ParamField query="chain" type="string" required>
   Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
@@ -16,8 +16,85 @@ Live snapshot of one market, safe to poll at high frequency: last price, per-win
 </ParamField>
 
 <ParamField query="windows" type="string">
-  Comma-separated stat windows. Example: `5m,1h,24h`
+  Comma-separated stat windows: `5m`, `1h`, `6h`, `24h`. Default `5m,1h,24h`.
 </ParamField>
 
-<Note>Rolling out now - being finalized with our first design partners. Ping us for early access.</Note>
+<Note>Each window carries `volumeNative`/`volumeUsd`, `buys`/`sells`, `buyVolumeNative`/`sellVolumeNative`, `traders` (unique), `feesNative` and `priceChangePct` (close-referenced). Solana markets additionally carry `txns`, organic-volume twins and `poolFeesNative`.</Note>
 
+<Note>`priceChangePct` is close-referenced: the change from the last close before the window opened.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/pool/data?chain=evm:8453&address=0x0ca6485b7e9cf814a3fd09d81672b07323535b64&windows=5m,1h,24h' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+    "type": "UNISWAP_V3",
+    "token": {
+      "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+      "name": "Degen",
+      "symbol": "DEGEN",
+      "decimals": 18,
+      "totalSupply": "37000000000"
+    },
+    "quote": {
+      "address": "0x4200000000000000000000000000000000000006",
+      "symbol": "WETH"
+    },
+    "priceNative": "0.00000053241",
+    "priceUsd": 0.001001,
+    "liquidityNative": "412.882",
+    "liquidityUsd": 776218.24,
+    "marketCapUsd": 37037000,
+    "circulatingSupply": "18500000000",
+    "bondingProgress": null,
+    "migrated": false,
+    "stats": {
+      "5m": {
+        "volumeNative": 0.041233,
+        "volumeUsd": 77.51,
+        "buys": 3,
+        "sells": 1,
+        "buyVolumeNative": 0.038104,
+        "sellVolumeNative": 0.003129,
+        "traders": 4,
+        "feesNative": 0.000123,
+        "priceChangePct": 0.42
+      },
+      "1h": {
+        "volumeNative": 1.204518,
+        "volumeUsd": 2264.49,
+        "buys": 41,
+        "sells": 27,
+        "buyVolumeNative": 0.812337,
+        "sellVolumeNative": 0.392181,
+        "traders": 52,
+        "feesNative": 0.003613,
+        "priceChangePct": 1.87
+      },
+      "24h": {
+        "volumeNative": 9.021983,
+        "volumeUsd": 16961.28,
+        "buys": 512,
+        "sells": 388,
+        "buyVolumeNative": 5.118442,
+        "sellVolumeNative": 3.903541,
+        "traders": 641,
+        "feesNative": 0.027065,
+        "priceChangePct": 4.96
+      }
+    }
+  },
+  "meta": {
+    "asOf": 1786901933078
+  }
+}
+```
+</ResponseExample>

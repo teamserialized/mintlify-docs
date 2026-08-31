@@ -1,0 +1,83 @@
+---
+title: "Wallet Closed Positions"
+description: "Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of `/v1/wallet/positions` - every position of a wallet lands in exactly one of the two. EVM and Solana."
+---
+
+`GET /v1/wallet/closed-positions` · **2 credits**
+
+Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of [`/v1/wallet/positions`](/endpoints/wallet-positions) - every position of a wallet lands in exactly one of the two. EVM and Solana.
+
+<ParamField query="wallet" type="string" required>
+  Wallet address (EVM hex, case-insensitive; Solana base58).
+</ParamField>
+
+<ParamField query="chain" type="string">
+  Public chain id - `evm:<id>` or `solana`. Omit to infer from the address: a `0x` wallet returns every EVM chain, a base58 wallet returns Solana. Example: `evm:8453`
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  1-100. Default 30.
+</ParamField>
+
+<ParamField query="offset" type="integer">
+  Rows to skip for pagination. Default 0.
+</ParamField>
+
+<ParamField query="sort" type="string">
+  `lastTradeAt` (default, newest exit first) or `pnl` (largest realized PnL first).
+</ParamField>
+
+<Note>USD figures are valued at the current native price. `realizedPnlPercent` is realized PnL over total USD bought. `meta.hasMore` signals another page; `meta.oldestAt` is the last row's exit time.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/wallet/closed-positions?chain=solana&wallet=GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E&limit=2&sort=pnl' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "chain": "solana",
+      "address": "9x4EQVaPRWSw4jKoWTpRzMP7YAu5sZwHyLJ9tbJYpump",
+      "symbol": "JOKE",
+      "name": "Jokecoin",
+      "totalBuyUsd": 41.208763,
+      "totalSellUsd": 58.913145,
+      "totalBuyNative": 0.198734,
+      "totalSellNative": 0.284102,
+      "realizedPnlUsd": 17.704382,
+      "realizedPnlNative": 0.085368,
+      "realizedPnlPercent": 42.96,
+      "buyCount": 4,
+      "sellCount": 3,
+      "lastTradeAt": 1786940537718
+    },
+    {
+      "chain": "solana",
+      "address": "GFQLVG2UKYydSCJ2WjkuMXijpgJ6hbs2nEsNwdZFpump",
+      "symbol": "Tortuga",
+      "name": "Tortuga",
+      "totalBuyUsd": 7.444819,
+      "totalSellUsd": 3.836057,
+      "totalBuyNative": 0.035902,
+      "totalSellNative": 0.018501,
+      "realizedPnlUsd": -3.608762,
+      "realizedPnlNative": -0.017401,
+      "realizedPnlPercent": -48.47,
+      "buyCount": 1,
+      "sellCount": 1,
+      "lastTradeAt": 1786907901306
+    }
+  ],
+  "meta": {
+    "asOf": 1787163135112,
+    "hasMore": false,
+    "oldestAt": 1786907901306
+  }
+}
+```
+</ResponseExample>

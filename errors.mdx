@@ -20,8 +20,11 @@ Every error is:
 | `INVALID_CHAIN` | 400 |
 | `INVALID_PARAM` | 400 |
 | `UNAUTHORIZED` | 401 |
+| `QUOTA_EXCEEDED` | 402 |
 | `NOT_FOUND` | 404 |
 | `RATE_LIMITED` | 429 |
 | `UPSTREAM_ERROR` | 502 |
 | `UPSTREAM_TIMEOUT` | 504 |
 | `INTERNAL` | 500 |
+
+`402 QUOTA_EXCEEDED` (monthly credits spent) and `429 RATE_LIMITED` (per-key rate) are covered in [Authentication & Limits](/authentication). `4xx` requests and rejected calls are never billed.

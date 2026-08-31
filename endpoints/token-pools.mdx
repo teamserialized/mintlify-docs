@@ -19,6 +19,8 @@ Every market of a token, ranked by our canonical pool priority - rank 1 is the e
   1-100, default 50.
 </ParamField>
 
+<Note>Each pool carries its own 24h stats - `volume24hNative`, `volume24hUsd`, `txns24h` - so you can pick the market to trade or price against. `null` when a pool has no 24h activity to report.</Note>
+
 <RequestExample>
 ```bash cURL
 curl 'https://api.serialized.xyz/v1/token/pools?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
@@ -40,7 +42,10 @@ curl 'https://api.serialized.xyz/v1/token/pools?chain=evm:8453&address=0x4ed4e86
       "priceNative": "0.00000054747124708872",
       "isLaunchpad": false,
       "migrated": false,
-      "createdAt": 1705088299000
+      "createdAt": 1705088299000,
+      "volume24hNative": 11.83920157,
+      "volume24hUsd": 22258.19,
+      "txns24h": 168
     },
     {
       "address": "0xc9034c3e7f58003e6ae0c8438e7c8f4598d5acaa",
@@ -52,7 +57,10 @@ curl 'https://api.serialized.xyz/v1/token/pools?chain=evm:8453&address=0x4ed4e86
       "priceNative": "0.00000054502089147879",
       "isLaunchpad": false,
       "migrated": false,
-      "createdAt": 1704655845000
+      "createdAt": 1704655845000,
+      "volume24hNative": 0.63362319,
+      "volume24hUsd": 1191.19,
+      "txns24h": 13
     }
   ],
   "meta": {

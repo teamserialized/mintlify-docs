@@ -12,11 +12,15 @@ The current candle of a token, re-pushed on every trade - same candle shape as R
 </ParamField>
 
 <ParamField body="address" type="string" required>
-  Token address. Example: `0xb2000000000000000000007bf6d5cbb0e24cb301`
+  Token address (EVM hex, case-insensitive; Solana base58, case-sensitive). Example: `0xb2000000000000000000007bf6d5cbb0e24cb301`
+</ParamField>
+
+<ParamField body="pools" type="string">
+  Optional. CSV of pool addresses (≤50) to restrict the candle. Omit for the default (the same resolved pool-set as REST `/v1/token/ohlcv` - best pool tracked across migration, curve history stitched in). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
 </ParamField>
 
 <ParamField body="interval" type="string">
-  Candle interval - same set as REST: `1s 5s 15s 30s 1m 5m 15m 30m 1h 4h 12h 1d 1w 1M`. Default `1m`. Example: `1m`
+  Candle interval - same set as REST: `1s 5s 15s 30s 1m 3m 5m 15m 30m 1h 2h 4h 6h 12h 1d 1w 1M`. Default `1m`. Example: `1m`
 </ParamField>
 
 <ParamField body="quote" type="string">
@@ -64,3 +68,7 @@ The current candle of a token, re-pushed on every trade - same candle shape as R
 }
 ```
 </ResponseExample>
+
+## Close codes
+
+The connection can be closed with: `4401` (auth failure - bad/missing/revoked key), `4402` (quota exceeded), `1008` (policy - subscription limits, floods, slow consumer), `1001` (idle timeout). On a close, backfill the gap over REST (`/v1/token/ohlcv` with `endTime`), then reconnect and re-subscribe.

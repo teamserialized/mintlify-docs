@@ -1,12 +1,76 @@
 ---
-title: "Authentication"
-description: "API keys and rate limits"
+title: "Authentication & Limits"
+description: "API keys, credits, rate limits, usage"
 ---
 
-Pass your raw API key in the Authorization header on every request (same convention as Mobula - zero migration friction).
+Pass your raw API key in the `Authorization` header on every request (same convention as Mobula — zero migration friction).
 
 ```
 Authorization: YOUR_API_KEY
 ```
 
-**Rate limits** : 300 requests/minute per key. Standard X-RateLimit-* headers on every response; 429 with Retry-After when exceeded.
+Create and manage keys, watch usage and billing at [serialized.xyz/dashboard](https://serialized.xyz/dashboard).
+
+## Plans
+
+Each plan sets a monthly credit allowance (calendar month, UTC) and a per-key rate limit.
+
+| Plan | Credits / month | Rate limit |
+| --- | --- | --- |
+| Free | 15,000 | 60 req/min |
+| Starter | 150,000 | 300 req/min |
+| Growth | 2,000,000 | 900 req/min |
+| Enterprise | unlimited | 3,000 req/min |
+
+## Credits
+
+Most endpoints cost **1 credit**. The heavier ones:
+
+| Credits | Endpoints |
+| --- | --- |
+| 0 | `usage`, `meta/*`, `health` |
+| 2 | `token/holders`, `token/top-traders`, `token/dev-tokens`, `wallet/positions`, `wallet/closed-positions`, `pool/top-traders` |
+| 5 | `token/ohlcv`, `pool/ohlcv`, `search` |
+| 10 | `token/security` |
+| 1000 | `audit/contract` |
+
+POST batch endpoints bill **per item**. **Only successful (2xx) responses are billed** — you never pay for your own 4xx, for auth/quota/rate-limit rejections, or for a 5xx on our side.
+
+Every billable response carries `X-Credits-Remaining` (the credits left in the current cycle; omitted on unlimited plans).
+
+## Rate limits
+
+The limit is per key, on a 1-minute window. Standard `X-RateLimit-*` headers are on every response; exceeding it returns `429` with code `RATE_LIMITED`.
+
+## Quota exhaustion
+
+When the monthly credit allowance is spent, billable endpoints return:
+
+```json
+{ "error": { "code": "QUOTA_EXCEEDED", "message": "Monthly credit quota exhausted — upgrade your plan or wait for the next cycle" } }
+```
+
+with HTTP `402` and `X-Credits-Remaining: 0`. Zero-credit endpoints (including `usage`) stay reachable so you can always inspect your own state and upgrade.
+
+## Usage introspection
+
+Query your own consumption programmatically — no credit cost, and a level of self-serve visibility no other provider exposes over the API:
+
+- `GET /v1/usage` — current cycle: `{ keyId, tenant, plan, month, credits: { used, limit, remaining }, requests }`.
+- `GET /v1/usage/history` — per-day series.
+- `GET /v1/usage/breakdown` — per-endpoint.
+
+A key only ever sees its own usage.
+
+## WebSocket
+
+The first frame authenticates with your key. Close codes:
+
+| Code | Meaning |
+| --- | --- |
+| 4401 | Auth failure — key missing, invalid, or revoked (revoking a key also drops its open connections) |
+| 4402 | Monthly credit quota exhausted (the WS mirror of the `402`) |
+| 1008 | Policy — limits, floods, or a stuck socket |
+| 1001 | Idle timeout |
+
+Streaming usage is metered per minute.
