@@ -82,7 +82,7 @@ Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with `
 
 <Note>An unknown token returns `404`. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` (the rate at the moment of the trade) on Solana.</Note>
 
-<Note>Amounts are GROSS on-chain (the exact swapped value). `isWash` is a boolean on Solana. On Base, the forming candle can include preconfirmed (flashblocks) swaps ahead of block commit; dedup by `id` or `txHash`.</Note>
+<Note>Amounts are GROSS on-chain (the exact swapped value). `feesNative` is the trade's transaction fee in the chain's native unit (`null` on a Base preconfirmed row — the fee is not final before block commit). `isWash` is a boolean on Solana. On Base, the forming candle can include preconfirmed (flashblocks) swaps ahead of block commit; dedup by `id` or `txHash`.</Note>
 
 <RequestExample>
 ```bash cURL
@@ -110,6 +110,7 @@ curl -X POST 'https://api.serialized.xyz/v1/token/trades' \
       "priceNative": 5.4747124708872e-7,
       "volumeNative": 0.000042612402192036,
       "volumeUsd": 0.08021081608014609,
+      "feesNative": 0.0000021,
       "isProTrader": false,
       "isSniper": false,
       "isWash": null,
@@ -128,6 +129,7 @@ curl -X POST 'https://api.serialized.xyz/v1/token/trades' \
       "priceNative": 5.4748839531073e-7,
       "volumeNative": 0.015391014265196838,
       "volumeUsd": 28.97104483687929,
+      "feesNative": 0.0000034,
       "isProTrader": true,
       "isSniper": false,
       "isWash": null,

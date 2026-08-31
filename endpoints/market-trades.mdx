@@ -51,7 +51,7 @@ Trade tape of one market, addressed by pool. Same row shape, badges and filters 
   CSV opt-ins. `traderTxCounts` adds each row's `makerTxCount`.
 </ParamField>
 
-<Note>An unknown pool returns `404` (never a silently-empty 200). `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM.</Note>
+<Note>An unknown pool returns `404` (never a silently-empty 200). `feesNative` is the trade's transaction fee in the chain's native unit. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM.</Note>
 
 <RequestExample>
 ```bash cURL
@@ -74,6 +74,7 @@ curl 'https://api.serialized.xyz/v1/pool/trades?chain=evm:8453&address=0x0ca6485
       "priceNative": 5.4747124708872e-7,
       "volumeNative": 0.000042612402192036,
       "volumeUsd": 0.08021081608014609,
+      "feesNative": 0.0000021,
       "isProTrader": false,
       "isSniper": false,
       "isWash": null,

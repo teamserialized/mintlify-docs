@@ -35,7 +35,7 @@ Trade history of a wallet, newest first - multihop-deduplicated (one event per t
   Solana only. Also serve the intermediate legs of routed swaps. Default false.
 </ParamField>
 
-<Note>Each trade carries `isRoutingHop` (a routed intermediate leg) and `isWash` (Solana wash/MEV flag; `null` on EVM). `volumeUsd` is at the current native price on EVM; on Solana it is valued at trade time and `meta.usdBasis` reports `trade` (or `spot` on fallback). `meta.nextCursor` is present while `meta.hasMore` is true.</Note>
+<Note>Each trade carries `feesNative` (the transaction fee in the chain's native unit), `isRoutingHop` (a routed intermediate leg) and `isWash` (Solana wash/MEV flag; `null` on EVM). `volumeUsd` is at the current native price on EVM; on Solana it is valued at trade time and `meta.usdBasis` reports `trade` (or `spot` on fallback). `meta.nextCursor` is present while `meta.hasMore` is true.</Note>
 
 <RequestExample>
 ```bash cURL (EVM)
@@ -63,6 +63,7 @@ curl 'https://api.serialized.xyz/v1/wallet/trades?chain=solana&wallet=GuhieZDx6n
       "priceNative": 2.46340612952e-9,
       "volumeNative": 0.001500827331112315,
       "volumeUsd": 3.120677773718492,
+      "feesNative": 0.0000021,
       "isWash": null,
       "isRoutingHop": false,
       "txHash": "0x18ec69970caef3c490d8276810f56083c9156c670e8c68eada72853a4d6e9b83",
@@ -80,6 +81,7 @@ curl 'https://api.serialized.xyz/v1/wallet/trades?chain=solana&wallet=GuhieZDx6n
       "priceNative": 2.2864562986700003e-9,
       "volumeNative": 0.001406562274237914,
       "volumeUsd": 2.9246719696342653,
+      "feesNative": 0.0000019,
       "isWash": null,
       "isRoutingHop": false,
       "txHash": "0x18ec69970caef3c490d8276810f56083c9156c670e8c68eada72853a4d6e9b83",
