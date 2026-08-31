@@ -32,7 +32,7 @@ Most endpoints cost **1 credit**. The heavier ones:
 | 2 | `token/holders`, `token/top-traders`, `token/dev-tokens`, `wallet/positions`, `wallet/closed-positions`, `pool/top-traders` |
 | 5 | `token/ohlcv`, `pool/ohlcv`, `search` |
 | 10 | `token/security` |
-| 1000 | `audit/contract` |
+| 750 | `audit/contract` |
 
 POST batch endpoints bill **per item**. **Only successful (2xx) responses are billed** — you never pay for your own 4xx, for auth/quota/rate-limit rejections, or for a 5xx on our side.
 
