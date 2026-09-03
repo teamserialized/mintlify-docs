@@ -28,7 +28,8 @@
   "security": [
     {
       "apiKey": []
-    }
+    },
+    {}
   ],
   "paths": {
     "/v1/audit/chains": {
