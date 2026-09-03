@@ -1,0 +1,75 @@
+---
+title: "Quickstart"
+description: "Your first call in under a minute, with the shared demo key."
+---
+
+Every endpoint page in this doc has an interactive playground pre-filled with a working example: open one and hit Send. This page is the same first call, from your own terminal or code.
+
+## 1. Grab a key
+
+The shared demo key below works everywhere in this doc and in the samples on this page (Free plan limits, shared between visitors). For your own key, [talk to us](/support).
+
+## 2. Make your first call
+
+Full token snapshot for DEGEN on Base:
+
+<CodeGroup>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/token?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
+  -H 'Authorization: sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM'
+```
+```typescript TypeScript
+const res = await fetch(
+  'https://api.serialized.xyz/v1/token?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed',
+  { headers: { Authorization: 'sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM' } },
+);
+const { data } = await res.json();
+console.log(data.symbol, data.priceUsd, data.stats24h.volumeUsd);
+```
+```python Python
+import requests
+
+res = requests.get(
+    "https://api.serialized.xyz/v1/token",
+    params={"chain": "evm:8453", "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"},
+    headers={"Authorization": "sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM"},
+)
+data = res.json()["data"]
+print(data["symbol"], data["priceUsd"], data["stats24h"]["volumeUsd"])
+```
+</CodeGroup>
+
+## 3. Read the response
+
+Every response is the same envelope: `{ data, meta }`, camelCase fields, millisecond timestamps, `null` meaning unknown (never a fabricated value). Trimmed here:
+
+```json
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+    "name": "Degen",
+    "symbol": "DEGEN",
+    "priceNative": "0.00000054747124708872",
+    "priceUsd": 0.0010292322577456162,
+    "marketCapUsd": 37389232.09806793,
+    "liquidityUsd": 239386.56038744663,
+    "pool": { "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64", "type": "UNISWAP_V3" },
+    "stats24h": { "volumeUsd": 23448.59872596349, "buys": 176, "sells": 5 }
+  },
+  "meta": { "asOf": 1786724319903 }
+}
+```
+
+The same call works on any [supported chain](/supported-chains): swap `chain=evm:8453` for `solana` and pass a base58 address.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Token Details" icon="coin" href="/endpoints/token-details">The snapshot you just fetched, field by field.</Card>
+  <Card title="Candles (OHLCV)" icon="chart-candlestick" href="/endpoints/candles-ohlcv">Chart-ready candles, 1s to 1M.</Card>
+  <Card title="Trades Tape" icon="list" href="/endpoints/trades-tape">The live tape, with real trader attribution.</Card>
+  <Card title="Streams (WebSocket)" icon="tower-broadcast" href="/streams/overview">The same shapes, pushed in real time.</Card>
+  <Card title="Migrate from another provider" icon="arrow-right-arrow-left" href="/migrate">Endpoint-by-endpoint maps from Mobula, Codex and Birdeye.</Card>
+  <Card title="Authentication & Limits" icon="key" href="/authentication">Plans, credits, rate limits.</Card>
+</CardGroup>

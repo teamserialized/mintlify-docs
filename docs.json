@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "serialized.data",
+  "description": "On-chain data API for trading apps: tokens, candles, trades, wallets and live streams. Built on our own indexers, 18 EVM chains + Solana, live.",
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg",
@@ -30,10 +31,13 @@
             "group": "Getting Started",
             "pages": [
               "introduction",
+              "quickstart",
               "authentication",
               "conventions",
+              "supported-chains",
               "errors",
-              "migrate"
+              "migrate",
+              "support"
             ]
           }
         ]

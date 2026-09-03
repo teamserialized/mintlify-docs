@@ -1,0 +1,32 @@
+---
+title: "Supported Chains"
+description: "18 EVM chains + Solana, live. The chain id to pass on every call."
+---
+
+Every request takes a `chain` parameter: `evm:<EIP-155 id>` for EVM chains (canonical ids, nothing invented) and `solana`. Ordered by trading activity:
+
+| Chain | `chain` id | Native |
+| --- | --- | --- |
+| Base | `evm:8453` | ETH |
+| Ethereum | `evm:1` | ETH |
+| BNB Smart Chain | `evm:56` | BNB |
+| Arbitrum | `evm:42161` | ETH |
+| Avalanche | `evm:43114` | AVAX |
+| Abstract | `evm:2741` | ETH |
+| HyperEVM | `evm:645749` | HYPE |
+| Ink | `evm:57073` | ETH |
+| Story | `evm:1514` | IP |
+| X Layer | `evm:196` | OKB |
+| Plasma | `evm:9745` | XPL |
+| Unichain | `evm:130` | ETH |
+| Monad | `evm:143` | MON |
+| MegaETH | `evm:4326` | ETH |
+| Tempo | `evm:4217` | USDC.e |
+| Robinhood Chain | `evm:4663` | ETH |
+| Arc | `evm:5042` | USDC |
+| Stable | `evm:988` | USDT |
+| Solana | `solana` | SOL |
+
+The list is also served by [`GET /v1/meta/chains`](/endpoints/chains) (free, 0 credits) with per-chain status, so your integration can sync it programmatically instead of hardcoding it.
+
+We ship new chains regularly. Need one we do not cover yet? [Talk to us](/support).
