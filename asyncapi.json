@@ -1,0 +1,522 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Serialized Data API Streams",
+    "version": "0.1.0",
+    "description": "Real-time push over a single WebSocket connection: live trades and token updates. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged. Streams bill connection time: 1 credit per connection-minute, with no per-message cost."
+  },
+  "servers": {
+    "production": {
+      "host": "api.serialized.xyz",
+      "pathname": "/v1/stream",
+      "protocol": "wss",
+      "description": "Authenticate with the first frame within 10 seconds: {\"op\":\"auth\",\"apiKey\":\"YOUR_API_KEY\"}. The server replies {\"op\":\"auth.ok\"}; any other first frame closes the connection (code 4401)."
+    }
+  },
+  "channels": {
+    "trades": {
+      "address": "trades",
+      "title": "Trades Stream",
+      "description": "Every new trade for a token - all pools by default, or a pool subset - pushed as it lands. Events are the exact REST trades-tape shape, one event per trade.",
+      "messages": {
+        "subscribe": {
+          "title": "Subscribe",
+          "summary": "Client frame opening the subscription (additive, ack is explicit).",
+          "payload": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "subscribe"
+              },
+              "channel": {
+                "type": "string",
+                "const": "trades"
+              },
+              "id": {
+                "type": "string",
+                "description": "Client-chosen subscription id, echoed on every frame of this subscription."
+              },
+              "params": {
+                "type": "object",
+                "properties": {
+                  "chain": {
+                    "type": "string",
+                    "description": "Public chain id - `evm:<id>` or `solana`.",
+                    "examples": [
+                      "evm:8453"
+                    ]
+                  },
+                  "address": {
+                    "type": "string",
+                    "description": "Token address (EVM hex, case-insensitive; Solana base58).",
+                    "examples": [
+                      "0xb2000000000000000000007bf6d5cbb0e24cb301"
+                    ]
+                  },
+                  "pools": {
+                    "type": "string",
+                    "description": "Comma-separated pool addresses to restrict the tape. Default: token-wide (every pool of the token)."
+                  }
+                },
+                "required": [
+                  "chain",
+                  "address"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "channel",
+              "id",
+              "params"
+            ]
+          },
+          "examples": [
+            {
+              "name": "Subscribe",
+              "payload": {
+                "op": "subscribe",
+                "channel": "trades",
+                "id": "tape-1",
+                "params": {
+                  "chain": "evm:8453",
+                  "address": "0xb2000000000000000000007bf6d5cbb0e24cb301"
+                }
+              }
+            }
+          ]
+        },
+        "ack": {
+          "title": "Ack",
+          "summary": "Server acknowledgement: the subscription is live.",
+          "payload": {
+            "type": "object"
+          },
+          "examples": [
+            {
+              "name": "Ack",
+              "payload": {
+                "op": "subscribed",
+                "id": "tape-1",
+                "channel": "trades"
+              }
+            }
+          ]
+        },
+        "trade": {
+          "title": "Trade",
+          "summary": "Server push frame (Trade).",
+          "payload": {
+            "type": "object",
+            "description": "`data` is the exact same shape as the REST twin of this channel; `asOf` is the server timestamp (ms)."
+          },
+          "examples": [
+            {
+              "name": "Trade",
+              "payload": {
+                "op": "event",
+                "id": "tape-1",
+                "channel": "trades",
+                "data": {
+                  "at": 1786718835000,
+                  "maker": "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09",
+                  "isBuy": true,
+                  "amountToken": 77.05662024406023,
+                  "amountQuote": 0.000042612402192036,
+                  "priceNative": 5.4747124708872e-7,
+                  "volumeNative": 0.000042612402192036,
+                  "volumeUsd": 0.08021081608014609,
+                  "isProTrader": false,
+                  "isSniper": false,
+                  "preconfirmed": false,
+                  "txHash": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf",
+                  "block": 49964744,
+                  "logIndex": 289
+                },
+                "asOf": 1786718835412
+              }
+            }
+          ]
+        }
+      }
+    },
+    "token-updates": {
+      "address": "token-updates",
+      "title": "Token Updates Stream",
+      "description": "Live refresh of the mutable Token Details fields - price, market cap, liquidity, bonding progress, 24h stats. Throttled to at most one event per second per token; fields you already parse from `/v1/token`.",
+      "messages": {
+        "subscribe": {
+          "title": "Subscribe",
+          "summary": "Client frame opening the subscription (additive, ack is explicit).",
+          "payload": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "subscribe"
+              },
+              "channel": {
+                "type": "string",
+                "const": "token-updates"
+              },
+              "id": {
+                "type": "string",
+                "description": "Client-chosen subscription id, echoed on every frame of this subscription."
+              },
+              "params": {
+                "type": "object",
+                "properties": {
+                  "chain": {
+                    "type": "string",
+                    "description": "Public chain id - `evm:<id>` or `solana`.",
+                    "examples": [
+                      "solana"
+                    ]
+                  },
+                  "address": {
+                    "type": "string",
+                    "description": "Token address.",
+                    "examples": [
+                      "CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump"
+                    ]
+                  }
+                },
+                "required": [
+                  "chain",
+                  "address"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "channel",
+              "id",
+              "params"
+            ]
+          },
+          "examples": [
+            {
+              "name": "Subscribe",
+              "payload": {
+                "op": "subscribe",
+                "channel": "token-updates",
+                "id": "tok-1",
+                "params": {
+                  "chain": "solana",
+                  "address": "CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump"
+                }
+              }
+            }
+          ]
+        },
+        "ack": {
+          "title": "Ack",
+          "summary": "Server acknowledgement: the subscription is live.",
+          "payload": {
+            "type": "object"
+          },
+          "examples": [
+            {
+              "name": "Ack",
+              "payload": {
+                "op": "subscribed",
+                "id": "tok-1",
+                "channel": "token-updates"
+              }
+            }
+          ]
+        },
+        "update": {
+          "title": "Update",
+          "summary": "Server push frame (Update).",
+          "payload": {
+            "type": "object",
+            "description": "`data` is the exact same shape as the REST twin of this channel; `asOf` is the server timestamp (ms)."
+          },
+          "examples": [
+            {
+              "name": "Update",
+              "payload": {
+                "op": "event",
+                "id": "tok-1",
+                "channel": "token-updates",
+                "data": {
+                  "priceNative": "0.000000028472524478",
+                  "priceUsd": 0.0000021952461580276,
+                  "marketCapUsd": 2195.24,
+                  "fdvUsd": 2195.24,
+                  "liquidityUsd": 2348.64,
+                  "launchpad": {
+                    "migrated": false,
+                    "bondingProgress": 38.6,
+                    "graduatedAt": null
+                  },
+                  "stats24h": {
+                    "volumeUsd": 16738.29,
+                    "buys": 412,
+                    "sells": 389,
+                    "priceChangePct": -71.5
+                  }
+                },
+                "asOf": 1787097303652
+              }
+            }
+          ]
+        }
+      }
+    },
+    "pool-updates": {
+      "address": "pool-updates",
+      "title": "Pool Updates Stream",
+      "description": "Live refresh of a single market's mutable fields - price, market cap, liquidity, bonding progress, windowed stats. The price moves instantly on every trade of the pool; the full snapshot refreshes server-side every ~10s. Events are throttled to at most one per second per pool and deduplicated - you only receive an event when something actually changed. Same engine and field names as `/v1/pool/data`; on subscribe, the last known state is pushed immediately when available.",
+      "messages": {
+        "subscribe": {
+          "title": "Subscribe",
+          "summary": "Client frame opening the subscription (additive, ack is explicit).",
+          "payload": {
+            "type": "object",
+            "properties": {
+              "op": {
+                "type": "string",
+                "const": "subscribe"
+              },
+              "channel": {
+                "type": "string",
+                "const": "pool-updates"
+              },
+              "id": {
+                "type": "string",
+                "description": "Client-chosen subscription id, echoed on every frame of this subscription."
+              },
+              "params": {
+                "type": "object",
+                "properties": {
+                  "chain": {
+                    "type": "string",
+                    "description": "Public chain id - `evm:<id>` or `solana`.",
+                    "examples": [
+                      "solana"
+                    ]
+                  },
+                  "pool": {
+                    "type": "string",
+                    "description": "Pool (market) address.",
+                    "examples": [
+                      "BqnpCdDLPV2pFdAaLnVidmn3G93RP2p5oRdGEY2sJGez"
+                    ]
+                  }
+                },
+                "required": [
+                  "chain",
+                  "pool"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "channel",
+              "id",
+              "params"
+            ]
+          },
+          "examples": [
+            {
+              "name": "Subscribe",
+              "payload": {
+                "op": "subscribe",
+                "channel": "pool-updates",
+                "id": "pool-1",
+                "params": {
+                  "chain": "solana",
+                  "pool": "BqnpCdDLPV2pFdAaLnVidmn3G93RP2p5oRdGEY2sJGez"
+                }
+              }
+            }
+          ]
+        },
+        "ack": {
+          "title": "Ack",
+          "summary": "Server acknowledgement: the subscription is live.",
+          "payload": {
+            "type": "object"
+          },
+          "examples": [
+            {
+              "name": "Ack",
+              "payload": {
+                "op": "subscribed",
+                "id": "pool-1",
+                "channel": "pool-updates"
+              }
+            }
+          ]
+        },
+        "update": {
+          "title": "Update",
+          "summary": "Server push frame (Update).",
+          "payload": {
+            "type": "object",
+            "description": "`data` is the exact same shape as the REST twin of this channel; `asOf` is the server timestamp (ms)."
+          },
+          "examples": [
+            {
+              "name": "Update",
+              "payload": {
+                "op": "event",
+                "id": "pool-1",
+                "channel": "pool-updates",
+                "data": {
+                  "priceNative": "0.000000027894474571",
+                  "priceUsd": 0.00000288045,
+                  "marketCapUsd": 253463983.91,
+                  "liquidityNative": "722.161187853",
+                  "liquidityUsd": 74572.08,
+                  "bondingProgress": null,
+                  "migrated": false,
+                  "stats": {
+                    "5m": {
+                      "volumeNative": 0.489206931,
+                      "volumeUsd": 50.51,
+                      "buys": 6,
+                      "sells": 2,
+                      "buyVolumeNative": 0.400091205,
+                      "sellVolumeNative": 0.089115726,
+                      "txns": 8,
+                      "volumeOrganicNative": 0.489206931,
+                      "volumeOrganicUsd": 50.51,
+                      "buysOrganic": 6,
+                      "sellsOrganic": 2,
+                      "priceChangePct": 0.42,
+                      "traders": 7,
+                      "feesNative": 0.000704,
+                      "poolFeesNative": 0.004892069
+                    },
+                    "1h": {
+                      "volumeNative": 2.221187931,
+                      "volumeUsd": 229.36,
+                      "buys": 27,
+                      "sells": 0,
+                      "buyVolumeNative": 2.221187931,
+                      "sellVolumeNative": 0,
+                      "txns": 27,
+                      "volumeOrganicNative": 1.896568223,
+                      "volumeOrganicUsd": 195.84,
+                      "buysOrganic": 20,
+                      "sellsOrganic": 0,
+                      "priceChangePct": 1.58,
+                      "traders": 15,
+                      "feesNative": 0.002376526,
+                      "poolFeesNative": 0.022211894
+                    },
+                    "24h": {
+                      "volumeNative": 7.170081239,
+                      "volumeUsd": 740.39,
+                      "buys": 28,
+                      "sells": 48,
+                      "buyVolumeNative": 2.344647931,
+                      "sellVolumeNative": 4.825433308,
+                      "txns": 76,
+                      "volumeOrganicNative": 6.512701056,
+                      "volumeOrganicUsd": 672.51,
+                      "buysOrganic": 21,
+                      "sellsOrganic": 45,
+                      "priceChangePct": -1.78,
+                      "traders": 41,
+                      "feesNative": 0.006465399,
+                      "poolFeesNative": 0.072148996
+                    }
+                  }
+                },
+                "asOf": 1788168160758
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "operations": {
+    "subscribe-trades": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/trades"
+      },
+      "title": "Subscribe Trades Stream",
+      "messages": [
+        {
+          "$ref": "#/channels/trades/messages/subscribe"
+        }
+      ]
+    },
+    "receive-trades": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/trades"
+      },
+      "title": "Trades Stream frames",
+      "messages": [
+        {
+          "$ref": "#/channels/trades/messages/ack"
+        },
+        {
+          "$ref": "#/channels/trades/messages/trade"
+        }
+      ]
+    },
+    "subscribe-token-updates": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/token-updates"
+      },
+      "title": "Subscribe Token Updates Stream",
+      "messages": [
+        {
+          "$ref": "#/channels/token-updates/messages/subscribe"
+        }
+      ]
+    },
+    "receive-token-updates": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/token-updates"
+      },
+      "title": "Token Updates Stream frames",
+      "messages": [
+        {
+          "$ref": "#/channels/token-updates/messages/ack"
+        },
+        {
+          "$ref": "#/channels/token-updates/messages/update"
+        }
+      ]
+    },
+    "subscribe-pool-updates": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/pool-updates"
+      },
+      "title": "Subscribe Pool Updates Stream",
+      "messages": [
+        {
+          "$ref": "#/channels/pool-updates/messages/subscribe"
+        }
+      ]
+    },
+    "receive-pool-updates": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/pool-updates"
+      },
+      "title": "Pool Updates Stream frames",
+      "messages": [
+        {
+          "$ref": "#/channels/pool-updates/messages/ack"
+        },
+        {
+          "$ref": "#/channels/pool-updates/messages/update"
+        }
+      ]
+    }
+  }
+}
