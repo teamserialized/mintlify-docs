@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/dev-tokens'
+openapi: '/openapi.json GET /v1/token/dev-tokens'
 title: "Deployer Track Record"
 description: "Every token deployed by a wallet, with a verdict on each (`active`, `migrated`, `rugged`, `abandoned`) and an aggregate risk read on the deployer: totals per status, graduation success rate, risk level, first and last deploy. Pass `address` to evaluate the deployer BEHIND a token (we resolve it), or `wallet` to query a deployer directly."
 ---
@@ -7,22 +7,6 @@ description: "Every token deployed by a wallet, with a verdict on each (`active`
 `GET /v1/token/dev-tokens` · **2 credits**
 
 Every token deployed by a wallet, with a verdict on each (`active`, `migrated`, `rugged`, `abandoned`) and an aggregate risk read on the deployer: totals per status, graduation success rate, risk level, first and last deploy. Pass `address` to evaluate the deployer BEHIND a token (we resolve it), or `wallet` to query a deployer directly.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `solana`
-</ParamField>
-
-<ParamField query="address" type="string">
-  Token address - its deployer is resolved first. Required unless `wallet` is given.
-</ParamField>
-
-<ParamField query="wallet" type="string">
-  Deployer address, skipping resolution.
-</ParamField>
-
-<ParamField query="limit" type="number">
-  1-100. Default 50.
-</ParamField>
 
 <Note>Each token's verdict is judged on its **best pool right now**: liquidity below $100 within a day of deploy reads `rugged`, below $500 within a week reads `abandoned`, a graduated launchpad token reads `migrated`, everything else `active`. `meta.stats.totalTokens` is the deployer's true deploy count; when you query by `address`, that token is left out of both the list and the stats so the record reflects the deployer's other work.</Note>
 

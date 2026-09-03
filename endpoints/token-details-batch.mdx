@@ -1,5 +1,5 @@
 ---
-api: 'POST /v1/token'
+openapi: '/openapi.json POST /v1/token'
 title: "Token Details: batch"
 description: "Full-detail batch twin: up to 25 `{chain, address}` items (EVM and Solana can be mixed in one call), response array in input order with per-item `{error}` slots. Billed per item."
 sidebarTitle: "Batch"
@@ -8,10 +8,6 @@ sidebarTitle: "Batch"
 `POST /v1/token` · **1 per item credit**
 
 Full-detail batch twin: up to 25 `{chain, address}` items (EVM and Solana can be mixed in one call), response array in input order with per-item `{error}` slots. Billed per item.
-
-<ParamField body="items" type="array" required>
-  1 to 25 of `{chain, address}`. Example: `[{"chain":"solana","address":"DezXAZ…"},{"chain":"evm:8453","address":"0x4ed4…"}]`
-</ParamField>
 
 <Note>Mixed families in one batch; a missing token returns a per-item error slot, never a failed batch.</Note>
 

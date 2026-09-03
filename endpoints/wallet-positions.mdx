@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/wallet/positions'
+openapi: '/openapi.json GET /v1/wallet/positions'
 title: "Wallet Positions"
 description: "Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana."
 ---
@@ -7,18 +7,6 @@ description: "Every position of a wallet with entry price and PnL: amount held, 
 `GET /v1/wallet/positions` · **2 credits**
 
 Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana.
-
-<ParamField query="wallet" type="string" required>
-  Wallet address (EVM hex, case-insensitive; Solana base58).
-</ParamField>
-
-<ParamField query="chain" type="string">
-  Public chain id - `evm:<id>` or `solana`. Omit to infer from the address: a `0x` wallet returns every EVM chain, a base58 wallet returns Solana. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="tokens" type="string">
-  Comma-separated token addresses (1-50) to scope the response to - positions and summary cover only those tokens. Same shape, faster: the lookup narrows to the requested tokens. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
 
 <Note>Lists the tokens currently held that the wallet has traded. `entryPriceUsd` is the current bag's average entry; `entryPriceLifetimeUsd` is the average over the position's whole life. The realized counterpart of each fully-exited position is on [`/v1/wallet/closed-positions`](/endpoints/wallet-closed-positions) - together the two cover every position exactly once.</Note>
 

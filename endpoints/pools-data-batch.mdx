@@ -1,5 +1,5 @@
 ---
-api: 'POST /v1/pools/data'
+openapi: '/openapi.json POST /v1/pools/data'
 title: "Market Data: batch"
 description: "Live snapshot of up to 100 markets in one call - the whole market-poll fan-out in a single request. Per-market shape identical to /v1/pool/data. Response is in input order, unknown markets slot in as null. Billed per market."
 sidebarTitle: "Batch"
@@ -8,14 +8,6 @@ sidebarTitle: "Batch"
 `POST /v1/pools/data` · **1 credit**
 
 The batch twin of [Market Data](/endpoints/market-data): poll up to 100 markets - across chains - in one request instead of a fan-out of single calls. Each item carries the same shape as `/v1/pool/data`; the response array is in input order, and an unknown market slots in as `null`. Billed per market in the call.
-
-<ParamField body="markets" type="array" required>
-  Up to 100 of `{chain, address}`. Response array is in input order; an unknown market is `null`. Billed per market. Example: `[{"chain":"evm:8453","address":"0x..."}]`
-</ParamField>
-
-<ParamField body="windows" type="string">
-  Comma-separated stat windows: `5m`, `1h`, `6h`, `24h`. Default `5m,1h,24h`.
-</ParamField>
 
 <Note>`circulatingSupply` is `null` on the batch (it comes from a slower upstream that would stall a fan-poll); fetch it per market on `/v1/pool/data` when you need it.</Note>
 

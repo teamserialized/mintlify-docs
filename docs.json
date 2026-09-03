@@ -16,13 +16,6 @@
   "api": {
     "playground": {
       "display": "interactive"
-    },
-    "mdx": {
-      "server": "https://api.serialized.xyz",
-      "auth": {
-        "method": "key",
-        "name": "Authorization"
-      }
     }
   },
   "navigation": {

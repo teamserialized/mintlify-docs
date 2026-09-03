@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/wallet/pnl'
+openapi: '/openapi.json GET /v1/wallet/pnl'
 title: "Wallet PnL"
 description: "Realized PnL of a wallet: daily curve plus summary (total realized, win rate, trades, wins/losses). Omit `chain` to combine every EVM chain; `chain=solana` for Solana."
 ---
@@ -7,18 +7,6 @@ description: "Realized PnL of a wallet: daily curve plus summary (total realized
 `GET /v1/wallet/pnl` · **1 credit**
 
 Realized PnL of a wallet: daily curve plus summary (total realized, win rate, trades, wins/losses). Omit `chain` to combine every EVM chain; `chain=solana` for Solana.
-
-<ParamField query="wallet" type="string" required>
-  Wallet address (EVM hex, case-insensitive; Solana base58).
-</ParamField>
-
-<ParamField query="chain" type="string">
-  Public chain id. Omit for all EVM chains combined.
-</ParamField>
-
-<ParamField query="period" type="string">
-  `1d`, `7d`, `30d` (default) or `all`. On EVM `all` spans the wallet's full history.
-</ParamField>
 
 <Note>Solana responses carry `usdBasis`: `trade` (each day valued at that day's native/USD rate) or `spot` (valued at the current native price). EVM PnL is valued at the current native price.</Note>
 

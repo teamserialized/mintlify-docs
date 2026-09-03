@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/price'
+openapi: '/openapi.json GET /v1/token/price'
 title: "Token Price"
 description: "Cheap price tier for bots and tickers: price, market cap, liquidity. Nothing else."
 ---
@@ -7,14 +7,6 @@ description: "Cheap price tier for bots and tickers: price, market cap, liquidit
 `GET /v1/token/price` · **1 credit**
 
 Cheap price tier for bots and tickers: price, market cap, liquidity. Nothing else.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address (EVM hex, case-insensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
 
 <RequestExample>
 ```bash cURL

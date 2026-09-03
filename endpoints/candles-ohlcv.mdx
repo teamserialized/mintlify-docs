@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/ohlcv'
+openapi: '/openapi.json GET /v1/token/ohlcv'
 title: "Candles (OHLCV)"
 description: "Chart-ready candles from 1s to 1M. Token-wide by default (the pool we price the token from, tracked across a bonding-curve migration and stitched into one continuous series), or aggregate an explicit set of up to 50 pools. Wick-outlier clamping and candle connecting included. On Base, the forming candle folds preconfirmed (flashblocks) swaps ~2.5s before block commit."
 ---
@@ -7,42 +7,6 @@ description: "Chart-ready candles from 1s to 1M. Token-wide by default (the pool
 `GET /v1/token/ohlcv` · **5 credits**
 
 Chart-ready candles from 1s to 1M. **Token-wide by default**: we resolve the pool we price the token from and, for a token that graduated from a bonding curve, stitch its curve history onto the current pool so the series is continuous. Pass `pools=` to aggregate an explicit set instead (≤50). Wick-outlier clamping and candle connecting are applied server-side. On Base, the forming candle folds preconfirmed (flashblocks) swaps ~2.5s before block commit.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address (EVM hex, case-insensitive; Solana base58, case-sensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
-
-<ParamField query="pools" type="string">
-  Optional. CSV of pool addresses (≤50) to aggregate. Omit for the token-wide default (best pool, tracked across migration, curve history stitched in). Each pool listed must belong to the token. Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
-</ParamField>
-
-<ParamField query="interval" type="string">
-  1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m). `1w`=7d, `1M`=30d, epoch-aligned. Example: `1h`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-500, default 200. Example: `24`
-</ParamField>
-
-<ParamField query="endTime" type="integer">
-  Unix seconds, inclusive upper bound. Paginate back with prev `meta.oldestTime - 1` while `meta.hasMore` (or with `meta.nextEndTime` when present). Example: `1786716000`
-</ParamField>
-
-<ParamField query="from" type="integer">
-  Unix seconds, inclusive lower bound - scans stop there. Example: `1755000000`
-</ParamField>
-
-<ParamField query="quote" type="string">
-  `native` (default) or `usd` (Solana) - `usd` converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history. Example: `usd`
-</ParamField>
-
-<ParamField query="fill" type="boolean">
-  Gap-fill empty buckets with flat candles for a dense time axis (default `false`). Example: `true`
-</ParamField>
 
 <Note>An unknown token returns `404`. Prices are native-quoted by default (`meta.quote: "native"`); on Solana pass `quote=usd` for USD candles, otherwise multiply by the native USD price.</Note>
 

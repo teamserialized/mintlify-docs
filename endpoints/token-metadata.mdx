@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/metadata'
+openapi: '/openapi.json GET /v1/token/metadata'
 title: "Token Metadata"
 description: "Socials, description, images, dex-paid status. POST twin on the same path for batches (≤100, billed per item)."
 ---
@@ -7,14 +7,6 @@ description: "Socials, description, images, dex-paid status. POST twin on the sa
 `GET /v1/token/metadata` · **1 credit**
 
 Socials, description, images, dex-paid status. POST twin on the same path for batches (≤100, billed per item).
-
-<ParamField query="chain" type="string" required>
-  Public chain id. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
 
 <Note>`iconUrl` and `headerUrl` point at the image's source URL, ready to render directly. `null` means no image is available.</Note>
 

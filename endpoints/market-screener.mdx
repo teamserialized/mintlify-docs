@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/screener'
+openapi: '/openapi.json GET /v1/screener'
 title: "Market Screener"
 description: "Every tradable market, paginated: filters by chain and token, sort by volume, market cap or creation time, cursor pagination. The discovery primitive - poll it to detect new markets."
 ---
@@ -7,22 +7,6 @@ description: "Every tradable market, paginated: filters by chain and token, sort
 `GET /v1/screener` · **1 credit**
 
 Every tradable market, paginated: filters by chain and token, sort by volume, market cap or creation time, cursor pagination. The discovery primitive - poll it to detect new markets.
-
-<ParamField query="chains" type="string" required>
-  CSV of public chain ids (1-8). sortBy=createdAt serves ONE chain per call (indexed walk) - fan out per chain. Example: `evm:8453,solana`
-</ParamField>
-
-<ParamField query="sortBy" type="string">
-  `volume` (default), `marketCap` or `createdAt`. volume/marketCap rank within the top-1000-by-24h-volume universe (`meta.universe`). Example: `createdAt`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  Rows per page (default 30, max 100). Example: `50`
-</ParamField>
-
-<ParamField query="cursor" type="string">
-  Opaque cursor from `meta.nextCursor`. Example: `eyJvIjozMH0`
-</ParamField>
 
 <Note>Each row is a market (chain + pool): token and quote identity, `priceNative`/`priceUsd`, `marketCapUsd`, `liquidityUsd`, `volume24hUsd`, `priceChange24hPct`, `txns`, `buys`, `sells`, `createdAt`.</Note>
 

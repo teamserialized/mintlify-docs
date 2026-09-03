@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/top-traders'
+openapi: '/openapi.json GET /v1/token/top-traders'
 title: "Token Top Traders"
 description: "Ranked traders of a token from our own PnL fold: realized PnL in native and USD, tokens and native bought/sold, open position, average entry, win rate over closed positions, first/last trade, and dev/sniper/pro-trader badges. Lifetime by default, or any rolling window (1h → 30d)."
 ---
@@ -7,30 +7,6 @@ description: "Ranked traders of a token from our own PnL fold: realized PnL in n
 `GET /v1/token/top-traders` · **2 credits**
 
 Ranked traders of a token from our own PnL fold: realized PnL in native and USD, tokens and native bought/sold, open position, average entry, win rate over closed positions, first/last trade, and dev/sniper/pro-trader badges. Lifetime by default, or any rolling window (`1h` → `30d`). EVM and Solana, one shape.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address. Example: `0x3c5cd672b204ba0fc48e93b98c0922920a87912d`
-</ParamField>
-
-<ParamField query="timeframe" type="string">
-  `all` (default, lifetime) or a rolling window: `1h`, `4h`, `1d`, `7d`, `30d`.
-</ParamField>
-
-<ParamField query="sortBy" type="string">
-  `pnl` (default), `bought`, `sold`, or `txns`.
-</ParamField>
-
-<ParamField query="order" type="string">
-  `asc` or `desc`. Default: `desc`.
-</ParamField>
-
-<ParamField query="limit" type="number">
-  1-100. Default 20.
-</ParamField>
 
 <Note>`meta` echoes the resolved `timeframe`, `sortBy` and `order`, plus `usdBasis` - the basis of every USD figure in the response.</Note>
 

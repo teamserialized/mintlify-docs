@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/search'
+openapi: '/openapi.json GET /v1/search'
 title: "Token Search"
 description: "Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry price, liquidity, market cap, 24h volume and 1h/24h price change."
 ---
@@ -7,18 +7,6 @@ description: "Low-latency token search: exact address (EVM hex, Solana base58, p
 `GET /v1/search` · **5 credits**
 
 Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry price, liquidity, market cap, 24h volume and 1h/24h price change.
-
-<ParamField query="q" type="string" required>
-  Address or text. Example: `degen`
-</ParamField>
-
-<ParamField query="chain" type="string">
-  Restrict to one chain.
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-50, default 12.
-</ParamField>
 
 <Note>`volume24hUsd` and `priceChange1hPct`/`priceChange24hPct` are token-wide - aggregated across every pool of the token - and referenced to the token's close before each window.</Note>
 

@@ -8,14 +8,6 @@ description: "Full token snapshot: price (native + USD), market cap & FDV (sanit
 
 Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.
 
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address (EVM hex, case-insensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
-
 <Note>`createdAt` is the TRUE deploy time (launchpad pool) - `launchpad.graduatedAt` carries the migration.</Note>
 
 <Note>`deployer` is resolved through the original launchpad pool owner - not the migration transaction sender.</Note>

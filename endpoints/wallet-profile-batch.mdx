@@ -1,5 +1,5 @@
 ---
-api: 'POST /v1/wallet/profile'
+openapi: '/openapi.json POST /v1/wallet/profile'
 title: "Wallet Profile: batch"
 description: "Batch twin: up to 100 addresses per call, response array in input order, `null` slots for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent)."
 sidebarTitle: "Batch"
@@ -8,10 +8,6 @@ sidebarTitle: "Batch"
 `POST /v1/wallet/profile` · **1 per item credit**
 
 Batch twin: up to 100 addresses per call, response array in input order, `null` slots for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).
-
-<ParamField body="items" type="array" required>
-  `[{ "address": "…" }]` - 1 to 100 items, EVM and Solana mixed freely.
-</ParamField>
 
 <RequestExample>
 ```bash cURL

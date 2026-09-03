@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/trades'
+openapi: '/openapi.json GET /v1/token/trades'
 title: "Trades Tape"
 description: "Real-time trade tape, token-wide by default or restricted to specific pools. `maker` is the REAL trader (relay/solver-resolved), with isProTrader/isSniper badges on every row and isWash on Solana. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Rich filters (side, USD/native/token size, date range, makers) and opaque cursor pagination."
 ---
@@ -8,78 +8,6 @@ description: "Real-time trade tape, token-wide by default or restricted to speci
 `POST /v1/token/trades` · **1 credit**
 
 Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with `isProTrader`/`isSniper` badges on every row and `isWash` on Solana. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. **Token-wide by default** - pass `pools=` to restrict. Use the `POST` twin for the `makers[]` filter (up to 2000 addresses, beyond the URL length cap).
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address (EVM hex, case-insensitive; Solana base58, case-sensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
-
-<ParamField query="pools" type="string">
-  Optional. CSV of pool addresses (≤50) restricting the scope. Omit for the token-wide default (every pool of the token). Each pool listed must belong to the token. Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
-</ParamField>
-
-<ParamField query="tradeType" type="string">
-  `buy` or `sell`. Example: `buy`
-</ParamField>
-
-<ParamField query="usdMin" type="number">
-  Keep trades whose USD volume is at least this. Example: `100`
-</ParamField>
-
-<ParamField query="usdMax" type="number">
-  Keep trades whose USD volume is at most this.
-</ParamField>
-
-<ParamField query="nativeMin" type="number">
-  Keep trades whose native-quote volume is at least this.
-</ParamField>
-
-<ParamField query="nativeMax" type="number">
-  Keep trades whose native-quote volume is at most this.
-</ParamField>
-
-<ParamField query="tokenAmountMin" type="number">
-  Keep trades of at least this many tokens.
-</ParamField>
-
-<ParamField query="tokenAmountMax" type="number">
-  Keep trades of at most this many tokens.
-</ParamField>
-
-<ParamField query="fromAt" type="integer">
-  Only trades at/after this time (epoch ms, inclusive). Example: `1755000000000`
-</ParamField>
-
-<ParamField query="toAt" type="integer">
-  Only trades at/before this time (epoch ms, inclusive).
-</ParamField>
-
-<ParamField query="sort" type="string">
-  `desc` (default, newest first) or `asc`. Example: `desc`
-</ParamField>
-
-<ParamField query="washFilter" type="string">
-  `washOnly` or `organicOnly` - filter by the per-transaction wash badge (Solana; every row carries `isWash`). Example: `organicOnly`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-500, default 100. Example: `3`
-</ParamField>
-
-<ParamField query="cursor" type="string">
-  Opaque - pass `meta.nextCursor` back verbatim to page. Example: `e1:eyJ0IjoxNzg2...`
-</ParamField>
-
-<ParamField query="include" type="string">
-  CSV opt-ins. `traderTxCounts` adds each row's `makerTxCount` (that trader's tx count within the page's time window). Example: `traderTxCounts`
-</ParamField>
-
-<ParamField body="makers" type="array">
-  POST only. Filter to these trader addresses (up to 2000). Example: `["0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09"]`
-</ParamField>
 
 <Note>An unknown token returns `404`. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` (the rate at the moment of the trade) on Solana.</Note>
 

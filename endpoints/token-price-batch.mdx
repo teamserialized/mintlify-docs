@@ -1,5 +1,5 @@
 ---
-api: 'POST /v1/token/price'
+openapi: '/openapi.json POST /v1/token/price'
 title: "Token Price: batch"
 description: "Batch twin - up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots."
 sidebarTitle: "Batch"
@@ -8,10 +8,6 @@ sidebarTitle: "Batch"
 `POST /v1/token/price` · **1 per item credit**
 
 Batch twin - up to 100 tokens in one call, one SQL round-trip. Response in input order; missing tokens come back as per-item `{error}` slots.
-
-<ParamField body="items" type="array" required>
-  [{chain, address}] - max 100.
-</ParamField>
 
 <RequestExample>
 ```bash cURL

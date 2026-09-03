@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/pools'
+openapi: '/openapi.json GET /v1/token/pools'
 title: "Token Pools"
 description: "Every market of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from."
 ---
@@ -7,18 +7,6 @@ description: "Every market of a token, ranked by our canonical pool priority - r
 `GET /v1/token/pools` · **1 credit**
 
 Every market of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted). Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address (EVM hex, case-insensitive). Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-100, default 50.
-</ParamField>
 
 <Note>Each pool carries its own 24h stats - `volume24hNative`, `volume24hUsd`, `txns24h` - so you can pick the market to trade or price against. `null` when a pool has no 24h activity to report.</Note>
 

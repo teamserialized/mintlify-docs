@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/pool/ohlcv'
+openapi: '/openapi.json GET /v1/pool/ohlcv'
 title: "Market Candles"
 description: "Historical OHLCV for one market, addressed by pool. Same engine, intervals (1s to 1M) and candle shape as `/v1/token/ohlcv` - here the pool IS the market (no curve stitching, no aggregation), for exact per-market charts."
 ---
@@ -7,38 +7,6 @@ description: "Historical OHLCV for one market, addressed by pool. Same engine, i
 `GET /v1/pool/ohlcv` · **5 credits**
 
 Historical OHLCV for one market, addressed by pool. Same engine, intervals (1s to 1M) and candle shape as [`/v1/token/ohlcv`](/endpoints/candles-ohlcv) - the difference is scope: this endpoint charts exactly one pool, with no curve stitching or multi-pool aggregation. A page of `/v1/pool/ohlcv` is byte-identical to `/v1/token/ohlcv?pools=<this pool>`.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported; Solana base58, case-sensitive). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
-</ParamField>
-
-<ParamField query="interval" type="string">
-  1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m). Example: `5m`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  Max candles per page (default 200, max 500). Example: `300`
-</ParamField>
-
-<ParamField query="endTime" type="integer">
-  Unix seconds, inclusive upper bound. Paginate back with prev `meta.oldestTime - 1` while `meta.hasMore` (or with `meta.nextEndTime` when present). Example: `1786716000`
-</ParamField>
-
-<ParamField query="from" type="integer">
-  Window start (unix SECONDS, inclusive - candle timestamps are TradingView-style seconds). Example: `1755000000`
-</ParamField>
-
-<ParamField query="quote" type="string">
-  `native` (default) or `usd` (Solana). Example: `usd`
-</ParamField>
-
-<ParamField query="fill" type="boolean">
-  Gap-fill empty buckets with flat candles for a dense time axis (default `false`). Example: `true`
-</ParamField>
 
 <Note>An unknown pool returns `404` (never a silently-empty 200). `meta.nextEndTime`, when present, is the next `endTime` to page a very deep scan; otherwise page with `oldestTime - 1`.</Note>
 

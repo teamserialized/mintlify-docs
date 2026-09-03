@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/wallet/equity/history'
+openapi: '/openapi.json GET /v1/wallet/equity/history'
 title: "Wallet Equity History"
 description: "Total wallet value (USD) as a time series over a chosen window - the equity curve behind every portfolio chart."
 ---
@@ -7,22 +7,6 @@ description: "Total wallet value (USD) as a time series over a chosen window - t
 `GET /v1/wallet/equity/history` · **1 credit**
 
 Total wallet value (USD) as a time series over a chosen window - the equity curve behind every portfolio chart.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="wallet" type="string" required>
-  Wallet address. Example: `0x8888888888888888888888888888888888888888`
-</ParamField>
-
-<ParamField query="from" type="integer">
-  Window start (epoch ms). Example: `1755000000000`
-</ParamField>
-
-<ParamField query="to" type="integer">
-  Window end (epoch ms, default now). Example: `1787800000000`
-</ParamField>
 
 <Note>`currentValueUsd` is the latest total value; `points` is the equity curve (`at` in ms, `valueUsd`). Billed per chain queried.</Note>
 

@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/pool/trades'
+openapi: '/openapi.json GET /v1/pool/trades'
 title: "Market Trades"
 description: "Trade tape of one market, addressed by pool: recent + historical, time-bounded, opaque cursor pagination, optional participant filter. Same row shape and filters as `/v1/token/trades` - a page here equals `/v1/token/trades?pools=<this pool>`."
 ---
@@ -7,50 +7,6 @@ description: "Trade tape of one market, addressed by pool: recent + historical, 
 `GET /v1/pool/trades` · **1 credit**
 
 Trade tape of one market, addressed by pool. Same row shape, badges and filters as [`/v1/token/trades`](/endpoints/trades-tape); the only difference is scope - exactly this pool. Each trade carries a stable `id`, timestamp (ms), price, size, side, `maker`, badges and tx hash.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported; Solana base58, case-sensitive). Example: `0x0ca6485b7e9cf814a3fd09d81672b07323535b64`
-</ParamField>
-
-<ParamField query="maker" type="string">
-  Filter trades by a single participant address. Example: `0x16380ab7951906dd53ca6095d51f091ef2614127`
-</ParamField>
-
-<ParamField query="tradeType" type="string">
-  `buy` or `sell`.
-</ParamField>
-
-<ParamField query="usdMin" type="number">
-  Keep trades whose USD volume is at least this (also `usdMax`, `nativeMin`, `nativeMax`, `tokenAmountMin`, `tokenAmountMax`). Example: `100`
-</ParamField>
-
-<ParamField query="fromAt" type="integer">
-  Only trades at/after this time (epoch ms, inclusive). `toAt` bounds the other end. Example: `1755000000000`
-</ParamField>
-
-<ParamField query="sort" type="string">
-  `desc` (default, newest first) or `asc`.
-</ParamField>
-
-<ParamField query="washFilter" type="string">
-  `washOnly` or `organicOnly` (Solana; every row carries `isWash`).
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-500, default 100.
-</ParamField>
-
-<ParamField query="cursor" type="string">
-  Opaque - pass `meta.nextCursor` back verbatim to page. Example: `e1:eyJ0IjoxNzU1...`
-</ParamField>
-
-<ParamField query="include" type="string">
-  CSV opt-ins. `traderTxCounts` adds each row's `makerTxCount`.
-</ParamField>
 
 <Note>An unknown pool returns `404` (never a silently-empty 200). `feesNative` is the trade's transaction fee in the chain's native unit. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM.</Note>
 

@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/holders'
+openapi: '/openapi.json GET /v1/token/holders'
 title: "Token Holders"
 description: "Top holders with position size, share of supply, full PnL (realized + unrealized), buy/sell volumes, behavioral labels and named entities (exchanges, funds - the \"Coinbase\" signal). EVM and Solana."
 ---
@@ -7,18 +7,6 @@ description: "Top holders with position size, share of supply, full PnL (realize
 `GET /v1/token/holders` · **2 credits**
 
 Top holders with position size, share of supply, full PnL (realized + unrealized), buy/sell volumes, behavioral labels and named entities (exchanges, funds - the "Coinbase" signal). EVM and Solana.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-100, default 50. Example: `5`
-</ParamField>
 
 <Note>`meta.totalHolders` carries the token's full holder count.</Note>
 

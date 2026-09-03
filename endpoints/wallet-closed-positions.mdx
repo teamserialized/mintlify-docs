@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/wallet/closed-positions'
+openapi: '/openapi.json GET /v1/wallet/closed-positions'
 title: "Wallet Closed Positions"
 description: "Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of `/v1/wallet/positions` - every position of a wallet lands in exactly one of the two. EVM and Solana."
 ---
@@ -7,26 +7,6 @@ description: "Every position a wallet has fully exited: total bought and sold (U
 `GET /v1/wallet/closed-positions` · **2 credits**
 
 Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of [`/v1/wallet/positions`](/endpoints/wallet-positions) - every position of a wallet lands in exactly one of the two. EVM and Solana.
-
-<ParamField query="wallet" type="string" required>
-  Wallet address (EVM hex, case-insensitive; Solana base58).
-</ParamField>
-
-<ParamField query="chain" type="string">
-  Public chain id - `evm:<id>` or `solana`. Omit to infer from the address: a `0x` wallet returns every EVM chain, a base58 wallet returns Solana. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-100. Default 30.
-</ParamField>
-
-<ParamField query="offset" type="integer">
-  Rows to skip for pagination. Default 0.
-</ParamField>
-
-<ParamField query="sort" type="string">
-  `lastTradeAt` (default, newest exit first) or `pnl` (largest realized PnL first).
-</ParamField>
 
 <Note>USD figures are valued at the current native price. `realizedPnlPercent` is realized PnL over total USD bought. `meta.hasMore` signals another page; `meta.oldestAt` is the last row's exit time.</Note>
 

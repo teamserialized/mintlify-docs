@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/stats'
+openapi: '/openapi.json GET /v1/token/stats'
 title: "Token Stats"
 description: "Windowed volume, buy/sell counts and volumes, transactions and price change - 5m/1h/6h/24h in one call. Token-wide across every pool by default."
 ---
@@ -7,22 +7,6 @@ description: "Windowed volume, buy/sell counts and volumes, transactions and pri
 `GET /v1/token/stats` · **1 credit**
 
 Windowed volume, buy/sell counts and volumes, transactions and price change - 5m/1h/6h/24h in one call.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
-
-<ParamField query="pools" type="string">
-  CSV of pool addresses (≤50) to scope the stats to specific markets. **Omit for token-wide stats across every pool** - the default, and what a single token figure should be. Every pool passed must belong to the token, or the request is rejected with 400.
-</ParamField>
-
-<ParamField query="windows" type="string">
-  CSV of `5m`|`1h`|`6h`|`24h`. Default: all four.
-</ParamField>
 
 <Note>The `24h` window here is the exact same figure as `stats24h` on [`/v1/token`](/endpoints/token-details) - one 24h number across the whole product.</Note>
 

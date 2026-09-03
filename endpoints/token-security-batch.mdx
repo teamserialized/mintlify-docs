@@ -1,5 +1,5 @@
 ---
-api: 'POST /v1/token/security'
+openapi: '/openapi.json POST /v1/token/security'
 title: "Token Security: batch"
 description: "Security fields for up to 500 tokens in one call, one union shape across EVM and Solana: mint/freeze authority state, holders count, top-10 concentration, dev/sniper/bundler holdings %, token burn, LP burn/lock, buy/sell/transfer tax, dexPaid + dexPaidAt. Billed per item. null always means unknown, never a fake zero."
 sidebarTitle: "Batch"
@@ -8,10 +8,6 @@ sidebarTitle: "Batch"
 `POST /v1/token/security` · **10 credits**
 
 The batch twin of [Token Security](/endpoints/token-security) - screen a whole watchlist in a single call. The response array is in input order with per-item `{error}` slots, and every item carries the same union shape (authorities, concentration, launch quality, liquidity safety, taxes, dexPaid). Mixed EVM and Solana in one call is fine.
-
-<ParamField body="items" type="array" required>
-  Up to 500 of `{chain, address}`. Response array is in input order with per-item `{error}` slots. Billed per item. Example: `[{"chain":"solana","address":"DezXAZ…"}]`
-</ParamField>
 
 <Note>Authority tri-state: `mintRevoked: true` = renounced (safe), `false` = active, `null` = unknown. USDC keeps both authorities active (Circle can mint & freeze - expected for a regulated stablecoin, a red flag on a memecoin); BONK has both revoked.</Note>
 

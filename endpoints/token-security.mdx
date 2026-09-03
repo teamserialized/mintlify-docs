@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/token/security'
+openapi: '/openapi.json GET /v1/token/security'
 title: "Token Security"
 description: "Security fields for any token in one union shape: mint/freeze authority state, holders count, top-10 concentration (CEX-custody excluded), dev/sniper/bundler holdings %, token burn, LP burn/lock, buy/sell/transfer tax, and dexPaid + dexPaidAt. EVM and Solana. null always means unknown, never a fake zero."
 ---
@@ -15,14 +15,6 @@ Everything you need to screen a token before trading it, in one call and one sha
 - **Taxes & listing** - `buyTaxBps`, `sellTaxBps`, `transferTaxBps`, `dexPaid`, `dexPaidAt`.
 
 `null` always means unknown, never a fabricated zero or false.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `solana`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token address (base58 mint on Solana, case-sensitive; `0x…` on EVM). Example: `DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263`
-</ParamField>
 
 <Note>Authority tri-state: `mintRevoked: true` means the authority is renounced (safe), `false` means it is still active, `null` means unknown. Same for freeze.</Note>
 

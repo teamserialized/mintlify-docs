@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/pulse'
+openapi: '/openapi.json GET /v1/pulse'
 title: "Token Filters"
 description: "Axiom-style launchpad lifecycle columns: `new` (created under 24h), `bonding` (active curves, sorted by bonding %), `graduated` (migrated or virtually-graduated, last 7 days). ~90 launchpads tracked natively across 18 EVM chains, bonding thresholds per factory."
 ---
@@ -7,18 +7,6 @@ description: "Axiom-style launchpad lifecycle columns: `new` (created under 24h)
 `GET /v1/pulse` · **1 credit**
 
 Axiom-style launchpad lifecycle columns: `new` (created under 24h), `bonding` (active curves, sorted by bonding %), `graduated` (migrated or virtually-graduated, last 7 days). ~90 launchpads tracked natively across 18 EVM chains, bonding thresholds per factory.
-
-<ParamField query="view" type="string" required>
-  new | bonding | graduated Example: `bonding`
-</ParamField>
-
-<ParamField query="chains" type="string" required>
-  CSV of chain ids (≤8), EVM and Solana mixable. Example: `evm:8453,solana`
-</ParamField>
-
-<ParamField query="limit" type="integer">
-  1-100, default 30.
-</ParamField>
 
 <Note>Each card is the token identity plus the live figures of the displayed pool over the view window (24h for `new`/`bonding`, 7d for `graduated`): `priceChangePct`, `volumeUsd`, `txns`, `buys`, `sells`, `feesUsd`. `priceChangePct` is referenced to the token's close before the window.</Note>
 

@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/wallet/profile'
+openapi: '/openapi.json GET /v1/wallet/profile'
 title: "Wallet Profile"
 description: "Who is behind an address: display name, avatar, ENS / Basename / .sol, bio, social accounts (Twitter, Farcaster, GitHub…), follower counts, sources, pro-trader flag - plus `linkedWallets`, other addresses of the same person (cross-wallet identity clusters). Built on our identity graph of 7.6M+ labeled wallets across EVM and Solana."
 ---
@@ -7,10 +7,6 @@ description: "Who is behind an address: display name, avatar, ENS / Basename / .
 `GET /v1/wallet/profile` · **1 credit**
 
 Who is behind an address: display name, avatar, ENS / Basename / .sol, bio, social accounts (Twitter, Farcaster, GitHub…), follower counts, sources, pro-trader flag - plus `linkedWallets`, other addresses of the same person (cross-wallet identity clusters). Built on our identity graph of 7.6M+ labeled wallets across EVM and Solana.
-
-<ParamField query="address" type="string" required>
-  Wallet address (EVM hex or Solana base58). Example: `0xd8da6bf26964af9d7eed9e03e53415d37aa96045`
-</ParamField>
 
 <RequestExample>
 ```bash cURL

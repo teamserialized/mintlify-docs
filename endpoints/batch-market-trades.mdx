@@ -1,5 +1,5 @@
 ---
-api: 'POST /v1/pools/trades'
+openapi: '/openapi.json POST /v1/pools/trades'
 title: "Batch Market Trades"
 description: "The tape of up to 200 markets in a single call, since a timestamp - grouped per market, with a per-market row cap. One request replaces a full polling fan-out. Cross-chain; billed per market."
 ---
@@ -7,18 +7,6 @@ description: "The tape of up to 200 markets in a single call, since a timestamp 
 `POST /v1/pools/trades` · **1 per market credit**
 
 The tape of up to 200 markets in a single call, since a timestamp - the response groups trades per market and caps rows per market. One request replaces a whole polling fan-out. Rows are the exact [`/v1/pool/trades`](/endpoints/market-trades) shape. This is a polling endpoint (`from` is bounded to 24h back); page the per-market tape for deep history.
-
-<ParamField body="markets" type="array" required>
-  List of `{chain, address}` pools (up to 200 per call, cross-chain). Billing is per market. Example: `[{"chain":"evm:8453","address":"0x0ca6485b7e9cf814a3fd09d81672b07323535b64"}]`
-</ParamField>
-
-<ParamField body="from" type="integer" required>
-  Only trades at/after this time (epoch ms, inclusive) - at most 24h back. Example: `1786718000000`
-</ParamField>
-
-<ParamField body="perMarketLimit" type="integer">
-  Rows per market (default 100, max 500). Example: `200`
-</ParamField>
 
 <Note>Results come back in input order, one entry per requested market (`{chain, address, trades}`); a market with no trades in the window returns an empty `trades`. `meta.usdBasis` is `spot` here - over a ≤24h window the trade-time and spot rates coincide. Billed per market included in the call.</Note>
 

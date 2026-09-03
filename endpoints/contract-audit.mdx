@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/audit/contract'
+openapi: '/openapi.json GET /v1/audit/contract'
 title: "Contract Audit"
 description: "Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Async-first: an already-audited token answers inline; a new one starts the audit and returns a progress status to re-poll."
 ---
@@ -7,14 +7,6 @@ description: "Full Serialized Audit verdict for a contract: safety verdict, vuln
 `GET /v1/audit/contract` · **750 credits**
 
 Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Async-first: an already-audited token answers inline; a new one starts the audit and returns a progress status to re-poll.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` (audit covers EVM only). Example: `evm:8453`
-</ParamField>
-
-<ParamField query="address" type="string" required>
-  Token/contract address. Example: `0x4ed4e862860bed51a9570b96d89af5e1b0efefed`
-</ParamField>
 
 <Note>`meta.complete` tells you whether the verdict is final or the audit is still running (`{ status: "FETCHING" | "DECOMPILING" | "ANALYZING" }`).</Note>
 

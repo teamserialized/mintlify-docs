@@ -1,5 +1,5 @@
 ---
-api: 'GET /v1/wallet/funding'
+openapi: '/openapi.json GET /v1/wallet/funding'
 title: "Wallet Funding"
 description: "Where a wallet got its first funds: the earliest native transfer that funded it - funder address, timestamp, transaction and amount, with an entity tag (exchange, bridge…) when the funder is known. The primitive behind insider and sybil heuristics."
 ---
@@ -7,14 +7,6 @@ description: "Where a wallet got its first funds: the earliest native transfer t
 `GET /v1/wallet/funding` · **1 credit**
 
 Where a wallet got its first funds: the earliest native transfer that funded it - funder address, timestamp, transaction and amount, with an entity tag (exchange, bridge…) when the funder is known. The primitive behind insider and sybil heuristics.
-
-<ParamField query="chain" type="string" required>
-  Public chain id - `evm:<id>` or `solana`. Example: `evm:8453`
-</ParamField>
-
-<ParamField query="wallet" type="string" required>
-  Wallet address (EVM hex, case-insensitive; Solana base58).
-</ParamField>
 
 <RequestExample>
 ```bash cURL
