@@ -14,8 +14,12 @@
     "dark": "#1D4ED8"
   },
   "api": {
-    "playground": {
-      "display": "none"
+    "mdx": {
+      "server": "https://api.serialized.xyz",
+      "auth": {
+        "method": "key",
+        "name": "Authorization"
+      }
     }
   },
   "navigation": {

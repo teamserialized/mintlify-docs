@@ -1,4 +1,5 @@
 ---
+api: 'GET /v1/token/ohlcv'
 title: "Candles (OHLCV)"
 description: "Chart-ready candles from 1s to 1M. Token-wide by default (the pool we price the token from, tracked across a bonding-curve migration and stitched into one continuous series), or aggregate an explicit set of up to 50 pools. Wick-outlier clamping and candle connecting included. On Base, the forming candle folds preconfirmed (flashblocks) swaps ~2.5s before block commit."
 ---
