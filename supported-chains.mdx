@@ -3,29 +3,36 @@ title: "Supported Chains"
 description: "18 EVM chains + Solana, live. The chain id to pass on every call."
 ---
 
+export const Chain = ({ img, name }) => (
+  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+    <img src={img} width="22" height="22" noZoom style={{ borderRadius: '50%', margin: 0 }} />
+    <b>{name}</b>
+  </span>
+);
+
 Every request takes a `chain` parameter: `evm:<EIP-155 id>` for EVM chains (canonical ids, nothing invented) and `solana`. Ordered by trading activity:
 
 | Chain | `chain` id | Native |
 | --- | --- | --- |
-| Base | `evm:8453` | ETH |
-| Ethereum | `evm:1` | ETH |
-| BNB Smart Chain | `evm:56` | BNB |
-| Arbitrum | `evm:42161` | ETH |
-| Avalanche | `evm:43114` | AVAX |
-| Abstract | `evm:2741` | ETH |
-| HyperEVM | `evm:645749` | HYPE |
-| Ink | `evm:57073` | ETH |
-| Story | `evm:1514` | IP |
-| X Layer | `evm:196` | OKB |
-| Plasma | `evm:9745` | XPL |
-| Unichain | `evm:130` | ETH |
-| Monad | `evm:143` | MON |
-| MegaETH | `evm:4326` | ETH |
-| Tempo | `evm:4217` | USDC.e |
-| Robinhood Chain | `evm:4663` | ETH |
-| Arc | `evm:5042` | USDC |
-| Stable | `evm:988` | USDT |
-| Solana | `solana` | SOL |
+| <Chain img="/images/chains/base.png" name="Base" /> | `evm:8453` | ETH |
+| <Chain img="/images/chains/ethereum.png" name="Ethereum" /> | `evm:1` | ETH |
+| <Chain img="/images/chains/bsc.png" name="BNB Smart Chain" /> | `evm:56` | BNB |
+| <Chain img="/images/chains/arbitrum.png" name="Arbitrum" /> | `evm:42161` | ETH |
+| <Chain img="/images/chains/avalanche.png" name="Avalanche" /> | `evm:43114` | AVAX |
+| <Chain img="/images/chains/abstract.webp" name="Abstract" /> | `evm:2741` | ETH |
+| <Chain img="/images/chains/hyperevm.webp" name="HyperEVM" /> | `evm:645749` | HYPE |
+| <Chain img="/images/chains/ink.webp" name="Ink" /> | `evm:57073` | ETH |
+| <Chain img="/images/chains/story.webp" name="Story" /> | `evm:1514` | IP |
+| <Chain img="/images/chains/xlayer.webp" name="X Layer" /> | `evm:196` | OKB |
+| <Chain img="/images/chains/plasma.png" name="Plasma" /> | `evm:9745` | XPL |
+| <Chain img="/images/chains/unichain.webp" name="Unichain" /> | `evm:130` | ETH |
+| <Chain img="/images/chains/monad.png" name="Monad" /> | `evm:143` | MON |
+| <Chain img="/images/chains/megaeth.png" name="MegaETH" /> | `evm:4326` | ETH |
+| <Chain img="/images/chains/tempo.webp" name="Tempo" /> | `evm:4217` | USDC.e |
+| <Chain img="/images/chains/robinhood.webp" name="Robinhood Chain" /> | `evm:4663` | ETH |
+| <Chain img="/images/chains/arc.webp" name="Arc" /> | `evm:5042` | USDC |
+| <Chain img="/images/chains/stable.webp" name="Stable" /> | `evm:988` | USDT |
+| <Chain img="/images/chains/solana.png" name="Solana" /> | `solana` | SOL |
 
 The list is also served by [`GET /v1/meta/chains`](/endpoints/chains) (free, 0 credits) with per-chain status, so your integration can sync it programmatically instead of hardcoding it.
 

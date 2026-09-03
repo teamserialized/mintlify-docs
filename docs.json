@@ -34,7 +34,6 @@
               "quickstart",
               "authentication",
               "conventions",
-              "supported-chains",
               "errors",
               "migrate",
               "support"
@@ -141,6 +140,17 @@
               "streams/trades-stream",
               "streams/token-updates-stream",
               "streams/pool-updates-stream"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Chains",
+        "groups": [
+          {
+            "group": "Chains",
+            "pages": [
+              "supported-chains"
             ]
           }
         ]
