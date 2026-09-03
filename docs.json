@@ -16,8 +16,7 @@
   },
   "api": {
     "playground": {
-      "display": "interactive",
-      "proxy": false
+      "display": "interactive"
     },
     "examples": {
       "prefill": true
@@ -113,11 +112,21 @@
               "endpoints/native-prices",
               "endpoints/chains",
               "endpoints/market-definition",
-              "endpoints/market-data",
-              "endpoints/pools-data-batch",
+              {
+                "group": "Market Data",
+                "pages": [
+                  "endpoints/market-data",
+                  "endpoints/pools-data-batch"
+                ]
+              },
               "endpoints/market-candles",
-              "endpoints/market-trades",
-              "endpoints/batch-market-trades",
+              {
+                "group": "Market Trades",
+                "pages": [
+                  "endpoints/market-trades",
+                  "endpoints/batch-market-trades"
+                ]
+              },
               "endpoints/pool-top-traders"
             ]
           },

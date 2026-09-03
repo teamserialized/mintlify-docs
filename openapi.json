@@ -7,12 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://demo.serialized.xyz",
-      "description": "Demo: no key needed, read endpoints, rate-limited per IP"
-    },
-    {
-      "url": "https://api.serialized.xyz",
-      "description": "Production: your API key in the Authorization header"
+      "url": "https://api.serialized.xyz"
     }
   ],
   "components": {
@@ -21,7 +16,7 @@
         "type": "apiKey",
         "name": "Authorization",
         "in": "header",
-        "description": "Your raw API key (not needed on the demo server)."
+        "x-default": "sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM"
       }
     }
   },

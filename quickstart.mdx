@@ -1,13 +1,13 @@
 ---
 title: "Quickstart"
-description: "Your first call in under a minute."
+description: "Your first call in under a minute, with the shared demo key."
 ---
 
-Every endpoint page in this doc has an interactive playground pre-filled with a working example: open one and hit Send. It runs against the demo server, no key needed. This page is the same first call, from your own terminal or code.
+Every endpoint page in this doc has an interactive playground pre-filled with a working example: open one and hit Send. This page is the same first call, from your own terminal or code.
 
 ## 1. Grab a key
 
-The playground needs no key. Your own code does: API keys are issued in conversation, [talk to us](/support) and you will have one in minutes. Paste it in place of `YOUR_API_KEY` below.
+The shared demo key below works everywhere in this doc and in the samples on this page (Free plan limits, shared between visitors). For your own key, [talk to us](/support).
 
 ## 2. Make your first call
 
@@ -16,12 +16,12 @@ Full token snapshot for DEGEN on Base:
 <CodeGroup>
 ```bash cURL
 curl 'https://api.serialized.xyz/v1/token?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed' \
-  -H 'Authorization: YOUR_API_KEY'
+  -H 'Authorization: sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM'
 ```
 ```typescript TypeScript
 const res = await fetch(
   'https://api.serialized.xyz/v1/token?chain=evm:8453&address=0x4ed4e862860bed51a9570b96d89af5e1b0efefed',
-  { headers: { Authorization: 'YOUR_API_KEY' } },
+  { headers: { Authorization: 'sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM' } },
 );
 const { data } = await res.json();
 console.log(data.symbol, data.priceUsd, data.stats24h.volumeUsd);
@@ -32,7 +32,7 @@ import requests
 res = requests.get(
     "https://api.serialized.xyz/v1/token",
     params={"chain": "evm:8453", "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"},
-    headers={"Authorization": "YOUR_API_KEY"},
+    headers={"Authorization": "sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM"},
 )
 data = res.json()["data"]
 print(data["symbol"], data["priceUsd"], data["stats24h"]["volumeUsd"])
