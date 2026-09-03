@@ -12,6 +12,8 @@ Axiom-style launchpad lifecycle columns: `new` (created under 24h), `bonding` (a
 
 <Note>`bondingProgress` is consistent with the token endpoint - same factory registry, same thresholds. `graduatedAt` uses the authoritative migration event, not the pool creation time.</Note>
 
+<Note>`priceNative`, `priceUsd`, `marketCapUsd`, `liquidityNative` and `liquidityUsd` are `null` on a card whose token has not traded yet; `txns`, `buys`, `sells` and `volumeUsd` then report measured zeros.</Note>
+
 <Note>EVM and Solana chains combine in one call - list them together in `chains` and the merged feed is ranked on the view's sort key. `chains=solana` serves the Pump.fun / Raydium LaunchLab / Meteora DBC lifecycles with the same views.</Note>
 
 <RequestExample>

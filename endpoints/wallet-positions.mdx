@@ -10,7 +10,9 @@ Every position of a wallet with entry price and PnL: amount held, USD value, ave
 
 <Note>Lists the tokens currently held that the wallet has traded. `entryPriceUsd` is the current bag's average entry; `entryPriceLifetimeUsd` is the average over the position's whole life. The realized counterpart of each fully-exited position is on [`/v1/wallet/closed-positions`](/endpoints/wallet-closed-positions) - together the two cover every position exactly once.</Note>
 
-<Note>`meta.summary` carries wallet-level totals (value, realized, unrealized, total PnL, position count). Returns 502 if a holdings source is unavailable.</Note>
+<Note>`amountUsd` is the position's market value at the depth of its main pool: the proceeds of selling the whole amount into that pool, pool fee included, so a large position on a thin pool is worth what the pool can actually pay out. Positions on a live bonding curve are valued at the curve price. `currentPriceUsd` is the market price of the token; `unrealizedPnlUsd` is `amountUsd` minus the cost basis. `amountUsd` and `unrealizedPnlUsd` are `null` when the position has no pool with usable reserves to value it against; `currentPriceUsd` is `null` when the main pool carries no plausible market price. `entryPriceUsd`, `entryPriceLifetimeUsd` and `realizedPnlUsd` come from the wallet's trades and are always served when the wallet bought the token.</Note>
+
+<Note>`meta.summary` carries wallet-level totals (value, realized, unrealized, total PnL) computed over every position of the wallet, whatever `minValueUsd` is; value and unrealized PnL cover the positions that carry an `amountUsd`. `positions` is the number of positions returned. Returns `503` with `Retry-After` while holdings are momentarily unavailable.</Note>
 
 <RequestExample>
 ```bash cURL

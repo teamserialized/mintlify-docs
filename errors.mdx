@@ -23,8 +23,10 @@ Every error is:
 | `QUOTA_EXCEEDED` | 402 |
 | `NOT_FOUND` | 404 |
 | `RATE_LIMITED` | 429 |
-| `UPSTREAM_ERROR` | 502 |
-| `UPSTREAM_TIMEOUT` | 504 |
+| `UPSTREAM_ERROR` | 503 |
+| `UPSTREAM_TIMEOUT` | 503 |
 | `INTERNAL` | 500 |
+
+`503` responses carry a `Retry-After` header (seconds): retry after that delay, the request is not billed.
 
 `402 QUOTA_EXCEEDED` (monthly credits spent) and `429 RATE_LIMITED` (per-key rate) are covered in [Authentication & Limits](/authentication). `4xx` requests and rejected calls are never billed.

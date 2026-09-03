@@ -10,7 +10,7 @@ Windowed volume, buy/sell counts and volumes, transactions and price change - 5m
 
 <Note>The `24h` window here is the exact same figure as `stats24h` on [`/v1/token`](/endpoints/token-details) - one 24h number across the whole product.</Note>
 
-<Note>`txns` is the exact count of transactions in the window. `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction. `priceChangePct` is the move across the window: the latest price against the price the token had one window-length ago - the last close before the window opened. `null` when the window carries no priced trades.</Note>
+<Note>`txns` is the exact count of transactions in the window. `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction. `priceChangePct` is the price change over the window, in percent. `null` when the window carries no priced trades.</Note>
 
 <RequestExample>
 ```bash cURL (EVM, token-wide)

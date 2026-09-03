@@ -5,7 +5,7 @@ description: "The contract every endpoint follows"
 
 ## One envelope
 
-Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). A field that can't be computed is `null` (never a fabricated value — see [null means unknown](#null-means-unknown)); when an upstream is momentarily unavailable the endpoint returns a neutral `502` rather than partial data.
+Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). A field that can't be computed is `null` (never a fabricated value, see [null means unknown](#null-means-unknown)); when data is momentarily unavailable the endpoint returns a `503` with `Retry-After` rather than partial data.
 
 ## Chain ids
 

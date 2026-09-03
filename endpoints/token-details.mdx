@@ -1,18 +1,24 @@
 ---
 openapi: '/openapi.json GET /v1/token'
 title: "Token Details"
-description: "Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials."
+description: "Full token snapshot: price (native + USD), market cap, FDV and supplies (total, circulating), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials."
 ---
 
 `GET /v1/token` · **1 credit**
 
-Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.
+Full token snapshot: price (native + USD), market cap, FDV and supplies (total, circulating), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.
+
+<Note>`totalSupply` is the on-chain supply of the contract on the requested chain. `marketCapUsd` and `fdvUsd` are the asset's circulating market cap and fully diluted value: for an asset issued on several chains (stablecoins, bridged majors) they cover the asset as a whole, across every chain, while `totalSupply` stays per contract. `circulatingSupply` is `null` when the token has no distinct circulating supply; `marketCapUsd` then equals `fdvUsd` (`totalSupply` × price). Wrapped natives (WETH, WBNB, WgUSDT...) and the chain's native coin (`0x000...000` on EVM, the SOL mint on Solana) are priced at `priceNative` `"1"` by construction, `priceUsd` being the same spot as [`/v1/prices/native`](/endpoints/native-prices). A wrapped native carries no capitalisation of its own: its `totalSupply`, `circulatingSupply`, `marketCapUsd` and `fdvUsd` are `null`; the coin's own figures live on the native coin entry. Its liquidity and `stats24h` are the wrapper contract's markets.</Note>
+
+<Note>`pool` is the token's best market under the canonical priority ranking: the same pool as the first row of [`/v1/token/pools`](/endpoints/token-pools).</Note>
+
+<Note>`priceNative`, `priceUsd`, `marketCapUsd`, `fdvUsd`, `liquidityNative`, `liquidityUsd`, `priceNativeAth` and `liquidityNativeAth` are `null` when the token has not traded yet; `stats24h` then reports measured zeros. A token whose price fell to zero after trading keeps `priceNative` `"0"`.</Note>
 
 <Note>`createdAt` is the TRUE deploy time (launchpad pool) - `launchpad.graduatedAt` carries the migration.</Note>
 
 <Note>`deployer` is resolved through the original launchpad pool owner - not the migration transaction sender.</Note>
 
-<Note>`stats24h` is the token-wide 24h window - the exact same numbers as the `24h` block of [`/v1/token/stats`](/endpoints/token-stats-windowed). `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction; `txns` is the exact transaction count. `priceChangePct` is the move across the window: the latest price against the price the token had 24h ago - the last close before the window opened. `null` when the window carries no priced trades.</Note>
+<Note>`stats24h` is the token-wide 24h window, the same window as the `24h` block of [`/v1/token/stats`](/endpoints/token-stats-windowed). `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction; `txns` is the exact transaction count. `priceChangePct` is the price change over the 24h window, in percent. `null` when the window carries no priced trades.</Note>
 
 <Note>`metadata.dexPaid` is `true`, `false`, or `null` (status unknown) - never a fabricated `false`. `metadata.dexPaidAt` is the payment time in ms, or `null`.</Note>
 
@@ -37,6 +43,7 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
     "decimals": 18,
     "nameRank": 2,
     "totalSupply": "36327303013.18345",
+    "circulatingSupply": null,
     "priceNative": "0.00000054747124708872",
     "priceUsd": 0.0010292322577456162,
     "marketCapUsd": 37389232.09806793,
@@ -92,6 +99,7 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
     "decimals": 5,
     "nameRank": 1,
     "totalSupply": "87994588748104.98",
+    "circulatingSupply": null,
     "priceNative": "3.139776285604127e-8",
     "priceUsd": 0.000002359580289275846,
     "marketCapUsd": 207630297.17296264,
@@ -135,6 +143,63 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
   },
   "meta": {
     "asOf": 1786745258937
+  }
+}
+```
+```json Response (stablecoin, EVM)
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    "name": "USD Coin",
+    "symbol": "USDC",
+    "decimals": 6,
+    "nameRank": 2,
+    "totalSupply": "4259955844.01",
+    "circulatingSupply": "74124132813.26",
+    "priceNative": "0.0004186947931834",
+    "priceUsd": 0.9999,
+    "marketCapUsd": 74116720399.96,
+    "fdvUsd": 74116720399.96,
+    "liquidityNative": "5286.3125",
+    "liquidityUsd": 12623871.44,
+    "priceNativeAth": null,
+    "liquidityNativeAth": null,
+    "pool": {
+      "address": "0xd0b53d9277642d899df5c87a3966a349a798f224",
+      "type": "UNISWAP_V3",
+      "quoteAddress": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "quoteSymbol": "USDC",
+      "factory": null,
+      "createdAt": 1691633477000
+    },
+    "launchpad": null,
+    "deployer": null,
+    "createdAt": 1691633477000,
+    "stats24h": {
+      "volumeNative": 95297.0512,
+      "volumeUsd": 227546269.11,
+      "buys": 245640,
+      "sells": 231882,
+      "buyVolumeNative": 50262.9488,
+      "sellVolumeNative": 45034.1024,
+      "txns": 477522,
+      "priceChangePct": 0.01
+    },
+    "metadata": {
+      "iconUrl": "https://cdn.dexscreener.com/cms/images/usdc-base.png",
+      "headerUrl": null,
+      "websiteUrl": "https://www.circle.com/en/usdc",
+      "twitterUrl": null,
+      "telegramUrl": null,
+      "discordUrl": null,
+      "description": null,
+      "dexPaid": null,
+      "dexPaidAt": null
+    }
+  },
+  "meta": {
+    "asOf": 1788350000000
   }
 }
 ```

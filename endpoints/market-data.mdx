@@ -8,9 +8,12 @@ description: "Live snapshot of one market, safe to poll at high frequency: price
 
 Live snapshot of one market, safe to poll at high frequency: price (native + USD), liquidity, market cap, circulating + total supply, and per-window stats - volume, buy/sell counts and volumes, unique traders, fees and price change. Windowed stats come from the same engine as [Token Stats](/endpoints/token-stats-windowed), scoped to this pool. The full security fields (authorities, taxes, concentration) live on [Token Security](/endpoints/token-security).
 
-<Note>Each window carries `volumeNative`/`volumeUsd`, `buys`/`sells`, `buyVolumeNative`/`sellVolumeNative`, `traders` (unique), `feesNative` and `priceChangePct` (close-referenced). Solana markets additionally carry `txns`, organic-volume twins and `poolFeesNative`.</Note>
+<Note>Each window carries `volumeNative`/`volumeUsd`, `buys`/`sells`, `buyVolumeNative`/`sellVolumeNative`, `traders` (unique), `feesNative` and `priceChangePct`. Solana markets additionally carry `txns`, organic-volume twins and `poolFeesNative`.</Note>
 
-<Note>`priceChangePct` is close-referenced: the change from the last close before the window opened.</Note>
+
+<Note>`priceChangePct` is the price change of this market over the window, in percent. `null` when the window carries no priced trades.</Note>
+
+<Note>`priceNative`, `priceUsd`, `marketCapUsd`, `liquidityNative` and `liquidityUsd` are `null` when the market has not traded yet; the windows then report measured zeros.</Note>
 
 <RequestExample>
 ```bash cURL

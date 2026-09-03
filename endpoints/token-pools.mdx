@@ -1,14 +1,18 @@
 ---
 openapi: '/openapi.json GET /v1/token/pools'
 title: "Token Pools"
-description: "Every market of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from."
+description: "The markets of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from."
 ---
 
 `GET /v1/token/pools` · **1 credit**
 
-Every market of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from.
+The markets of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from. A token is listed on both sides of its markets: as the priced asset of a pool (`side: "base"`) and on the markets where it is the quote asset (`side: "quote"`), which is how wrapped natives and stablecoins such as WETH, WHYPE or USDC trade.
+
+<Note>Each row describes the pool from its own viewpoint: `baseAddress` / `baseSymbol` is the pool's priced asset, `quoteAddress` / `quoteSymbol` its quote asset, `priceNative` the price of the base asset in the chain's native coin, and `side` tells you which of the two is the token you asked for. The token you asked for is always identified; the other side is `null` while its identity is still being resolved.</Note>
 
 <Note>Each pool carries its own 24h stats - `volume24hNative`, `volume24hUsd`, `txns24h` - so you can pick the market to trade or price against. `null` when a pool has no 24h activity to report.</Note>
+
+<Note>`priceNative` and `liquidityNative` are `null` for a pool that has not traded yet. A pool whose price fell to zero after trading keeps `priceNative` `"0"`.</Note>
 
 <RequestExample>
 ```bash cURL
@@ -25,6 +29,9 @@ curl 'https://api.serialized.xyz/v1/token/pools?chain=evm:8453&address=0x4ed4e86
       "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
       "type": "UNISWAP_V3",
       "factory": null,
+      "side": "base",
+      "baseAddress": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+      "baseSymbol": "BRETT",
       "quoteAddress": "0x4200000000000000000000000000000000000006",
       "quoteSymbol": "WETH",
       "liquidityNative": "127.33497008601",
@@ -40,6 +47,9 @@ curl 'https://api.serialized.xyz/v1/token/pools?chain=evm:8453&address=0x4ed4e86
       "address": "0xc9034c3e7f58003e6ae0c8438e7c8f4598d5acaa",
       "type": "UNISWAP_V3",
       "factory": null,
+      "side": "base",
+      "baseAddress": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+      "baseSymbol": "BRETT",
       "quoteAddress": "0x4200000000000000000000000000000000000006",
       "quoteSymbol": "WETH",
       "liquidityNative": "18.671634022943",

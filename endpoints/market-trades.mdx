@@ -8,7 +8,9 @@ description: "Trade tape of one market, addressed by pool: recent + historical, 
 
 Trade tape of one market, addressed by pool. Same row shape, badges and filters as [`/v1/token/trades`](/endpoints/trades-tape); the only difference is scope - exactly this pool. Each trade carries a stable `id`, timestamp (ms), price, size, side, `maker`, badges and tx hash.
 
-<Note>An unknown pool returns `404` (never a silently-empty 200). `feesNative` is the trade's transaction fee in the chain's native unit. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM.</Note>
+<Note>**Pagination.** Each page is bounded by `limit` and by a scan window over the tape: a page can hold fewer than `limit` rows while `meta.hasMore` is `true`. Keep passing `meta.nextCursor` until `hasMore` is `false`; cursors never skip or repeat a trade, and `hasMore: false` means the requested history is fully served.</Note>
+
+<Note>An unknown pool returns `404` (never a silently-empty 200). `feesNative` is the trade's transaction fee in the chain's native unit, `null` when it is not available for that row. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM.</Note>
 
 <RequestExample>
 ```bash cURL
