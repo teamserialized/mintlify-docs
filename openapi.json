@@ -1,0 +1,44 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Serialized Data API",
+    "description": "On-chain data for trading apps - tokens, candles, token filters. Built on our own indexers. 18 EVM chains + Solana, live.",
+    "version": "0.1.0"
+  },
+  "servers": [{ "url": "https://api.serialized.xyz" }],
+  "components": {
+    "securitySchemes": {
+      "apiKey": { "type": "apiKey", "name": "Authorization", "in": "header" }
+    }
+  },
+  "security": [{ "apiKey": [] }],
+  "paths": {
+    "/v1/token": {
+      "get": {
+        "summary": "Token Details",
+        "description": "Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.",
+        "parameters": [
+          {
+            "name": "chain",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted).",
+            "example": "evm:8453"
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Token address (EVM hex, case-insensitive).",
+            "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Token snapshot in the standard `{ data, meta }` envelope." }
+        }
+      }
+    }
+  }
+}
