@@ -1,27 +1,37 @@
-# mintlify-docs — GENERATED, do not edit
+# mintlify-docs: deployment target for docs.serialized.xyz
 
-This repo is the Mintlify deployment target for the **Serialized Data** docs
-(docs.serialized.xyz). Every file here except this README, AGENTS.md, LICENSE
-and .mintignore is **generated and force-synced** — any hand edit will be
-erased on the next publish.
+Mintlify deploys this repo (a push to `main` goes to production). The content is
+authored in `serialized-xyz/serialized-data` under `docs/mintlify/` (hand-written
+MDX) and published here by `scripts/publish-mintlify.mjs`.
 
-## Source of truth
+## Editing here is allowed, with one rule
 
-`serialized-xyz/serialized-data` → `docs/public/api-reference.json`
-(one JSON describing the whole API surface: REST endpoints + WS streams).
+You can edit pages in this repo (Mintlify web editor, a quick fix on GitHub), as
+long as the edits are **committed** (the publish refuses a dirty working tree).
+The next publish from `serialized-data` runs a 3-way sync, using the last publish
+commit as the base:
 
-## How to change the docs
+- changed only here: imported back into `serialized-data`, then kept;
+- changed only in `serialized-data`: published over this repo;
+- changed on both sides, differently: the publish **fails** and lists the files.
+  Someone reconciles them in `serialized-data` and publishes again. Nothing is
+  silently lost either way.
+
+Prefer editing in `serialized-data` when you can: the API code, the contract
+and the docs live and get reviewed together there.
+
+## How to publish
 
 In the `serialized-data` repo:
 
 ```bash
-# 1. edit docs/public/api-reference.json (or the generator)
-node scripts/gen-mintlify.mjs        # regenerate docs/mintlify/ (reviewable)
-node scripts/publish-mintlify.mjs    # sync into this repo + push
+node scripts/publish-mintlify.mjs    # 3-way sync, overlay, commit, push
 ```
 
-The publish script refuses to run if this repo has local changes — that is the
-guard against hand edits.
+## Files owned by this repo only
+
+`README.md`, `AGENTS.md`, `LICENSE`, `.mintignore`: never touched by the
+publish, edit them here.
 
 ## Local preview
 
@@ -29,5 +39,3 @@ guard against hand edits.
 npm i -g mint   # Mintlify CLI
 mint dev        # at the root of this repo
 ```
-
-Deploys to production automatically on push to `main` (Mintlify GitHub app).

@@ -1,10 +1,12 @@
 # Instructions for AI agents
 
-**Do not edit any file in this repo.** Everything except README.md, AGENTS.md,
-LICENSE and .mintignore is generated from `serialized-xyz/serialized-data`
-(`docs/public/api-reference.json` + `scripts/gen-mintlify.mjs`) and force-synced
-by `scripts/publish-mintlify.mjs`. A hand edit here is silently destroyed on the
-next publish.
+This repo is the Mintlify deployment target for docs.serialized.xyz. The pages
+are authored in `serialized-xyz/serialized-data` under `docs/mintlify/` and
+published here by `scripts/publish-mintlify.mjs`.
 
-To change the docs: edit the JSON (or the generator) in `serialized-data`,
-regenerate, and publish from there. See README.md for the exact commands.
+**Prefer editing in `serialized-data`.** If you edit here, commit your changes:
+the next publish runs a 3-way sync (base = last publish commit) that imports
+edits made only here, and fails loudly on a file changed on both sides. See
+README.md.
+
+`README.md`, `AGENTS.md`, `LICENSE` and `.mintignore` live only in this repo.
