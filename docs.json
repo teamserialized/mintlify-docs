@@ -16,6 +16,9 @@
   "api": {
     "playground": {
       "display": "interactive"
+    },
+    "examples": {
+      "prefill": true
     }
   },
   "navigation": {

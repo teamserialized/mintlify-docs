@@ -15,7 +15,8 @@
       "apiKey": {
         "type": "apiKey",
         "name": "Authorization",
-        "in": "header"
+        "in": "header",
+        "x-default": "sd_live_eyJrIjoiODNkMGM4MWI4ZDk2IiwidCI6Im9wZW5hcGktZG9jcyIsInAiOiJmcmVlIiwiaWF0IjoxNzg4NDI4NDY3fQ.3FMGyHyDqzSKU7TylKuBRKdiFIy3doL9If9I6vyB0KM"
       }
     }
   },
@@ -53,7 +54,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` (audit covers EVM only).",
             "example": "evm:8453"
@@ -63,7 +65,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token/contract address.",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -99,7 +102,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -109,7 +113,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "description": "Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported).",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
@@ -133,7 +138,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -143,7 +149,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "description": "Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported).",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
@@ -176,7 +183,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -186,7 +194,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "description": "Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported; Solana base58, case-sensitive).",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
@@ -196,7 +205,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "5m"
             },
             "description": "1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m).",
             "example": "5m"
@@ -206,7 +216,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 300
             },
             "description": "Max candles per page (default 200, max 500).",
             "example": 300
@@ -216,7 +227,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1786716000
             },
             "description": "Unix seconds, inclusive upper bound. Paginate back with prev `meta.oldestTime - 1` while `meta.hasMore` (or with `meta.nextEndTime` when present).",
             "example": 1786716000
@@ -226,7 +238,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1755000000
             },
             "description": "Window start (unix SECONDS, inclusive - candle timestamps are TradingView-style seconds).",
             "example": 1755000000
@@ -236,7 +249,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "usd"
             },
             "description": "`native` (default) or `usd` (Solana).",
             "example": "usd"
@@ -246,7 +260,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "x-default": true
             },
             "description": "Gap-fill empty buckets with flat candles for a dense time axis (default `false`).",
             "example": true
@@ -270,7 +285,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -280,7 +296,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "description": "Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported).",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
@@ -340,7 +357,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -350,7 +368,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "description": "Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported; Solana base58, case-sensitive).",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
@@ -360,7 +379,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x16380ab7951906dd53ca6095d51f091ef2614127"
             },
             "description": "Filter trades by a single participant address.",
             "example": "0x16380ab7951906dd53ca6095d51f091ef2614127"
@@ -379,7 +399,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "number"
+              "type": "number",
+              "x-default": 100
             },
             "description": "Keep trades whose USD volume is at least this (also `usdMax`, `nativeMin`, `nativeMax`, `tokenAmountMin`, `tokenAmountMax`).",
             "example": 100
@@ -389,7 +410,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1755000000000
             },
             "description": "Only trades at/after this time (epoch ms, inclusive). `toAt` bounds the other end.",
             "example": 1755000000000
@@ -426,7 +448,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "e1:eyJ0IjoxNzU1..."
             },
             "description": "Opaque - pass `meta.nextCursor` back verbatim to page.",
             "example": "e1:eyJ0IjoxNzU1..."
@@ -465,6 +488,12 @@
                     "items": {},
                     "description": "Up to 100 of `{chain, address}`. Response array is in input order; an unknown market is `null`. Billed per market.",
                     "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x..."
+                      }
+                    ],
+                    "x-default": [
                       {
                         "chain": "evm:8453",
                         "address": "0x..."
@@ -511,12 +540,19 @@
                         "chain": "evm:8453",
                         "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
                       }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
+                      }
                     ]
                   },
                   "timeframe": {
                     "type": "string",
                     "description": "`1m`|`5m`|`30m`|`1h`|`24h`|`7d` (default `24h`).",
-                    "example": "24h"
+                    "example": "24h",
+                    "x-default": "24h"
                   }
                 },
                 "required": [
@@ -554,17 +590,25 @@
                         "chain": "evm:8453",
                         "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
                       }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
+                      }
                     ]
                   },
                   "from": {
                     "type": "integer",
                     "description": "Only trades at/after this time (epoch ms, inclusive) - at most 24h back.",
-                    "example": 1786718000000
+                    "example": 1786718000000,
+                    "x-default": 1786718000000
                   },
                   "perMarketLimit": {
                     "type": "integer",
                     "description": "Rows per market (default 100, max 500).",
-                    "example": 200
+                    "example": 200,
+                    "x-default": 200
                   }
                 },
                 "required": [
@@ -605,7 +649,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "bonding"
             },
             "description": "new | bonding | graduated",
             "example": "bonding"
@@ -615,7 +660,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453,solana"
             },
             "description": "CSV of chain ids (≤8), EVM and Solana mixable.",
             "example": "evm:8453,solana"
@@ -648,7 +694,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453,solana"
             },
             "description": "CSV of public chain ids (1-8). sortBy=createdAt serves ONE chain per call (indexed walk) - fan out per chain.",
             "example": "evm:8453,solana"
@@ -658,7 +705,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "createdAt"
             },
             "description": "`volume` (default), `marketCap` or `createdAt`. volume/marketCap rank within the top-1000-by-24h-volume universe (`meta.universe`).",
             "example": "createdAt"
@@ -668,7 +716,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 50
             },
             "description": "Rows per page (default 30, max 100).",
             "example": 50
@@ -678,7 +727,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "eyJvIjozMH0"
             },
             "description": "Opaque cursor from `meta.nextCursor`.",
             "example": "eyJvIjozMH0"
@@ -702,7 +752,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "degen"
             },
             "description": "Address or text.",
             "example": "degen"
@@ -758,6 +809,16 @@
                         "chain": "evm:8453",
                         "address": "0x4ed4…"
                       }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ…"
+                      },
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x4ed4…"
+                      }
                     ]
                   }
                 },
@@ -784,7 +845,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted).",
             "example": "evm:8453"
@@ -794,7 +856,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address (EVM hex, case-insensitive).",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -818,7 +881,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "solana"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "solana"
@@ -869,7 +933,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -879,7 +944,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address.",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -889,7 +955,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 5
             },
             "description": "1-100, default 50.",
             "example": 5
@@ -913,7 +980,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id.",
             "example": "evm:8453"
@@ -923,7 +991,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address.",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -947,7 +1016,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted).",
             "example": "evm:8453"
@@ -957,7 +1027,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address (EVM hex, case-insensitive; Solana base58, case-sensitive).",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -967,7 +1038,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "description": "Optional. CSV of pool addresses (≤50) to aggregate. Omit for the token-wide default (best pool, tracked across migration, curve history stitched in). Each pool listed must belong to the token.",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
@@ -977,7 +1049,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "1h"
             },
             "description": "1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m). `1w`=7d, `1M`=30d, epoch-aligned.",
             "example": "1h"
@@ -987,7 +1060,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 24
             },
             "description": "1-500, default 200.",
             "example": 24
@@ -997,7 +1071,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1786716000
             },
             "description": "Unix seconds, inclusive upper bound. Paginate back with prev `meta.oldestTime - 1` while `meta.hasMore` (or with `meta.nextEndTime` when present).",
             "example": 1786716000
@@ -1007,7 +1082,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1755000000
             },
             "description": "Unix seconds, inclusive lower bound - scans stop there.",
             "example": 1755000000
@@ -1017,7 +1093,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "usd"
             },
             "description": "`native` (default) or `usd` (Solana) - `usd` converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history.",
             "example": "usd"
@@ -1027,7 +1104,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "boolean",
+              "x-default": true
             },
             "description": "Gap-fill empty buckets with flat candles for a dense time axis (default `false`).",
             "example": true
@@ -1051,7 +1129,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted).",
             "example": "evm:8453"
@@ -1061,7 +1140,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address (EVM hex, case-insensitive).",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -1124,7 +1204,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted).",
             "example": "evm:8453"
@@ -1134,7 +1215,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address (EVM hex, case-insensitive).",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -1168,6 +1250,12 @@
                         "chain": "solana",
                         "address": "DezXAZ…"
                       }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ…"
+                      }
                     ]
                   }
                 },
@@ -1194,7 +1282,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "solana"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "solana"
@@ -1204,7 +1293,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"
             },
             "description": "Token address (base58 mint on Solana, case-sensitive; `0x…` on EVM).",
             "example": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"
@@ -1232,7 +1322,8 @@
                   "chain": {
                     "type": "string",
                     "description": "Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted).",
-                    "example": "evm:8453"
+                    "example": "evm:8453",
+                    "x-default": "evm:8453"
                   },
                   "tokens": {
                     "type": "array",
@@ -1240,12 +1331,16 @@
                     "description": "Token addresses (up to 100, same chain). Billing is per token; an unknown token returns `[]`.",
                     "example": [
                       "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+                    ],
+                    "x-default": [
+                      "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
                     ]
                   },
                   "timeframe": {
                     "type": "string",
                     "description": "`1m`|`5m`|`30m`|`1h`|`24h`|`7d` (default `24h`).",
-                    "example": "24h"
+                    "example": "24h",
+                    "x-default": "24h"
                   }
                 },
                 "required": [
@@ -1274,7 +1369,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -1284,7 +1380,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address.",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -1326,7 +1423,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -1336,7 +1434,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x3c5cd672b204ba0fc48e93b98c0922920a87912d"
             },
             "description": "Token address.",
             "example": "0x3c5cd672b204ba0fc48e93b98c0922920a87912d"
@@ -1396,7 +1495,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -1406,7 +1506,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Token address (EVM hex, case-insensitive; Solana base58, case-sensitive).",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -1416,7 +1517,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "description": "Optional. CSV of pool addresses (≤50) restricting the scope. Omit for the token-wide default (every pool of the token). Each pool listed must belong to the token.",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
@@ -1426,7 +1528,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "buy"
             },
             "description": "`buy` or `sell`.",
             "example": "buy"
@@ -1436,7 +1539,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "number"
+              "type": "number",
+              "x-default": 100
             },
             "description": "Keep trades whose USD volume is at least this.",
             "example": 100
@@ -1491,7 +1595,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1755000000000
             },
             "description": "Only trades at/after this time (epoch ms, inclusive).",
             "example": 1755000000000
@@ -1510,7 +1615,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "desc"
             },
             "description": "`desc` (default, newest first) or `asc`.",
             "example": "desc"
@@ -1520,7 +1626,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "organicOnly"
             },
             "description": "`washOnly` or `organicOnly` - filter by the per-transaction wash badge (Solana; every row carries `isWash`).",
             "example": "organicOnly"
@@ -1530,7 +1637,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 3
             },
             "description": "1-500, default 100.",
             "example": 3
@@ -1540,7 +1648,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "e1:eyJ0IjoxNzg2..."
             },
             "description": "Opaque - pass `meta.nextCursor` back verbatim to page.",
             "example": "e1:eyJ0IjoxNzg2..."
@@ -1550,7 +1659,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "traderTxCounts"
             },
             "description": "CSV opt-ins. `traderTxCounts` adds each row's `makerTxCount` (that trader's tx count within the page's time window).",
             "example": "traderTxCounts"
@@ -1568,6 +1678,9 @@
                     "items": {},
                     "description": "POST only. Filter to these trader addresses (up to 2000).",
                     "example": [
+                      "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09"
+                    ],
+                    "x-default": [
                       "0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09"
                     ]
                   }
@@ -1604,7 +1717,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`. Omit to infer from the address: a `0x` wallet returns every EVM chain, a base58 wallet returns Solana.",
             "example": "evm:8453"
@@ -1655,7 +1769,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -1665,7 +1780,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x8888888888888888888888888888888888888888"
             },
             "description": "Wallet address.",
             "example": "0x8888888888888888888888888888888888888888"
@@ -1675,7 +1791,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1755000000000
             },
             "description": "Window start (epoch ms).",
             "example": 1755000000000
@@ -1685,7 +1802,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 1787800000000
             },
             "description": "Window end (epoch ms, default now).",
             "example": 1787800000000
@@ -1709,7 +1827,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -1792,7 +1911,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`. Omit to infer from the address: a `0x` wallet returns every EVM chain, a base58 wallet returns Solana.",
             "example": "evm:8453"
@@ -1802,7 +1922,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
             },
             "description": "Comma-separated token addresses (1-50) to scope the response to - positions and summary cover only those tokens. Same shape, faster: the lookup narrows to the requested tokens.",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
@@ -1856,7 +1977,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
             },
             "description": "Wallet address (EVM hex or Solana base58).",
             "example": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
@@ -1880,7 +2002,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -1958,7 +2081,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "description": "Public chain id - `evm:<id>` or `solana`.",
             "example": "evm:8453"
@@ -1968,7 +2092,8 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x8888888888888888888888888888888888888888"
             },
             "description": "Wallet address.",
             "example": "0x8888888888888888888888888888888888888888"
@@ -1978,7 +2103,8 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "x-default": 50
             },
             "description": "Transactions scanned (default 50, max 100).",
             "example": 50
