@@ -3,7 +3,7 @@ title: "Authentication & Limits"
 description: "API keys, credits, rate limits, usage"
 ---
 
-Pass your raw API key in the `Authorization` header on every request (same convention as Mobula — zero migration friction).
+Pass your raw API key in the `Authorization` header on every request (same convention as Mobula, zero migration friction).
 
 ```
 Authorization: YOUR_API_KEY
@@ -23,14 +23,14 @@ It runs on Free plan limits and is shared between visitors: perfect for explorin
 
 ## Plans
 
-Each plan sets a monthly credit allowance (calendar month, UTC) and a per-key rate limit.
+Each plan sets a monthly credit allowance (calendar month, UTC), a per-key rate limit and a per-second burst cap.
 
-| Plan | Credits / month | Rate limit |
-| --- | --- | --- |
-| Free | 15,000 | 60 req/min |
-| Starter | 150,000 | 1,200 req/min |
-| Growth | 2,000,000 | 2,400 req/min |
-| Enterprise | unlimited | 6,000 req/min |
+| Plan | Credits / month | Rate limit | Burst |
+| --- | --- | --- | --- |
+| Free | 15,000 | 60 req/min | 10 req/s |
+| Starter | 150,000 | 1,200 req/min | 40 req/s |
+| Growth | 2,000,000 | 2,400 req/min | 80 req/s |
+| Enterprise | unlimited | 6,000 req/min | 150 req/s |
 
 ## Credits
 
@@ -44,13 +44,23 @@ Most endpoints cost **1 credit**. The heavier ones:
 | 10 | `token/security` |
 | 750 | `audit/contract` |
 
-POST batch endpoints bill **per item**. **Only successful (2xx) responses are billed** — you never pay for your own 4xx, for auth/quota/rate-limit rejections, or for a 5xx on our side.
+POST batch endpoints bill **per item**. **Only successful (2xx) responses are billed**: you never pay for your own 4xx, for auth/quota/rate-limit rejections, or for a 5xx on our side.
 
 Every billable response carries `X-Credits-Remaining` (the credits left in the current cycle; omitted on unlimited plans).
 
 ## Rate limits
 
-The limit is per key, on a 1-minute window. Standard `X-RateLimit-*` headers are on every response; exceeding it returns `429` with code `RATE_LIMITED`.
+The limit is per key, on a 1-minute window, with a per-second burst cap so a full minute's budget cannot land in a single second. Standard `X-RateLimit-*` headers are on every response; exceeding a limit returns `429` with code `RATE_LIMITED` and a `Retry-After` header.
+
+A few endpoint groups carry their own per-key cap, identical on every plan:
+
+| Group | Endpoints | Cap |
+| --- | --- | --- |
+| Wallet | `wallet/*` | 300 req/min |
+| Traders | `token/top-traders`, `token/dev-tokens`, `pool/top-traders` | 150 req/min |
+| Security | `token/security` | 100 req/min |
+| Search | `search` | 200 req/min |
+| Audit | `audit/contract` | 30 req/min |
 
 ## Quota exhaustion
 
@@ -78,9 +88,9 @@ The first frame authenticates with your key. Close codes:
 
 | Code | Meaning |
 | --- | --- |
-| 4401 | Auth failure — key missing, invalid, or revoked (revoking a key also drops its open connections) |
+| 4401 | Auth failure: key missing, invalid, or revoked (revoking a key also drops its open connections) |
 | 4402 | Monthly credit quota exhausted (the WS mirror of the `402`) |
-| 1008 | Policy — limits, floods, or a stuck socket |
+| 1008 | Policy: limits, floods, or a stuck socket |
 | 1001 | Idle timeout |
 
 Streaming usage is metered per minute.
