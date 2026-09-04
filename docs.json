@@ -165,5 +165,8 @@
   },
   "footer": {
     "socials": {}
+  },
+  "seo": {
+    "indexing": "navigable"
   }
 }
