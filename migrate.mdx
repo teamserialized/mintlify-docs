@@ -26,6 +26,7 @@ API key in the `Authorization` header) and the credit model is aligned.
 | GET `{data}` / batch POST `{payload}` wrappers                  | always `{ data, meta }`                                                          | one envelope                                     |
 | Timestamps: mixed seconds/ms                                    | always unix **milliseconds**, fields end in `At`                                 | no guessing                                      |
 | Amounts net-of-fee (Solana)                                     | GROSS on-chain amounts (the exact swapped value)                                | matches the chain exactly                        |
+| Native coin as `0xeeee…eeee`                                    | native coin = `0x0000…0000` on EVM (`pool.quote.address`, `token/pools`), `So11111111111111111111111111111111111111112` on Solana | the chain's own convention, no synthetic address |
 
 ### Endpoint map
 
@@ -36,7 +37,7 @@ API key in the `Authorization` header) and the credit model is aligned.
 | `GET /api/2/token/price`                           | `GET /v1/token/price`                                    | + `marketCapUsd`, `liquidityUsd` included                                                    |
 | `GET /api/2/token/markets` pairs                   | `GET /v1/token/pools`                                    | rank 1 = the pool we price from, then every other market by 24h volume and liquidity         |
 | `GET /api/2/token/ohlcv-history`                   | `GET /v1/token/ohlcv`                                    | `pools` optional, defaults to the best pool followed through migration; intervals `1s` to `1M`; `quote=usd` on Solana; paginate with `endTime` while `meta.hasMore` |
-| `GET /api/2/market/details` (windowed stats)       | `GET /v1/token/stats?windows=5m,1h,24h`                  | token-wide by default, `pools=` to restrict; per-window `txns`, buy/sell split and `priceChangePct` |
+| `GET /api/2/market/details` (windowed stats)       | `GET /v1/token/stats`                                    | token-wide by default, `pools=` to restrict; `5m`, `1h`, `6h`, `24h` by default (same on `/v1/pool/data`); per-window `txns`, buy/sell split and `priceChangePct` |
 | `GET /api/2/token/trades`                          | `GET /v1/token/trades`                                   | token-wide by default (no `mode=pair` to unlearn); cursor + `fromAt`; `isWash` on Solana; `meta.usdBasis`; `marketAddress` is `poolAddress` on every row |
 | `GET /api/2/market/query` (`sortBy=volume24h`)     | `GET /v1/screener?sortBy=volume`                         | `volume` is strictly by 24h USD volume; the default `trending` ranks by relevance (wash-penalised); `marketCap`, `createdAt` |
 | `GET /api/2/token/holder-positions`                | `GET /v1/token/holders`                                  | top holders with supply share                                                                |

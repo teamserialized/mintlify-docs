@@ -1,13 +1,13 @@
 ---
 openapi: '/openapi.json POST /v1/wallet/profile'
 title: "Wallet Profile: batch"
-description: "Batch twin: up to 100 addresses per call, response array in input order, `null` slots for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent)."
+description: "Batch twin: up to 100 addresses per call, response array in input order. Each slot is the body of the single GET (`{ profile, linkedWallets }`), with `profile: null` and `linkedWallets: []` for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent)."
 sidebarTitle: "Batch"
 ---
 
 `POST /v1/wallet/profile` · **1 per item credit**
 
-Batch twin: up to 100 addresses per call, response array in input order, `null` slots for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).
+Batch twin: up to 100 addresses per call, response array in input order. Each slot is the body of the single GET (`{ profile, linkedWallets }`), with `profile: null` and `linkedWallets: []` for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).
 
 <RequestExample>
 ```bash cURL
@@ -22,7 +22,7 @@ curl -X POST 'https://api.serialized.xyz/v1/wallet/profile' \
 {
   "data": [
     {
-      "data": {
+      "profile": {
         "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
         "displayName": "vitalik.eth",
         "avatarUrl": "https://euc.li/vitalik.eth",
@@ -55,10 +55,14 @@ curl -X POST 'https://api.serialized.xyz/v1/wallet/profile' \
         ],
         "identityGroup": "twitter:VitalikButerin",
         "isProTrader": false
-      }
+      },
+      "linkedWallets": [
+        "0xa6a54119b8d20219e6ffeb8026fb557651c3b9b6"
+      ]
     },
     {
-      "data": null
+      "profile": null,
+      "linkedWallets": []
     }
   ],
   "meta": {

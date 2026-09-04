@@ -21,7 +21,7 @@ A `null` field means the source is unavailable or the value fails sanity checks 
 
 ## Strict validation
 
-Unknown params or invalid enums return 400 with a machine-readable `error.code` - never silently-empty data.
+Unknown params or invalid enums return 400 with a machine-readable `error.code` - never silently-empty data. A parameter we do not know answers `UNKNOWN_PARAM` and names it in the message; a known parameter with a bad value answers `INVALID_PARAM`.
 
 ## Native + USD
 

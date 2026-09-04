@@ -16,6 +16,8 @@ Full token snapshot: price (native + USD), market cap, FDV and supplies (total, 
 
 <Note>`createdAt` is the TRUE deploy time (launchpad pool) - `launchpad.graduatedAt` carries the migration.</Note>
 
+<Note>`launchpad.bondingProgress` reaches `100` at graduation and stays `100` once migrated (`launchpad.migrated: true`); the market endpoint reports the same value for the curve. `launchpad.launchpadPoolAddress` is the original bonding-curve market when it is addressable on `/v1/pool`; `null` for launch mechanisms without a dedicated curve market (Uniswap CCA auctions). `metadata.iconUrl` and `metadata.headerUrl` are always fetchable `https` URLs (IPFS and Arweave pointers resolved to a public gateway).</Note>
+
 <Note>`deployer` is the token's creator wallet: the launchpad creator when the token has a launchpad lineage, otherwise the wallet that created its canonical pool - never the migration transaction sender. `deployerSource` says which arm resolved it (`metadata` when the launchpad's metadata feed names the creator, `launchpad` for the creator of the original bonding curve, `pool` for the creator of the canonical pool) and is `null` whenever `deployer` is `null`.</Note>
 
 <Note>`stats24h` is the token-wide 24h window, the same window as the `24h` block of [`/v1/token/stats`](/endpoints/token-stats-windowed). `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction; `txns` is the number of distinct transactions in the window. `priceChangePct` is the price change over the 24h window, in percent. `null` when the window carries no priced trades.</Note>

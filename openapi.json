@@ -144,7 +144,7 @@
       "get": {
         "operationId": "market-data",
         "summary": "Market Data",
-        "description": "Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, circulating + total supply, buys/sells and unique traders per window (5m/1h/24h). Buy/sell tax and the full security fields live on `/v1/token/security`.",
+        "description": "Live snapshot of one market, safe to poll at high frequency: last price, per-window volume, liquidity, market cap, circulating + total supply, buys/sells and unique traders per window (5m/1h/6h/24h). Buy/sell tax and the full security fields live on `/v1/token/security`.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -175,15 +175,15 @@
           },
           {
             "schema": {
-              "default": "5m,1h,24h",
+              "default": "5m,1h,6h,24h",
               "type": "string",
-              "x-default": "5m,1h,24h"
+              "x-default": "5m,1h,6h,24h"
             },
             "in": "query",
             "name": "windows",
             "required": false,
-            "description": "Comma-separated stat windows.",
-            "example": "5m,1h,24h"
+            "description": "Comma-separated stat windows among `5m`, `1h`, `6h`, `24h`. Default: all four, the same default as `/v1/token/stats`.",
+            "example": "5m,1h,6h,24h"
           }
         ]
       }
@@ -713,11 +713,11 @@
                     }
                   },
                   "windows": {
-                    "default": "5m,1h,24h",
-                    "description": "CSV stat windows",
+                    "default": "5m,1h,6h,24h",
+                    "description": "Comma-separated stat windows among 5m, 1h, 6h, 24h. Default: all four (5m,1h,6h,24h).",
                     "type": "string",
-                    "example": "5m,1h,24h",
-                    "x-default": "5m,1h,24h"
+                    "example": "5m,1h,6h,24h",
+                    "x-default": "5m,1h,6h,24h"
                   }
                 }
               }
@@ -1993,7 +1993,7 @@
             "in": "query",
             "name": "windows",
             "required": false,
-            "description": "CSV of 5m|1h|6h|24h (default all).",
+            "description": "Comma-separated stat windows among `5m`, `1h`, `6h`, `24h`. Default: all four, the same default as `/v1/pool/data`.",
             "example": "5m,1h,6h,24h"
           }
         ]
@@ -2867,7 +2867,7 @@
       "post": {
         "operationId": "wallet-profile-batch",
         "summary": "Wallet Profile: batch",
-        "description": "Batch twin: up to 100 addresses per call, response array in input order, `null` slots for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).",
+        "description": "Batch twin: up to 100 addresses per call, response array in input order. Each slot is the body of the single GET (`{ profile, linkedWallets }`), with `profile: null` and `linkedWallets: []` for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."

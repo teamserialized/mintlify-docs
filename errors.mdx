@@ -19,6 +19,7 @@ Every error is:
 |---|---|
 | `INVALID_CHAIN` | 400 |
 | `INVALID_PARAM` | 400 |
+| `UNKNOWN_PARAM` | 400 |
 | `UNAUTHORIZED` | 401 |
 | `QUOTA_EXCEEDED` | 402 |
 | `NOT_FOUND` | 404 |
@@ -26,6 +27,8 @@ Every error is:
 | `UPSTREAM_ERROR` | 503 |
 | `UPSTREAM_TIMEOUT` | 503 |
 | `INTERNAL` | 500 |
+
+`400 UNKNOWN_PARAM` names the parameter we do not know (`Unknown query parameter "blockchain"`), so a leftover parameter from another provider is caught on the first call; `400 INVALID_PARAM` is a known parameter with a bad value.
 
 `503` responses carry a `Retry-After` header (seconds): retry after that delay, the request is not billed.
 

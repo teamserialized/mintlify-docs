@@ -8,7 +8,7 @@ description: "Static definition of one market (pool): venue/type, launchpad/fact
 
 Static definition of one market (pool): venue/type, the launchpad or factory it came from, fee tier, base & quote token metadata, price, liquidity, launchpad + bonding state, and created-at. Slow-changing, so cache it freely. A market id is simply chain + pool address: stable, unique on its venue, never reused.
 
-<Note>`factory` is the launchpad/factory of origin from our registry (e.g. `CLANKER`, `ZORA`, `PUMPFUN`), or `null` for a plain AMM pool. `feeBps` is the fee tier for concentrated-liquidity venues (Uniswap V3/V4, PancakeSwap V3, Aerodrome Slipstream); `null` when the fee is dynamic or the venue's fee units aren't certain, never a guess.</Note>
+<Note>`factory` is the launchpad/factory of origin from our registry (e.g. `CLANKER`, `ZORA`, `PUMPFUN`), or `null` for a plain AMM pool. `feeBps` is the fee tier for concentrated-liquidity venues (Uniswap V3/V4, PancakeSwap V3, Aerodrome Slipstream); `null` when the fee is dynamic or the venue's fee units aren't certain, never a guess. It may carry two decimals: Uniswap fee units are hundredths of a basis point (a `3499` fee tier is `34.99` bps). `bondingProgress` is `100` once the curve has migrated, consistent with the token endpoint.</Note>
 
 <Note>`bondingProgress` (0-100) is only present while `isLaunchpad` is true; `migrated` flips true once the token graduates to its AMM pool.</Note>
 

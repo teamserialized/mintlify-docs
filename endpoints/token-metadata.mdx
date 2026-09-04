@@ -8,7 +8,7 @@ description: "Socials, description, images, dex-paid status. POST twin on the sa
 
 Socials, description, images, dex-paid status. POST twin on the same path for batches (≤100, billed per item).
 
-<Note>`iconUrl` and `headerUrl` point at the image's source URL, ready to render directly. `null` means no image is available.</Note>
+<Note>`iconUrl` and `headerUrl` are always fetchable `https` URLs, ready to render directly: IPFS and Arweave pointers are resolved to a public gateway. `null` means no image is available.</Note>
 
 <Note>`dexPaid` is `true`, `false`, or `null` (status unknown); when our index has no record for a token, the status is resolved from DEX Screener's listing records. `dexPaidAt` is the payment time in ms, or `null`.</Note>
 
