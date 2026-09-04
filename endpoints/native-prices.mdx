@@ -6,7 +6,7 @@ description: "Live USD prices of every chain's native coin, with per-symbol fres
 
 `GET /v1/prices/native` · **1 credit**
 
-Live USD prices of every chain's native coin, with per-symbol freshness (`updatedAt`, `stale`) - you always know how fresh a price is.
+Live USD prices of every chain's native coin, with per-symbol freshness (`updatedAt`, `stale`) - you always know how fresh a price is. These are the live rates the spot-priced USD fields of the API use (Solana: the on-chain SOL/USDC rate, refreshed every 10 seconds); Solana trade and candle USD figures use the rate at trade time, see `meta.usdBasis` on those endpoints.
 
 <RequestExample>
 ```bash cURL

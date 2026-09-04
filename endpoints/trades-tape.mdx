@@ -9,7 +9,7 @@ description: "Real-time trade tape, token-wide by default or restricted to speci
 
 Real-time trade tape. `maker` is the trader behind the swap: when a wallet trades through a relay, a solver or a smart account, the row is attributed to that wallet, otherwise to the transaction sender. Every row carries `isProTrader`/`isSniper` badges, and `isWash` on Solana. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. **Token-wide by default** - pass `pools=` to restrict. Use the `POST` twin for the `makers[]` filter (up to 2000 addresses, beyond the URL length cap).
 
-<Note>**One row per swap event.** On EVM a swap routed through several pools of the token yields one row per pool, all sharing `txHash` (`id` is `txHash:logIndex`): group by `txHash` for a per-transaction view. On Solana the legs of a transaction are aggregated into one row per transaction and side (`id` is `signature:b` or `signature:s`).</Note>
+<Note>**One row per swap event.** On EVM a swap routed through several pools of the token yields one row per pool, all sharing `txHash` (`id` is `txHash:logIndex`): group by `txHash` for a per-transaction view. On Solana the legs of a transaction are aggregated into one row per transaction and side (`id` is `signature:b` or `signature:s`). Every row names its market in `poolAddress`: the pool of the swap event on EVM, the pool carrying the largest leg of the side on Solana.</Note>
 
 <Note>**Pagination.** Each page is bounded by `limit` and by a scan window over the tape: a page can hold fewer than `limit` rows while `meta.hasMore` is `true`. Keep passing `meta.nextCursor` until `hasMore` is `false`; cursors never skip or repeat a trade, whatever the page size, and `hasMore: false` means the requested history is fully served. `fromAt` and `toAt` are unix milliseconds; a value in seconds is rejected with `400`.</Note>
 
@@ -50,7 +50,8 @@ curl -X POST 'https://api.serialized.xyz/v1/token/trades' \
       "preconfirmed": false,
       "txHash": "0x9d6dd98095ebcb254576b23b2269edf8fa984b581404209aa2a5fe3a14431bdf",
       "block": 49964744,
-      "logIndex": 289
+      "logIndex": 289,
+      "poolAddress": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
     },
     {
       "id": "0xfe19670bf678d0a83f9ef9227e34f3a76462a924603a31ec2481fac34c7be319:407",
@@ -69,7 +70,8 @@ curl -X POST 'https://api.serialized.xyz/v1/token/trades' \
       "preconfirmed": false,
       "txHash": "0xfe19670bf678d0a83f9ef9227e34f3a76462a924603a31ec2481fac34c7be319",
       "block": 49953231,
-      "logIndex": 407
+      "logIndex": 407,
+      "poolAddress": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
     }
   ],
   "meta": {

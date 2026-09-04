@@ -230,7 +230,7 @@
             "in": "query",
             "name": "interval",
             "required": true,
-            "description": "Candle interval (default `5m`).",
+            "description": "1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m). `1w` buckets are epoch-aligned weeks (Thursday 00:00 UTC to Thursday); `1M` buckets are calendar months (UTC). `7d` and `30d` are accepted aliases; `meta.interval` echoes the canonical key.",
             "example": "5m"
           },
           {
@@ -865,7 +865,7 @@
       "get": {
         "operationId": "native-prices",
         "summary": "Native Prices",
-        "description": "Live USD prices of every chain's native coin, with per-symbol freshness (`updatedAt`, `stale`) - you always know how fresh a price is.",
+        "description": "Live USD prices of every chain's native coin, with per-symbol freshness (`updatedAt`, `stale`) - you always know how fresh a price is. These are the live rates the spot-priced USD fields of the API use (Solana: the on-chain SOL/USDC rate, refreshed every 10 seconds); Solana trade and candle USD figures use the rate at trade time, see `meta.usdBasis`.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -1111,7 +1111,7 @@
       "get": {
         "operationId": "market-screener",
         "summary": "Market Screener",
-        "description": "Every tradable market, paginated: filters by chain, sort by volume, market cap or creation time, per-window stats on every row, cursor pagination. The discovery primitive - poll it to detect new markets.",
+        "description": "Every tradable market, paginated: filters by chain, sort by trending (relevance), volume, market cap or creation time, per-window stats on every row, cursor pagination. The discovery primitive - poll it to detect new markets.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -1131,15 +1131,15 @@
           },
           {
             "schema": {
-              "default": "volume",
+              "default": "trending",
               "type": "string",
-              "x-default": "volume"
+              "x-default": "trending"
             },
             "in": "query",
             "name": "sortBy",
             "required": false,
-            "description": "`volume` (default), `marketCap` or `createdAt`. volume/marketCap rank within each chain's own universe (top 300 by 24h volume plus top 100 by 1h volume, named in `meta.universe`); `window` selects the rank window for `volume`.",
-            "example": "volume"
+            "description": "`trending` (default), `volume`, `marketCap` or `createdAt`. `trending` is the relevance ranking: 24h activity weighted by real participation, so wash-traded markets rank below organically traded ones with the same figures. `volume` is strictly ordered by the gross USD volume of `window` (default 24h: `volume24hUsd` descending). trending/volume/marketCap rank within each chain's own universe (top 300 by 24h volume plus top 100 by 1h volume, named in `meta.universe`).",
+            "example": "trending"
           },
           {
             "schema": {
@@ -1149,7 +1149,7 @@
             "in": "query",
             "name": "window",
             "required": false,
-            "description": "Rank window for `sortBy=volume`: `5m`, `1h`, `6h` or `24h` (default `24h`, the relevance ranking).",
+            "description": "Rank window for `sortBy=volume`: `5m`, `1h`, `6h` or `24h` (default `24h`). Not accepted with the other sorts (`trending` is a 24h relevance).",
             "example": "1h"
           },
           {
@@ -1574,7 +1574,7 @@
             "in": "query",
             "name": "interval",
             "required": true,
-            "description": "1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m).",
+            "description": "1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m). `1w` buckets are epoch-aligned weeks (Thursday 00:00 UTC to Thursday, the standard weekly bucket); `1M` buckets are calendar months (1st of the month 00:00 UTC). `7d` and `30d` are accepted as aliases of `1w` and `1M`; `meta.interval` always echoes the canonical key.",
             "example": "1h"
           },
           {
@@ -1633,7 +1633,7 @@
             "in": "query",
             "name": "quote",
             "required": false,
-            "description": "`native` (default) or `usd` (Solana) - usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history.",
+            "description": "`native` (default) or `usd` (Solana) - usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history (monthly candles use the median of the month's daily rates).",
             "example": "usd"
           },
           {

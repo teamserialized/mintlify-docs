@@ -20,7 +20,7 @@ Full token snapshot: price (native + USD), market cap, FDV and supplies (total, 
 
 <Note>`stats24h` is the token-wide 24h window, the same window as the `24h` block of [`/v1/token/stats`](/endpoints/token-stats-windowed). `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction; `txns` is the number of distinct transactions in the window. `priceChangePct` is the price change over the 24h window, in percent. `null` when the window carries no priced trades.</Note>
 
-<Note>`metadata.dexPaid` is `true`, `false`, or `null` (status unknown) - never a fabricated `false`. `metadata.dexPaidAt` is the payment time in ms, or `null`.</Note>
+<Note>`metadata.dexPaid` is `true`, `false`, or `null` (status unknown) - never a fabricated `false`. When our index has no record for a token, the status is resolved from DEX Screener's listing records. `metadata.dexPaidAt` is the payment time in ms, or `null`.</Note>
 
 <RequestExample>
 ```bash cURL (EVM)

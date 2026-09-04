@@ -1,21 +1,23 @@
 ---
 openapi: '/openapi.json GET /v1/screener'
 title: "Market Screener"
-description: "Every tradable market, paginated: filters by chain, sort by volume, market cap or creation time, per-window stats on every row, cursor pagination. The discovery primitive - poll it to detect new markets."
+description: "Every tradable market, paginated: filters by chain, sort by trending (relevance), volume, market cap or creation time, per-window stats on every row, cursor pagination. The discovery primitive - poll it to detect new markets."
 ---
 
 `GET /v1/screener` · **1 credit**
 
-Every tradable market, paginated: filters by chain, sort by volume, market cap or creation time, cursor pagination. Each row is a market (chain + pool) with its identity, price, liquidity, market cap and windowed stats (5m, 1h, 6h, 24h). The discovery primitive - poll it to detect new markets.
+Every tradable market, paginated: filters by chain, sort by trending (relevance, the default), volume, market cap or creation time, cursor pagination. Each row is a market (chain + pool) with its identity, price, liquidity, market cap and windowed stats (5m, 1h, 6h, 24h). The discovery primitive - poll it to detect new markets.
+
+<Note>`sortBy=trending` (default) ranks by relevance: 24h activity weighted by real participation, so a wash-traded market ranks below an organically traded one with the same figures. `sortBy=volume` is strictly ordered by the gross USD volume of `window` (default `24h`, that is `volume24hUsd` descending; `5m`, `1h`, `6h` rank on `stats.<window>.volumeUsd`). `sortBy=marketCap` ranks on `marketCapUsd`. `window` applies to `volume` only.</Note>
 
 <Note>Each row carries `priceNative`/`priceUsd`, `marketCapUsd`, `liquidityUsd`, `createdAt`, the 24h headline figures (`volume24hUsd`, `priceChange24hPct`, `txns`, `buys`, `sells`) and `stats`, one object per window (`5m`, `1h`, `6h`, `24h`) with seven fields named as in a [Market Data](/endpoints/market-data) window: `volumeNative`, `volumeUsd`, `buys`, `sells`, `txns`, `feesNative` and `priceChangePct` (the price change over the window, in percent). `volume24hUsd`, `txns`, `buys` and `sells` equal their `stats.24h` counterparts. `sortBy=createdAt` rows carry identity, price and market cap; windowed stats belong to the ranked listings. `priceNative`, `priceUsd` and `marketCapUsd` are `null` on a market that has not traded yet.</Note>
 
 
-<Note>For `volume`/`marketCap`, the universe is selected PER CHAIN: the top 300 markets by 24h USD volume plus the top 100 by 1h USD volume of that chain, refreshed every few seconds and named in `meta.universe`. `meta.chains` lists every requested chain with `markets` (the size of its universe) and `asOf` (the time its figures were computed). Pages merge the chains on the rank key. The cursor pins, for each chain, the computation the page was cut from and resumes right after the last market it served: every page of a walk started within the last minute comes from the same figures, so a market is served exactly once whatever the ranks did since. `meta.chains[*].asOf` tells you which computation a page reflects.</Note>
+<Note>For `trending`/`volume`/`marketCap`, the universe is selected PER CHAIN: the top 300 markets by 24h USD volume plus the top 100 by 1h USD volume of that chain, refreshed every few seconds and named in `meta.universe`. `meta.chains` lists every requested chain with `markets` (the size of its universe) and `asOf` (the time its figures were computed). Pages merge the chains on the rank key. The cursor pins, for each chain, the computation the page was cut from and resumes right after the last market it served: every page of a walk started within the last minute comes from the same figures, so a market is served exactly once whatever the ranks did since. `meta.chains[*].asOf` tells you which computation a page reflects.</Note>
 
 <RequestExample>
-```bash cURL (24h relevance, two chains)
-curl 'https://api.serialized.xyz/v1/screener?chains=evm:8453,solana&sortBy=volume&limit=2' \
+```bash cURL (trending, two chains)
+curl 'https://api.serialized.xyz/v1/screener?chains=evm:8453,solana&limit=2' \
   -H 'Authorization: YOUR_API_KEY'
 ```
 ```bash cURL (most traded over the last hour on Monad)
@@ -159,10 +161,9 @@ curl 'https://api.serialized.xyz/v1/screener?chains=evm:8453&sortBy=createdAt&li
   ],
   "meta": {
     "asOf": 1787163135004,
-    "sortBy": "volume",
-    "window": "24h",
+    "sortBy": "trending",
     "hasMore": true,
-    "nextCursor": "eyJ2IjozLCJzIjoidm9sdW1lIiwidyI6IjI0aCIsImMiOnsiZXZtOjg0NTMiOnsiayI6OC43MSwiYSI6IjB4MGNhNjQ4NWI3ZTljZjgxNGEzZmQwOWQ4MTY3MmIwNzMyMzUzNWI2NCIsInQiOjE3ODcxNjMxMzUwMDR9LCJzb2xhbmEiOnsiayI6Ni45NCwiYSI6IjQ4V2t3cnB1eHJqdW5VaVdQaktFNm13dDcyTDhKdDQ0WktEemVveGZwSkZxIiwidCI6MTc4NzE2MzEzNzIxMH19fQ",
+    "nextCursor": "eyJ2Ijo0LCJzIjoidHJlbmRpbmciLCJ3IjoiMjRoIiwiYyI6eyJldm06ODQ1MyI6eyJrIjo4LjcxLCJhIjoiMHgwY2E2NDg1YjdlOWNmODE0YTNmZDA5ZDgxNjcyYjA3MzIzNTM1YjY0IiwidCI6MTc4NzE2MzEzNTAwNH0sInNvbGFuYSI6eyJrIjo2Ljk0LCJhIjoiNDhXa3dycHV4cmp1blVpV1BqS0U2bXd0NzJMOEp0NDRaS0R6ZW94ZnBKRnEiLCJ0IjoxNzg3MTYzMTM3MjEwfX19",
     "universe": "perChain:top300ByVolume24hUsd+top100ByVolume1hUsd",
     "chains": {
       "evm:8453": { "markets": 341, "asOf": 1787163135004 },

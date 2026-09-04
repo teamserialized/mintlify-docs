@@ -10,6 +10,8 @@ Chart-ready candles from 1s to 1M. **Token-wide by default**: we resolve the poo
 
 <Note>An unknown token returns `404`. Prices are native-quoted by default (`meta.quote: "native"`); on Solana pass `quote=usd` for USD candles, otherwise multiply by the native USD price.</Note>
 
+<Note>Intervals run from `1s` to `1M`. `1w` candles are epoch-aligned weeks, Thursday 00:00 UTC to Thursday (the standard weekly bucket); `1M` candles are calendar months in UTC (1st of the month 00:00 UTC, 28 to 31 days). `7d` and `30d` are accepted as aliases of `1w` and `1M`; `meta.interval` always echoes the canonical key. With `quote=usd`, a monthly candle is converted at the median of the month's daily SOL/USD rates.</Note>
+
 <Note>The time axis is dense by default: every bucket up to `endTime` is present, and a bucket without a trade is a flat zero-volume candle at the previous close. Pass `fill=false` for a sparse axis with traded buckets only. `limit` is honoured whenever the token's history allows it, however quiet the token is.</Note>
 
 <Note>Every candle opens at the close of the previous traded candle, the first candle of a page included (its open is the close of the last traded candle before the page): paging backwards yields one continuous series, and a given bucket has the same `open` whatever page it lands on. Only the very first candle of the token's history, or the first candle at or after a `from` you set, opens at its own first trade.</Note>

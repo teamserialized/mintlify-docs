@@ -10,7 +10,7 @@ Socials, description, images, dex-paid status. POST twin on the same path for ba
 
 <Note>`iconUrl` and `headerUrl` point at the image's source URL, ready to render directly. `null` means no image is available.</Note>
 
-<Note>`dexPaid` is `true`, `false`, or `null` (status unknown); `dexPaidAt` is the payment time in ms, or `null`.</Note>
+<Note>`dexPaid` is `true`, `false`, or `null` (status unknown); when our index has no record for a token, the status is resolved from DEX Screener's listing records. `dexPaidAt` is the payment time in ms, or `null`.</Note>
 
 <RequestExample>
 ```bash cURL

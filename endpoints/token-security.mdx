@@ -12,7 +12,7 @@ Everything you need to screen a token before trading it, in one call and one sha
 - **Concentration** - `holdersCount`, `top10HoldersPct` (CEX-custody and pool/burn wallets excluded - the exclusion *is* the signal), `devHoldingsPct`.
 - **Launch quality** - `snipersHoldingsPct`, `bundlersHoldingsPct`, `tokenBurnedPct`.
 - **Liquidity safety** - `lpBurnedPct`, `lpLockedPct`, `lpSource`.
-- **Taxes & listing** - `buyTaxBps`, `sellTaxBps`, `transferTaxBps`, `dexPaid`, `dexPaidAt`.
+- **Taxes & listing** - `buyTaxBps`, `sellTaxBps`, `transferTaxBps`, `dexPaid`, `dexPaidAt` (the DEX Screener listing status, resolved from its listing records when our index has no record).
 
 `null` always means unknown, never a fabricated zero or false.
 
