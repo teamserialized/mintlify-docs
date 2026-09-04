@@ -1,14 +1,16 @@
 ---
 openapi: '/openapi.json GET /v1/wallet/closed-positions'
 title: "Wallet Closed Positions"
-description: "Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of `/v1/wallet/positions` - every position of a wallet lands in exactly one of the two. EVM and Solana."
+description: "Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of `/v1/wallet/positions` - the realized PnL of every position lands in exactly one of the two. EVM and Solana."
 ---
 
 `GET /v1/wallet/closed-positions` · **2 credits**
 
-Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of [`/v1/wallet/positions`](/endpoints/wallet-positions) - every position of a wallet lands in exactly one of the two. EVM and Solana.
+Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of [`/v1/wallet/positions`](/endpoints/wallet-positions) - the realized PnL of every position lands in exactly one of the two. EVM and Solana.
 
 <Note>USD figures are valued at the current native price. `realizedPnlPercent` is realized PnL over total USD bought. `meta.hasMore` signals another page; `meta.oldestAt` is the last row's exit time.</Note>
+
+<Note>`tokens=` scopes the response to 1 to 50 token addresses: the realized PnL of a fully-exited token in one call, without paging the wallet. A token whose bag is fully sold but still shows a residual balance is listed here with its realized PnL, and on [`/v1/wallet/positions`](/endpoints/wallet-positions) as a holding with `buys` and `sells` at 0.</Note>
 
 <RequestExample>
 ```bash cURL

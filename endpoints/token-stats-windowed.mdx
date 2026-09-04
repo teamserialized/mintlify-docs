@@ -10,7 +10,7 @@ Windowed volume, buy/sell counts and volumes, transactions and price change - 5m
 
 <Note>The `24h` window here is the exact same figure as `stats24h` on [`/v1/token`](/endpoints/token-details) - one 24h number across the whole product.</Note>
 
-<Note>`txns` is the exact count of transactions in the window. `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction. `priceChangePct` is the price change over the window, in percent. `null` when the window carries no priced trades.</Note>
+<Note>`txns` is the number of distinct transactions in the window, on every chain. `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction: on EVM they count swap events (a swap routed through several pools of the token counts one event per pool), on Solana they count transactions per side. `priceChangePct` is the price change over the window, in percent. `null` when the window carries no priced trades.</Note>
 
 <RequestExample>
 ```bash cURL (EVM, token-wide)
@@ -33,6 +33,7 @@ curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e86
       "volumeUsd": 0,
       "buys": 0,
       "sells": 0,
+      "txns": 0,
       "buyVolumeNative": 0,
       "sellVolumeNative": 0,
       "priceChangePct": null
@@ -42,6 +43,7 @@ curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e86
       "volumeUsd": 775.71,
       "buys": 4,
       "sells": 2,
+      "txns": 6,
       "buyVolumeNative": 0.398210102336,
       "sellVolumeNative": 0.01388478,
       "priceChangePct": 0.31844021
@@ -51,6 +53,7 @@ curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e86
       "volumeUsd": 6183.15,
       "buys": 41,
       "sells": 3,
+      "txns": 43,
       "buyVolumeNative": 3.107442612402,
       "sellVolumeNative": 0.177438309934,
       "priceChangePct": 1.20455082
@@ -60,6 +63,7 @@ curl 'https://api.serialized.xyz/v1/token/stats?chain=evm:8453&address=0x4ed4e86
       "volumeUsd": 23448.598725963,
       "buys": 176,
       "sells": 5,
+      "txns": 178,
       "buyVolumeNative": 11.839201571847,
       "sellVolumeNative": 0.633623186973,
       "priceChangePct": 7.328276263872

@@ -61,18 +61,18 @@ A few endpoint groups carry their own per-key cap, identical on every plan:
 When the monthly credit allowance is spent, billable endpoints return:
 
 ```json
-{ "error": { "code": "QUOTA_EXCEEDED", "message": "Monthly credit quota exhausted — upgrade your plan or wait for the next cycle" } }
+{ "error": { "code": "QUOTA_EXCEEDED", "message": "Monthly credit quota exhausted, upgrade your plan or wait for the next cycle" } }
 ```
 
 with HTTP `402` and `X-Credits-Remaining: 0`. Zero-credit endpoints (including `usage`) stay reachable so you can always inspect your own state and upgrade.
 
 ## Usage introspection
 
-Query your own consumption programmatically — no credit cost, and a level of self-serve visibility no other provider exposes over the API:
+Query your own consumption programmatically, at no credit cost, and a level of self-serve visibility no other provider exposes over the API:
 
-- `GET /v1/usage` — current cycle: `{ keyId, tenant, plan, month, credits: { used, limit, remaining }, requests }`.
-- `GET /v1/usage/history` — per-day series.
-- `GET /v1/usage/breakdown` — per-endpoint.
+- `GET /v1/usage`: current cycle: `{ keyId, tenant, plan, month, credits: { used, limit, remaining }, requests }`.
+- `GET /v1/usage/history`: per-day series.
+- `GET /v1/usage/breakdown`: per-endpoint.
 
 A key only ever sees its own usage.
 

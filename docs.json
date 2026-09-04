@@ -113,6 +113,7 @@
               "endpoints/token-sparklines",
               "endpoints/native-prices",
               "endpoints/chains",
+              "endpoints/factories",
               "endpoints/market-definition",
               {
                 "group": "Market Data",

@@ -16,9 +16,9 @@ Full token snapshot: price (native + USD), market cap, FDV and supplies (total, 
 
 <Note>`createdAt` is the TRUE deploy time (launchpad pool) - `launchpad.graduatedAt` carries the migration.</Note>
 
-<Note>`deployer` is resolved through the original launchpad pool owner - not the migration transaction sender.</Note>
+<Note>`deployer` is the token's creator wallet: the launchpad creator when the token has a launchpad lineage, otherwise the wallet that created its canonical pool - never the migration transaction sender. `deployerSource` says which arm resolved it (`metadata` when the launchpad's metadata feed names the creator, `launchpad` for the creator of the original bonding curve, `pool` for the creator of the canonical pool) and is `null` whenever `deployer` is `null`.</Note>
 
-<Note>`stats24h` is the token-wide 24h window, the same window as the `24h` block of [`/v1/token/stats`](/endpoints/token-stats-windowed). `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction; `txns` is the exact transaction count. `priceChangePct` is the price change over the 24h window, in percent. `null` when the window carries no priced trades.</Note>
+<Note>`stats24h` is the token-wide 24h window, the same window as the `24h` block of [`/v1/token/stats`](/endpoints/token-stats-windowed). `buys`/`sells` and `buyVolumeNative`/`sellVolumeNative` split flow by direction; `txns` is the number of distinct transactions in the window. `priceChangePct` is the price change over the 24h window, in percent. `null` when the window carries no priced trades.</Note>
 
 <Note>`metadata.dexPaid` is `true`, `false`, or `null` (status unknown) - never a fabricated `false`. `metadata.dexPaidAt` is the payment time in ms, or `null`.</Note>
 
@@ -62,12 +62,14 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
     },
     "launchpad": null,
     "deployer": "0xac937655e7b69934eaf0ef56a7f38ece1d74b451",
+    "deployerSource": "pool",
     "createdAt": 1705088299000,
     "stats24h": {
       "volumeNative": 12.472824758820458,
       "volumeUsd": 23448.59872596349,
       "buys": 176,
       "sells": 5,
+      "txns": 178,
       "buyVolumeNative": 11.839201571847,
       "sellVolumeNative": 0.633623186973,
       "priceChangePct": 7.328276263872449
@@ -118,6 +120,7 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
     },
     "launchpad": null,
     "deployer": null,
+    "deployerSource": null,
     "createdAt": 1671942208000,
     "stats24h": {
       "volumeNative": 2466.120265838208,
@@ -175,6 +178,7 @@ curl 'https://api.serialized.xyz/v1/token?chain=solana&address=DezXAZ8z7PnrnRJjz
     },
     "launchpad": null,
     "deployer": null,
+    "deployerSource": null,
     "createdAt": 1691633477000,
     "stats24h": {
       "volumeNative": 95297.0512,

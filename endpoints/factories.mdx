@@ -1,0 +1,77 @@
+---
+openapi: '/openapi.json GET /v1/meta/factories'
+title: "Factories"
+description: "Launchpad and factory keys of the registry: `factories` lists every key, `byChain` the keys the `factories=` filter of `/v1/pulse` accepts for each chain. EVM and Solana. Free."
+---
+
+`GET /v1/meta/factories`
+
+Launchpad and factory keys of the registry: `factories` lists every key, `byChain` the keys the `factories=` filter of [`/v1/pulse`](/endpoints/pulse) accepts for each chain. EVM and Solana. Free.
+
+<Note>Keys are accepted in any form on input (`PUMPFUN`, `pump.fun`, the indexer's `PUMP_FUN`); the response carries the canonical form. A key listed under a chain always produces a feed on that chain. On Solana the list also carries the trading venues (`PUMPSWAP`, `RAYDIUM`, `ORCA`, `METEORA`) the filter accepts there, next to the launchpads. The example is abridged: the live response lists every registry key and every chain.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/meta/factories' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "factories": [
+      "APE_STORE",
+      "BANKR",
+      "CLANKER",
+      "FLAUNCH",
+      "FOUR_MEME",
+      "HEAVEN",
+      "METEORA_DBC",
+      "PUMPFUN",
+      "RAYDIUM_LAUNCHLAB",
+      "VIRTUAL",
+      "ZORA"
+    ],
+    "byChain": {
+      "evm:8453": [
+        "APE_STORE",
+        "B20",
+        "BANKR",
+        "BASESTONK",
+        "BASETONKS",
+        "CLANKER",
+        "CREATOR_BID",
+        "FEEL_CASH",
+        "FLAUNCH",
+        "LIQUID",
+        "LONG_XYZ",
+        "NOICE",
+        "O1",
+        "O1_STOCKS",
+        "PRINTR",
+        "STOCKX_FUN",
+        "UNISWAP_CCA",
+        "VIRTUAL",
+        "ZORA"
+      ],
+      "solana": [
+        "HEAVEN",
+        "METEORA",
+        "METEORA_DBC",
+        "ORCA",
+        "PUMPFUN",
+        "PUMPSWAP",
+        "RAYDIUM",
+        "RAYDIUM_LAUNCHLAB",
+        "TRENCH_SOL"
+      ]
+    }
+  },
+  "meta": {
+    "asOf": 1786724321172
+  }
+}
+```
+</ResponseExample>

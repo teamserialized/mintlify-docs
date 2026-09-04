@@ -95,7 +95,8 @@
     "/v1/meta/factories": {
       "get": {
         "operationId": "get-v1-meta-factories",
-        "summary": "GET /v1/meta/factories",
+        "summary": "Factories",
+        "description": "Launchpad and factory keys of the registry: `factories` lists every key, `byChain` the keys the `factories=` filter of `/v1/pulse` accepts for each chain. EVM and Solana. Free.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -243,7 +244,7 @@
             "in": "query",
             "name": "limit",
             "required": false,
-            "description": "Max candles per page (default 200, max 500).",
+            "description": "Candles per page, 1-500 (default 200). Honoured whenever the history allows it, however quiet the token is.",
             "example": 300
           },
           {
@@ -254,7 +255,7 @@
             "in": "query",
             "name": "endTime",
             "required": false,
-            "description": "Unix seconds, inclusive upper bound (pagination: prev oldestTime - 1)"
+            "description": "Unix SECONDS, inclusive upper bound (pagination: prev oldestTime - 1). At most 1 day ahead; a millisecond value is rejected (400)."
           },
           {
             "schema": {
@@ -265,7 +266,7 @@
             "in": "query",
             "name": "from",
             "required": false,
-            "description": "Window start (unix SECONDS, inclusive - candle timestamps are TradingView-style seconds).",
+            "description": "Unix SECONDS, inclusive lower bound (scans stop there). A millisecond value is rejected (400).",
             "example": 1755000000
           },
           {
@@ -295,15 +296,15 @@
           },
           {
             "schema": {
-              "default": false,
+              "default": true,
               "type": "boolean",
-              "x-default": false
+              "x-default": true
             },
             "in": "query",
             "name": "fill",
             "required": false,
-            "description": "Gap-fill empty buckets with flat candles (dense time axis; off by default)",
-            "example": false
+            "description": "Dense time axis (default true): a flat zero-volume candle for every bucket without a trade. `false` returns traded buckets only.",
+            "example": true
           }
         ]
       }
@@ -575,7 +576,7 @@
             "in": "query",
             "name": "fromAt",
             "required": false,
-            "description": "Only trades at/after this time (epoch ms).",
+            "description": "Unix MILLISECONDS, inclusive lower bound. A value in seconds is rejected (400).",
             "example": 1755000000000
           },
           {
@@ -586,7 +587,7 @@
             "in": "query",
             "name": "toAt",
             "required": false,
-            "description": "unix ms, inclusive"
+            "description": "Unix MILLISECONDS, inclusive upper bound (at most 7 days ahead). A value in seconds is rejected (400)."
           },
           {
             "schema": {
@@ -785,7 +786,7 @@
       "post": {
         "operationId": "batch-market-trades",
         "summary": "Batch Market Trades",
-        "description": "The tape of up to 100+ markets in a single call, since a timestamp - grouped per market, per-market row cap. One request replaces a full polling fan-out.",
+        "description": "The tape of up to 200 markets in a single call, since a timestamp - grouped per market, per-market row cap. One request replaces a full polling fan-out.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -839,7 +840,7 @@
                   },
                   "from": {
                     "minimum": 0,
-                    "description": "Only trades at/after this time (epoch ms) - at most 24h back (polling endpoint; page the per-market tape for history).",
+                    "description": "Only trades at/after this time (unix MILLISECONDS, at most 24h back; a value in seconds is rejected with 400). Page the per-market tape for history.",
                     "type": "integer",
                     "example": 1755000000000,
                     "x-default": 1755000000000
@@ -1524,7 +1525,7 @@
       "get": {
         "operationId": "candles-ohlcv",
         "summary": "Candles (OHLCV)",
-        "description": "Chart-ready candles from 1s to 1d, multi-pool aggregation (≤50 pools), wick-outlier clamping and candle connecting included. On Base, the forming candle includes preconfirmed (flashblocks) swaps ~2.5s before block commit.",
+        "description": "Chart-ready candles from 1s to 1M. Token-wide by default (the pool we price the token from, tracked across a bonding-curve migration), or an explicit set of up to 50 pools. Wick-outlier clamping and candle connecting included. On Base, the forming candle includes preconfirmed (flashblocks) swaps ~2.5s before block commit.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -1561,7 +1562,7 @@
             "in": "query",
             "name": "pools",
             "required": false,
-            "description": "CSV of pool addresses (≤50).",
+            "description": "Optional CSV of pool addresses (≤50) to aggregate; default: the pool we price the token from, tracked across a bonding-curve migration.",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
           },
           {
@@ -1587,7 +1588,7 @@
             "in": "query",
             "name": "limit",
             "required": false,
-            "description": "1-500, default 200.",
+            "description": "Candles per page, 1-500 (default 200). Honoured whenever the history allows it, however quiet the token is.",
             "example": 24
           },
           {
@@ -1598,7 +1599,7 @@
             "in": "query",
             "name": "endTime",
             "required": false,
-            "description": "Unix seconds, inclusive. Paginate back with prev `meta.oldestTime - 1` while `meta.hasMore`."
+            "description": "Unix SECONDS, inclusive upper bound (at most 1 day ahead; a millisecond value is rejected with 400). Paginate back with the previous `meta.oldestTime - 1` while `meta.hasMore` is true."
           },
           {
             "schema": {
@@ -1608,7 +1609,7 @@
             "in": "query",
             "name": "from",
             "required": false,
-            "description": "Unix seconds, inclusive lower bound (scans stop there)"
+            "description": "Unix SECONDS, inclusive lower bound (scans stop there). A millisecond value is rejected (400)."
           },
           {
             "schema": {
@@ -1637,15 +1638,15 @@
           },
           {
             "schema": {
-              "default": false,
+              "default": true,
               "type": "boolean",
-              "x-default": false
+              "x-default": true
             },
             "in": "query",
             "name": "fill",
             "required": false,
-            "description": "Gap-fill empty buckets with flat candles (dense time axis; off by default)",
-            "example": false
+            "description": "Dense time axis (default true): a flat zero-volume candle for every bucket without a trade. `false` returns traded buckets only.",
+            "example": true
           }
         ]
       }
@@ -1654,7 +1655,7 @@
       "get": {
         "operationId": "token-pools",
         "summary": "Token Pools",
-        "description": "The markets of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from.",
+        "description": "The markets of a token - rank 1 is the exact pool the token endpoint prices from, then every other market ranked by 24h volume and liquidity.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -1859,7 +1860,7 @@
                         }
                       }
                     },
-                    "description": "Up to 500 of `{chain, address}`. Response array is in input order with per-item `{error}` slots. Billed per item.",
+                    "description": "Up to 100 of `{chain, address}`, across chains. Response array is in input order with per-item `{error}` slots. Billed per item.",
                     "example": [
                       {
                         "chain": "solana",
@@ -1980,7 +1981,7 @@
             "in": "query",
             "name": "pools",
             "required": false,
-            "description": "CSV of pool addresses (≤50).",
+            "description": "Optional CSV of pool addresses (≤50) to restrict the windows to; default token-wide (every pool of the token).",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
           },
           {
@@ -2002,7 +2003,7 @@
       "get": {
         "operationId": "token-top-traders",
         "summary": "Token Top Traders",
-        "description": "Ranked traders of a token, from our own PnL fold (per wallet and token): realized PnL in native and USD, tokens bought/sold, open position, average entry, win rate over closed positions, first/last trade. Default sort is each family's indexed one - `pnl` on EVM, `volume` on Solana - and `sortBy` overrides it.",
+        "description": "Ranked traders of a token, from our own PnL fold (per wallet and token): realized PnL in native and USD, tokens bought/sold, open position, average entry, win rate over closed positions, first/last trade. Default sort is `pnl` on both families; `sortBy` accepts `pnl`, `bought`, `sold` or `txns`.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2110,7 +2111,7 @@
             "in": "query",
             "name": "sortBy",
             "required": false,
-            "description": "`pnl` or `volume`. Default: `pnl` on EVM, `volume` on Solana."
+            "description": "`pnl` (default), `bought`, `sold` or `txns`."
           },
           {
             "schema": {
@@ -2155,7 +2156,7 @@
       "get": {
         "operationId": "trades-tape",
         "summary": "Trades Tape",
-        "description": "Real-time trade tape. `maker` is the REAL trader (relay/solver-resolved), with isProTrader/isSniper badges on every row. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Filters: tradeType, USD/native/token amount ranges, date range, makers (POST twin, ≤2000). Cursor pagination.",
+        "description": "Real-time trade tape. `maker` is the trader behind the swap, resolved through relays, solvers and smart accounts, with isProTrader/isSniper badges on every row. On Base, preconfirmed (flashblocks) trades appear ~2.5s before block commit, flagged per row. Filters: side, USD/native/token amount ranges, date range, makers (POST twin, up to 2000). Cursor pagination.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2192,7 +2193,7 @@
             "in": "query",
             "name": "pools",
             "required": false,
-            "description": "CSV of pool addresses (≤50).",
+            "description": "Optional CSV of pool addresses (≤50) to restrict the tape; default token-wide (every pool of the token).",
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
           },
           {
@@ -2278,7 +2279,7 @@
             "in": "query",
             "name": "fromAt",
             "required": false,
-            "description": "unix ms, inclusive"
+            "description": "Unix MILLISECONDS, inclusive lower bound. A value in seconds is rejected (400)."
           },
           {
             "schema": {
@@ -2288,7 +2289,7 @@
             "in": "query",
             "name": "toAt",
             "required": false,
-            "description": "unix ms, inclusive"
+            "description": "Unix MILLISECONDS, inclusive upper bound (at most 7 days ahead). A value in seconds is rejected (400)."
           },
           {
             "schema": {
@@ -2444,12 +2445,12 @@
                   },
                   "fromAt": {
                     "minimum": 0,
-                    "description": "unix ms, inclusive",
+                    "description": "Unix MILLISECONDS, inclusive lower bound. A value in seconds is rejected (400).",
                     "type": "integer"
                   },
                   "toAt": {
                     "minimum": 0,
-                    "description": "unix ms, inclusive",
+                    "description": "Unix MILLISECONDS, inclusive upper bound (at most 7 days ahead). A value in seconds is rejected (400).",
                     "type": "integer"
                   },
                   "cursor": {
@@ -2554,7 +2555,8 @@
     "/v1/wallet/closed-positions": {
       "get": {
         "operationId": "get-v1-wallet-closed-positions",
-        "summary": "GET /v1/wallet/closed-positions",
+        "summary": "Wallet Closed Positions",
+        "description": "Every position a wallet has fully exited: total bought and sold (USD and native), realized PnL in absolute and percent, buy/sell counts and last trade time. The realized counterpart of `/v1/wallet/positions` - the realized PnL of every position lands in exactly one of the two. EVM and Solana.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2567,15 +2569,28 @@
             },
             "in": "query",
             "name": "wallet",
-            "required": true
+            "required": true,
+            "description": "Wallet address (EVM hex, case-insensitive; Solana base58)."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "x-default": "solana"
+            },
+            "in": "query",
+            "name": "chain",
+            "required": false,
+            "description": "Public chain id - `evm:<id>` or `solana`. Omit for all EVM chains.",
+            "example": "solana"
           },
           {
             "schema": {
               "type": "string"
             },
             "in": "query",
-            "name": "chain",
-            "required": false
+            "name": "tokens",
+            "required": false,
+            "description": "Comma-separated token addresses (1-50) to scope the response to: the realized PnL of those tokens, without paging the whole wallet."
           },
           {
             "schema": {
@@ -2588,6 +2603,7 @@
             "in": "query",
             "name": "limit",
             "required": true,
+            "description": "1-100. Default 30.",
             "example": 30
           },
           {
@@ -2600,6 +2616,7 @@
             "in": "query",
             "name": "offset",
             "required": true,
+            "description": "Rows to skip. Default 0.",
             "example": 0
           },
           {
@@ -2615,6 +2632,7 @@
             "in": "query",
             "name": "sort",
             "required": false,
+            "description": "`lastTradeAt` (default) or `pnl`.",
             "example": "lastTradeAt"
           }
         ]
@@ -2662,7 +2680,7 @@
             "in": "query",
             "name": "from",
             "required": false,
-            "description": "Window start (epoch ms).",
+            "description": "Unix MILLISECONDS. A value in seconds is rejected (400).",
             "example": 1755000000000
           },
           {
@@ -2674,7 +2692,7 @@
             "in": "query",
             "name": "to",
             "required": false,
-            "description": "Window end (epoch ms, default now).",
+            "description": "Unix MILLISECONDS, default now. A value in seconds is rejected (400).",
             "example": 1787800000000
           }
         ]
@@ -2758,7 +2776,7 @@
             "in": "query",
             "name": "period",
             "required": false,
-            "description": "`1d`, `7d`, `30d` (default) or `all`.",
+            "description": "`1d`, `7d`, `30d` (default) or `all`. A period keeps the UTC days from now minus that many days through today, both inclusive: `7d` spans 8 calendar days, `1d` yesterday and today.",
             "example": "30d"
           }
         ]
@@ -2803,19 +2821,20 @@
             "in": "query",
             "name": "tokens",
             "required": false,
-            "description": "Comma-separated token addresses (1-50) to scope the response to - positions and summary cover only those tokens. Same shape, faster: the lookup narrows to the requested tokens.",
+            "description": "Comma-separated token addresses (1-50) to scope the response to - positions and summary cover only those tokens.",
             "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
           },
           {
             "schema": {
               "minimum": 0,
+              "default": 0.05,
               "type": "number",
               "x-default": 10
             },
             "in": "query",
             "name": "minValueUsd",
             "required": false,
-            "description": "Only positions whose `amountUsd` reaches this floor. Default 0 (no floor); `meta.summary` still covers every position of the wallet.",
+            "description": "Only positions whose `amountUsd` reaches this floor. Default 0.05 (dust removed); pass 0 to lift the floor. A traded position whose value is unknown is always listed; `meta.summary` still covers every position of the wallet.",
             "example": 10
           }
         ]
@@ -2894,7 +2913,7 @@
       "get": {
         "operationId": "wallet-trades",
         "summary": "Wallet Trades",
-        "description": "Trade history of a wallet, newest first - multihop-deduplicated (one event per transaction, token and side; never doubled volumes). Paginate with `cursor` on Solana (opaque token from `meta.nextCursor` - exact, never skips or repeats a trade) and with `beforeAt` on EVM (`meta.oldestAt` feeds the next page). On Solana the intermediate legs of routed swaps (the wSOL or stable a route passes through) are excluded by default - pass `includeRoutingHops=true` to see them, flagged `isRoutingHop`. Wash/MEV rows are NOT filtered and carry the `isWash` badge - consumers choose. Both flags are `null` on EVM (no equivalent stamp).",
+        "description": "Trade history of a wallet, newest first - multihop-deduplicated (one event per transaction, token and side; never doubled volumes). Paginate with the opaque `cursor` from `meta.nextCursor` on both EVM and Solana: exact keyset pagination that never skips or repeats a trade. The intermediate legs of routed swaps (the wSOL, stable or quote a route passes through) are excluded by default - pass `includeRoutingHops=true` to see them, flagged `isRoutingHop`. Wash/MEV rows are NOT filtered and carry the `isWash` badge - consumers choose; `isWash` is `null` on EVM (no equivalent stamp).",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2937,12 +2956,13 @@
           },
           {
             "schema": {
+              "minimum": 0,
               "type": "integer"
             },
             "in": "query",
             "name": "beforeAt",
             "required": false,
-            "description": "Upper time bound (ms): only trades strictly older. On Solana prefer `cursor` - a beforeAt walk drops trades that share the boundary second."
+            "description": "Upper bound, unix MILLISECONDS: trades strictly older. A value in seconds is rejected (400). Prefer `cursor` for exact pagination."
           },
           {
             "schema": {
@@ -2961,7 +2981,7 @@
             "in": "query",
             "name": "cursor",
             "required": false,
-            "description": "Solana only. Opaque resume token from `meta.nextCursor` - exact keyset pagination, no skip or duplicate."
+            "description": "Opaque resume token from `meta.nextCursor` - exact keyset pagination on both EVM and Solana, no skip or duplicate."
           },
           {
             "schema": {
@@ -2972,7 +2992,7 @@
             "in": "query",
             "name": "includeRoutingHops",
             "required": false,
-            "description": "Solana only. Also serve the intermediate legs of routed swaps. Default false.",
+            "description": "Also serve the intermediate legs of routed swaps, flagged `isRoutingHop`. Default false.",
             "example": false
           }
         ]

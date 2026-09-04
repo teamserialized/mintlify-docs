@@ -1,16 +1,16 @@
 ---
 openapi: '/openapi.json GET /v1/token/pools'
 title: "Token Pools"
-description: "The markets of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from."
+description: "The markets of a token - rank 1 is the exact pool the token endpoint prices from, then every other market ranked by 24h volume and liquidity."
 ---
 
 `GET /v1/token/pools` · **1 credit**
 
-The markets of a token, ranked by our canonical pool priority - rank 1 is the exact pool the token endpoint prices from. A token is listed on both sides of its markets: as the priced asset of a pool (`side: "base"`) and on the markets where it is the quote asset (`side: "quote"`), which is how wrapped natives and stablecoins such as WETH, WHYPE or USDC trade.
+The markets of a token. Rank 1 is the exact pool the token endpoint prices from (our canonical pool priority); the other markets follow, ranked by 24h volume then liquidity, so the most active markets come first. A token is listed on both sides of its markets: as the priced asset of a pool (`side: "base"`) and on the markets where it is the quote asset (`side: "quote"`), which is how wrapped natives and stablecoins such as WETH, WHYPE or USDC trade.
 
 <Note>Each row describes the pool from its own viewpoint: `baseAddress` / `baseSymbol` is the pool's priced asset, `quoteAddress` / `quoteSymbol` its quote asset, `priceNative` the price of the base asset in the chain's native coin, and `side` tells you which of the two is the token you asked for. The token you asked for is always identified; the other side is `null` while its identity is still being resolved.</Note>
 
-<Note>Each pool carries its own 24h stats - `volume24hNative`, `volume24hUsd`, `txns24h` - so you can pick the market to trade or price against. `null` when a pool has no 24h activity to report.</Note>
+<Note>Each pool carries its own 24h stats - `volume24hNative`, `volume24hUsd`, `txns24h` (distinct transactions) - so you can pick the market to trade or price against. A pool without a trade over the last 24h reports measured zeros.</Note>
 
 <Note>`priceNative` and `liquidityNative` are `null` for a pool that has not traded yet. A pool whose price fell to zero after trading keeps `priceNative` `"0"`.</Note>
 

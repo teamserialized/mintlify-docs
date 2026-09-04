@@ -9,11 +9,11 @@ Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). A 
 
 ## Chain ids
 
-`evm:<EIP-155 id>` (e.g. `evm:8453` for Base, `evm:645749` for HyperEVM - canonical ids, nothing invented) and `solana`.
+`evm:<EIP-155 id>` (e.g. `evm:8453` for Base, `evm:645749` for HyperEVM - canonical ids, nothing invented) and `solana` (`solana:solana` is accepted on input).
 
 ## camelCase fields, ms timestamps
 
-All fields are camelCase; every timestamp is unix milliseconds and ends in `At` (candle `time` is unix seconds, TradingView-style).
+All fields are camelCase; every timestamp is unix milliseconds and ends in `At` (candle `time` is unix seconds, TradingView-style). Timestamp parameters follow the same rule: milliseconds everywhere (`fromAt`, `toAt`, `beforeAt`, and `from` / `to` outside candles), seconds for the candle bounds `endTime` and `from`. A value in the other unit is rejected with `400` rather than interpreted.
 
 ## null means unknown
 
@@ -33,4 +33,4 @@ Hot single-GET endpoints have a POST twin on the same path taking `items[]`; the
 
 ## Solana included
 
-Every REST endpoint and stream also serves Solana with the same shapes: chain=solana, base58 addresses (case-sensitive), tx identity is the signature (carried in txHash). Displayed Solana volumes and counts are the full on-chain figures; organic twins (wash-filtered) are available as separate `*Organic` fields where provided. Solana trades aggregate multihop legs per transaction (effective VWAP).
+Every REST endpoint and stream also serves Solana with the same shapes: chain=solana, base58 addresses (case-sensitive), tx identity is the signature (carried in txHash). Displayed Solana volumes and counts are the full on-chain figures; organic twins (wash-filtered) are available as separate `*Organic` fields where provided. Solana trades aggregate multihop legs per transaction (effective VWAP); EVM tapes serve one row per swap event, so a swap routed through several pools of a token yields several rows sharing `txHash`. On token stats, token details, market data and token pools, `txns` counts distinct transactions on every chain.

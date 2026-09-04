@@ -10,7 +10,7 @@ Trade tape of one market, addressed by pool. Same row shape, badges and filters 
 
 <Note>**Pagination.** Each page is bounded by `limit` and by a scan window over the tape: a page can hold fewer than `limit` rows while `meta.hasMore` is `true`. Keep passing `meta.nextCursor` until `hasMore` is `false`; cursors never skip or repeat a trade, and `hasMore: false` means the requested history is fully served.</Note>
 
-<Note>An unknown pool returns `404` (never a silently-empty 200). `feesNative` is the trade's transaction fee in the chain's native unit, `null` when it is not available for that row. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM.</Note>
+<Note>An unknown pool returns `404` (never a silently-empty 200). `maker` is the trader behind the swap (resolved through relays, solvers and smart accounts, otherwise the transaction sender). `feesNative` is the transaction fee paid by the trader (gas and priority fee) in the chain's native unit, `null` when it is not available for that row. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` on Solana. `isWash` is a boolean on Solana and `null` on EVM. On EVM each row is one swap event (a swap routed through several pools yields one row per pool, sharing `txHash`); on Solana the legs of a transaction are aggregated per transaction and side. `fromAt` and `toAt` are unix milliseconds; a value in seconds is rejected with `400`.</Note>
 
 <RequestExample>
 ```bash cURL
