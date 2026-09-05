@@ -1,13 +1,13 @@
 ---
 openapi: '/openapi.json POST /v1/wallet/profile'
 title: "Wallet Profile: batch"
-description: "Batch twin: up to 100 addresses per call, response array in input order. Each slot is the body of the single GET (`{ profile, linkedWallets }`), with `profile: null` and `linkedWallets: []` for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent)."
+description: "Batch twin: up to 100 addresses per call, response array in input order. Each slot is `{ data }` where `data` is the body of the single GET (`{ profile, linkedWallets }`), the same slot shape as every other batch endpoint. A wallet without a known identity comes back as `{ data: { profile: null, linkedWallets: [] } }` (identities are harvested continuously - retry later, never assume permanent)."
 sidebarTitle: "Batch"
 ---
 
 `POST /v1/wallet/profile` · **1 per item credit**
 
-Batch twin: up to 100 addresses per call, response array in input order. Each slot is the body of the single GET (`{ profile, linkedWallets }`), with `profile: null` and `linkedWallets: []` for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).
+Batch twin: up to 100 addresses per call, response array in input order. Each slot is `{ data }` where `data` is the body of the single GET (`{ profile, linkedWallets }`), the same slot shape as every other batch endpoint. A wallet without a known identity comes back as `{ data: { profile: null, linkedWallets: [] } }` (identities are harvested continuously - retry later, never assume permanent).
 
 <RequestExample>
 ```bash cURL
@@ -22,47 +22,51 @@ curl -X POST 'https://api.serialized.xyz/v1/wallet/profile' \
 {
   "data": [
     {
-      "profile": {
-        "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
-        "displayName": "vitalik.eth",
-        "avatarUrl": "https://euc.li/vitalik.eth",
-        "ensName": "vitalik.eth",
-        "basename": null,
-        "solName": null,
-        "bio": "I choose balance. First-level balance.\n\nmi pinxe lo crino tcati\n\nhttps://t.co/gCQrmCby7P",
-        "socials": {
-          "url": "https://vitalik.ca",
-          "arkham": "vitalik-buterin",
-          "github": "vbuterin",
-          "twitter": "VitalikButerin",
-          "farcaster": "vitalik.eth",
-          "gmgn_tags": "bluechip_owner,kol",
-          "gmgn_chain": "eth"
+      "data": {
+        "profile": {
+          "address": "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+          "displayName": "vitalik.eth",
+          "avatarUrl": "https://euc.li/vitalik.eth",
+          "ensName": "vitalik.eth",
+          "basename": null,
+          "solName": null,
+          "bio": "I choose balance. First-level balance.\n\nmi pinxe lo crino tcati\n\nhttps://t.co/gCQrmCby7P",
+          "socials": {
+            "url": "https://vitalik.ca",
+            "arkham": "vitalik-buterin",
+            "github": "vbuterin",
+            "twitter": "VitalikButerin",
+            "farcaster": "vitalik.eth",
+            "gmgn_tags": "bluechip_owner,kol",
+            "gmgn_chain": "eth"
+          },
+          "followerCounts": {
+            "gmgn": 1974,
+            "twitter": 7557156,
+            "farcaster": 536314,
+            "gmgn_renamed": 1337
+          },
+          "sources": [
+            "arkham",
+            "gmgn",
+            "ud",
+            "farcaster",
+            "basenames",
+            "ens"
+          ],
+          "identityGroup": "twitter:VitalikButerin",
+          "isProTrader": false
         },
-        "followerCounts": {
-          "gmgn": 1974,
-          "twitter": 7557156,
-          "farcaster": 536314,
-          "gmgn_renamed": 1337
-        },
-        "sources": [
-          "arkham",
-          "gmgn",
-          "ud",
-          "farcaster",
-          "basenames",
-          "ens"
-        ],
-        "identityGroup": "twitter:VitalikButerin",
-        "isProTrader": false
-      },
-      "linkedWallets": [
-        "0xa6a54119b8d20219e6ffeb8026fb557651c3b9b6"
-      ]
+        "linkedWallets": [
+          "0xa6a54119b8d20219e6ffeb8026fb557651c3b9b6"
+        ]
+      }
     },
     {
-      "profile": null,
-      "linkedWallets": []
+      "data": {
+        "profile": null,
+        "linkedWallets": []
+      }
     }
   ],
   "meta": {

@@ -6,7 +6,7 @@ description: "The markets of a token - rank 1 is the exact pool the token endpoi
 
 `GET /v1/token/pools` · **1 credit**
 
-The markets of a token. Rank 1 is the exact pool the token endpoint prices from (our canonical pool priority); the other markets follow, ranked by 24h volume then liquidity, so the most active markets come first. A token is listed on both sides of its markets: as the priced asset of a pool (`side: "base"`) and on the markets where it is the quote asset (`side: "quote"`), which is how wrapped natives and stablecoins such as WETH, WHYPE or USDC trade.
+The markets of a token. Rank 1 is the token's main market (the most active of its liquid pools over the last 24h, the pool the token endpoint prices from when the token is its priced asset); the other markets follow, ranked by 24h volume then liquidity, so the most active markets come first. A token is listed on both sides of its markets: as the priced asset of a pool (`side: "base"`) and on the markets where it is the quote asset (`side: "quote"`), which is how wrapped natives and stablecoins such as WETH, WHYPE or USDC trade.
 
 <Note>Each row describes the pool from its own viewpoint: `baseAddress` / `baseSymbol` is the pool's priced asset, `quoteAddress` / `quoteSymbol` its quote asset, `priceNative` the price of the base asset in the chain's native coin, and `side` tells you which of the two is the token you asked for. The token you asked for is always identified; the other side is `null` while its identity is still being resolved.</Note>
 

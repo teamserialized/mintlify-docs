@@ -1,16 +1,16 @@
 ---
 openapi: '/openapi.json GET /v1/token'
 title: "Token Details"
-description: "Full token snapshot: price (native + USD), market cap, FDV and supplies (total, circulating), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials."
+description: "Full token snapshot: price (native + USD), market cap, FDV and supplies (total, circulating), liquidity (+ATH), best pool (the token's main market: the most active of the liquid pools where it is the priced asset, the same market as the first row of /v1/token/pools), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials."
 ---
 
 `GET /v1/token` · **1 credit**
 
-Full token snapshot: price (native + USD), market cap, FDV and supplies (total, circulating), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.
+Full token snapshot: price (native + USD), market cap, FDV and supplies (total, circulating), liquidity (+ATH), best pool (the token's main market: the most active of the liquid pools where it is the priced asset, the same market as the first row of /v1/token/pools), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.
 
 <Note>`totalSupply` is the on-chain supply of the contract on the requested chain. `marketCapUsd` and `fdvUsd` are the asset's circulating market cap and fully diluted value: for an asset issued on several chains (stablecoins, bridged majors) they cover the asset as a whole, across every chain, while `totalSupply` stays per contract. `circulatingSupply` is `null` when the token has no distinct circulating supply; `marketCapUsd` then equals `fdvUsd` (`totalSupply` × price). Wrapped natives (WETH, WBNB, WgUSDT...) and the chain's native coin (`0x000...000` on EVM, the SOL mint on Solana) are priced at `priceNative` `"1"` by construction, `priceUsd` being the same spot as [`/v1/prices/native`](/endpoints/native-prices). A wrapped native carries no capitalisation of its own: its `totalSupply`, `circulatingSupply`, `marketCapUsd` and `fdvUsd` are `null`; the coin's own figures live on the native coin entry. Its liquidity and `stats24h` are the wrapper contract's markets.</Note>
 
-<Note>`pool` is the token's best market under the canonical priority ranking: the same pool as the first row of [`/v1/token/pools`](/endpoints/token-pools).</Note>
+<Note>`pool` is the token's main market: the most active over the last 24h of the liquid pools where the token is the priced asset (liquidity alone can elect an idle pool). It is the first row of [`/v1/token/pools`](/endpoints/token-pools), which may also rank first a market where the token is the quote (`side: quote`) when the token's own markets are negligible next to it.</Note>
 
 <Note>`priceNative`, `priceUsd`, `marketCapUsd`, `fdvUsd`, `liquidityNative`, `liquidityUsd`, `priceNativeAth` and `liquidityNativeAth` are `null` when the token has not traded yet; `stats24h` then reports measured zeros. A token whose price fell to zero after trading keeps `priceNative` `"0"`.</Note>
 

@@ -1232,7 +1232,7 @@
       "get": {
         "operationId": "token-details",
         "summary": "Token Details",
-        "description": "Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (canonical priority ranking), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.",
+        "description": "Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (the token's main market: the most active of the liquid pools where it is the priced asset, the same market as the first row of /v1/token/pools), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2867,7 +2867,7 @@
       "post": {
         "operationId": "wallet-profile-batch",
         "summary": "Wallet Profile: batch",
-        "description": "Batch twin: up to 100 addresses per call, response array in input order. Each slot is the body of the single GET (`{ profile, linkedWallets }`), with `profile: null` and `linkedWallets: []` for wallets without a known identity (identities are harvested continuously - retry later, never assume permanent).",
+        "description": "Batch twin: up to 100 addresses per call, response array in input order. Each slot is `{ data }` where `data` is the body of the single GET (`{ profile, linkedWallets }`), the same slot shape as every other batch endpoint. A wallet without a known identity comes back as `{ data: { profile: null, linkedWallets: [] } }` (identities are harvested continuously - retry later, never assume permanent).",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
