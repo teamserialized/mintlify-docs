@@ -46,6 +46,10 @@ The forming candle of a token, pushed as it changes - same candle shape as REST 
 
 Per key: 20 `ohlcv` subscriptions across your connections by default (each `token x interval` counts as one), on top of the shared stream limits (5 connections, 20 subscriptions per connection, 50 distinct tokens). One subscription can serve as many charts as you like on your side; several clients subscribing to the same token and interval share the same server-side candle. Tell us your target and we raise the limits with you.
 
+## Billing
+
+Each `ohlcv` subscription (one token and one interval) costs **2 credits per minute**, on top of the 1 credit per connection-minute shared by all streams. The first minute is charged when the subscription is acknowledged, the following ones for every minute it stays open; there is no per-message cost, whatever the trade rate of the token. `GET /v1/usage/breakdown` reports it under the route `WS ohlcv`.
+
 ## Backfill and reconnect
 
 Load history with `GET /v1/token/ohlcv` (same `interval`, same default pool set), then subscribe: the first event is the forming candle, which continues the history you loaded. After a reconnect, re-fetch the last candles over REST (`endTime` = now) and re-subscribe; the stream never replays.
