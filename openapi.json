@@ -1232,7 +1232,7 @@
       "get": {
         "operationId": "token-details",
         "summary": "Token Details",
-        "description": "Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (the token's main market: the most active of the liquid pools where it is the priced asset, the same market as the first row of /v1/token/pools), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.",
+        "description": "Full token snapshot: price (native + USD), market cap & FDV (sanity-capped), liquidity (+ATH), best pool (the token's main market: the deepest of the pools where it is the priced asset, measured on both sides of the pool, the same market as the first row of /v1/token/pools), launchpad state (bonding progress, graduation), deployer, 24h stats, metadata & socials.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
