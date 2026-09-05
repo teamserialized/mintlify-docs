@@ -40,7 +40,15 @@ Limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 di
 
 ## Billing
 
-Streams bill connection time: 1 credit per connection-minute, with no per-message cost.
+Streams bill time, never messages: 1 credit per connection-minute, plus a per-subscription price for every minute a subscription stays open (first minute charged when the subscription is acknowledged). Whatever the trade rate of a token, the price is the same.
+
+| Channel | Credits per subscription-minute |
+| --- | --- |
+| `trades` | 1 |
+| `token-updates` | 2 |
+| `pool-updates` | 2 |
+
+Example: one connection with 5 `trades` subscriptions open for an hour costs 60 + 5 × 60 = 360 credits. `GET /v1/usage/breakdown` reports connection time under `WS /v1/stream` and each channel under `WS <channel>`.
 
 ## Connection walkthrough
 
