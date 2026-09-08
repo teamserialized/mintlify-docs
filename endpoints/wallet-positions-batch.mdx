@@ -1,0 +1,104 @@
+---
+openapi: '/openapi.json POST /v1/wallet/positions'
+title: "Wallet Positions: batch"
+description: "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, summary, hasMore }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. `minValueUsd`, `includeNative`, `includeStables`, `limit` and `offset` apply to every wallet of the call. Billed per wallet."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/wallet/positions` · **2 per wallet credits**
+
+Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, summary, hasMore }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. `minValueUsd`, `includeNative`, `includeStables`, `limit` and `offset` apply to every wallet of the call. Billed per wallet.
+
+<Note>Each `items[]` entry takes a `wallet` and an optional `chain` (omit it for all EVM chains of a hex address; a base58 address is Solana). A slot's `data`, `summary` and `hasMore` are exactly what `GET /v1/wallet/positions` returns for that wallet with the same options; see that page for the row fields. `includeNative` and `includeStables` are served on Solana wallets.</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/wallet/positions' \\
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \\
+  -d '{"items":[{"wallet":"Hasda78TSaT9bjiPxDBvP4GpohFpP3TDTaJEcCYK5kyN","chain":"solana"},{"wallet":"0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09","chain":"evm:8453"}],"limit":1}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": [
+        {
+          "chain": "solana",
+          "address": "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
+          "symbol": "ZEC",
+          "name": "Zcash",
+          "kind": "position",
+          "amount": "192.61887279",
+          "amountUsd": 204564.0,
+          "entryPriceUsd": 1159.37,
+          "entryPriceLifetimeUsd": 580.754,
+          "currentPriceUsd": 1176.53,
+          "exitPriceUsd": 580.396,
+          "realizedPnlUsd": 143736.0,
+          "unrealizedPnlUsd": -18752.6,
+          "totalPnlUsd": 124983.0,
+          "boughtTokens": "277623.5582956517",
+          "soldTokens": "277216.80506887264",
+          "boughtUsd": 161231000.0,
+          "soldUsd": 160896000.0,
+          "buys": 386285,
+          "sells": 386391,
+          "firstTradeAt": 1770064351000,
+          "lastTradeAt": 1788884202000
+        }
+      ],
+      "summary": {
+        "totalValueUsd": 1106750.0,
+        "realizedPnlUsd": 30184600.0,
+        "unrealizedPnlUsd": -20955.2,
+        "totalPnlUsd": 30163600.0,
+        "positions": 24
+      },
+      "hasMore": true
+    },
+    {
+      "data": [
+        {
+          "chain": "evm:8453",
+          "address": "0x75dba8d0a28c171d4ca98b19c452616f3ee70ac0",
+          "symbol": "RV",
+          "name": "RV",
+          "kind": "position",
+          "amount": "8",
+          "amountUsd": null,
+          "entryPriceUsd": null,
+          "entryPriceLifetimeUsd": null,
+          "currentPriceUsd": null,
+          "exitPriceUsd": null,
+          "realizedPnlUsd": 0,
+          "unrealizedPnlUsd": null,
+          "totalPnlUsd": 0,
+          "boughtTokens": "0",
+          "soldTokens": "0",
+          "boughtUsd": 0,
+          "soldUsd": 0,
+          "buys": 0,
+          "sells": 0,
+          "firstTradeAt": null,
+          "lastTradeAt": null
+        }
+      ],
+      "summary": {
+        "totalValueUsd": 0.000228482,
+        "realizedPnlUsd": 18.928,
+        "unrealizedPnlUsd": 0,
+        "totalPnlUsd": 18.928,
+        "positions": 2
+      },
+      "hasMore": true
+    }
+  ],
+  "meta": {
+    "asOf": 1788884264787
+  }
+}
+```
+</ResponseExample>

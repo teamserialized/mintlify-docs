@@ -1,22 +1,24 @@
 ---
 openapi: '/openapi.json GET /v1/wallet/positions'
 title: "Wallet Positions"
-description: "Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana."
+description: "Every position of a wallet with entry and exit prices, cumulative amounts and PnL: amount held, USD value, average entry and average exit, bought and sold totals, realized + unrealized + total PnL, trade counts and first/last trade timestamps. Optional native and stablecoin balances, pagination. EVM and Solana."
 ---
 
 `GET /v1/wallet/positions` · **2 credits**
 
-Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana.
+Every position of a wallet with entry and exit prices, cumulative amounts and PnL: amount held, USD value, average entry and average exit, bought and sold totals, realized + unrealized + total PnL, trade counts and first/last trade timestamps. Optional native and stablecoin balances, pagination. EVM and Solana.
 
-<Note>Lists the tokens currently held that the wallet has traded, plus the real holdings it received without trading them (a transfer, an airdrop, a routing leg): those carry `buys` and `sells` at 0 and no entry price. Stablecoins, native coins and their wrapped forms are never positions. Received holdings are only listed when their main pool holds at least $1,000 of real reserves, which keeps airdropped spam out. `entryPriceUsd` is the current bag's average entry; `entryPriceLifetimeUsd` is the average over the position's whole life. The realized counterpart of each fully-exited position is on [`/v1/wallet/closed-positions`](/endpoints/wallet-closed-positions). A token whose bag is fully sold but still shows a residual balance (a transfer received after the exit, a routing leg) is listed here as such a holding while its realized PnL lives there: across the two endpoints the realized PnL of a token is counted exactly once.</Note>
+<Note>Lists the tokens currently held that the wallet has traded, plus the real holdings it received without trading them (a transfer, an airdrop, a routing leg): those carry `buys` and `sells` at 0 and no entry price. Every row carries a `kind`: `position` for a traded token or a received holding. Received holdings are only listed when their main pool holds at least $1,000 of real reserves, which keeps airdropped spam out. `entryPriceUsd` is the current bag's average entry; `entryPriceLifetimeUsd` is the average over the position's whole life; `exitPriceUsd` is the average price of every sell (`null` when nothing was sold). `boughtTokens`, `soldTokens`, `boughtUsd` and `soldUsd` are the position's lifetime totals. The realized counterpart of each fully-exited position is on [`/v1/wallet/closed-positions`](/endpoints/wallet-closed-positions): across the two endpoints the realized PnL of a token is counted exactly once.</Note>
 
-<Note>`amountUsd` is the position's market value at the depth of its main pool: the proceeds of selling the whole amount into that pool, pool fee included, so a large position on a thin pool is worth what the pool can actually pay out. Positions on a live bonding curve are valued at the curve price. `currentPriceUsd` is the market price of the token; `unrealizedPnlUsd` is `amountUsd` minus the cost basis. `amountUsd` and `unrealizedPnlUsd` are `null` when the position has no pool with usable reserves to value it against, including a held token with no live market on the chain; `currentPriceUsd` is `null` when the main pool carries no plausible market price. Holdings received without a trade are listed too (`buys` and `sells` at 0, no entry price), at `null` value when the token has no live market; only dust airdrops on pools with a few dollars of depth are left out. `entryPriceUsd`, `entryPriceLifetimeUsd` and `realizedPnlUsd` come from the wallet's trades and are always served when the wallet bought the token.</Note>
+<Note>`amountUsd` is the position's market value at the depth of its main pool: the proceeds of selling the whole amount into that pool, pool fee included, so a large position on a thin pool is worth what the pool can actually pay out. Positions on a live bonding curve are valued at the curve price. `currentPriceUsd` is the market price of the token; `unrealizedPnlUsd` is `amountUsd` minus the cost basis. `amountUsd` and `unrealizedPnlUsd` are `null` when the position has no pool with usable reserves to value it against, including a held token with no live market on the chain; `currentPriceUsd` is `null` when the main pool carries no plausible market price. `entryPriceUsd`, `entryPriceLifetimeUsd`, `exitPriceUsd` and `realizedPnlUsd` come from the wallet's trades and are always served when the wallet traded the token.</Note>
 
-<Note>`minValueUsd` defaults to 0.05: dust positions are left out unless you pass `minValueUsd=0`. A traded position whose value cannot be established is always listed, since its entry price and realized PnL stand on their own. `meta.summary` carries wallet-level totals (value, realized, unrealized, total PnL) computed over every position of the wallet, whatever `minValueUsd` is; value and unrealized PnL cover the positions that carry an `amountUsd`. `positions` is the number of positions returned. Returns `503` with `Retry-After` while holdings are momentarily unavailable.</Note>
+<Note>On Solana, `includeNative=true` adds the wallet's SOL balance (SOL held plus wrapped SOL, one row of `kind` `native`) and `includeStables=true` adds its USD stablecoin balances (`kind` `stable`), both at face value with no PnL fields, and counts them in `summary.totalValueUsd`. Without the flags these balances are not part of the response nor of the summary. A stablecoin the wallet actually traded is a `position` either way.</Note>
+
+<Note>`minValueUsd` defaults to 0.05: dust positions are left out unless you pass `minValueUsd=0`. A traded position whose value cannot be established is always listed, since its entry price and realized PnL stand on their own. Rows are sorted by value; `limit` and `offset` page through them and `meta.hasMore` tells whether another page follows (omit `limit` to receive every row). `meta.summary` carries wallet-level totals (value, realized, unrealized, total PnL) computed over every position of the wallet, whatever `minValueUsd` and the page are; value and unrealized PnL cover the positions that carry an `amountUsd`; `positions` is the total number of rows across all pages. Returns `503` with `Retry-After` while holdings are momentarily unavailable.</Note>
 
 <RequestExample>
 ```bash cURL
-curl 'https://api.serialized.xyz/v1/wallet/positions?chain=solana&wallet=GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E' \
+curl 'https://api.serialized.xyz/v1/wallet/positions?chain=solana&wallet=Hasda78TSaT9bjiPxDBvP4GpohFpP3TDTaJEcCYK5kyN&includeNative=true&includeStables=true&limit=3' \\
   -H 'Authorization: YOUR_API_KEY'
 ```
 </RequestExample>
@@ -27,50 +29,63 @@ curl 'https://api.serialized.xyz/v1/wallet/positions?chain=solana&wallet=GuhieZD
   "data": [
     {
       "chain": "solana",
-      "address": "GFQLVG2UKYydSCJ2WjkuMXijpgJ6hbs2nEsNwdZFpump",
-      "symbol": "Tortuga",
-      "name": "Tortuga",
-      "amount": "786309.646509",
-      "amountUsd": 1.542082323211693,
-      "entryPriceUsd": 0.0000094681,
-      "entryPriceLifetimeUsd": 0.0000094681,
-      "currentPriceUsd": 0.0000019611641928318152,
+      "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "kind": "stable",
+      "amount": "756752.037419",
+      "amountUsd": 756752.0,
+      "entryPriceUsd": null,
+      "entryPriceLifetimeUsd": null,
+      "currentPriceUsd": 1.0,
+      "exitPriceUsd": null,
       "realizedPnlUsd": 0,
-      "unrealizedPnlUsd": -5.90277604090017,
-      "totalPnlUsd": -5.90277604090017,
-      "buys": 1,
+      "unrealizedPnlUsd": null,
+      "totalPnlUsd": 0,
+      "boughtTokens": "0",
+      "soldTokens": "0",
+      "boughtUsd": 0,
+      "soldUsd": 0,
+      "buys": 0,
       "sells": 0,
-      "firstTradeAt": 1786907834306,
-      "lastTradeAt": 1786907834306
+      "firstTradeAt": null,
+      "lastTradeAt": null
     },
     {
       "chain": "solana",
-      "address": "9x4EQVaPRWSw4jKoWTpRzMP7YAu5sZwHyLJ9tbJYpump",
-      "symbol": "JOKE",
-      "name": "Jokecoin",
-      "amount": "412500.128401",
-      "amountUsd": 0.938454937,
-      "entryPriceUsd": 0.0000043767,
-      "entryPriceLifetimeUsd": 0.0000039912,
-      "currentPriceUsd": 0.0000022750068945288,
-      "realizedPnlUsd": 6.184,
-      "unrealizedPnlUsd": -0.8663,
-      "totalPnlUsd": 5.3177,
-      "buys": 3,
-      "sells": 2,
-      "firstTradeAt": 1786906521018,
-      "lastTradeAt": 1786940537718
+      "address": "A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS",
+      "symbol": "ZEC",
+      "name": "Zcash",
+      "kind": "position",
+      "amount": "192.61887279",
+      "amountUsd": 204564.0,
+      "entryPriceUsd": 1159.37,
+      "entryPriceLifetimeUsd": 580.754,
+      "currentPriceUsd": 1176.53,
+      "exitPriceUsd": 580.396,
+      "realizedPnlUsd": 143736.0,
+      "unrealizedPnlUsd": -18752.6,
+      "totalPnlUsd": 124983.0,
+      "boughtTokens": "277623.5582956517",
+      "soldTokens": "277216.80506887264",
+      "boughtUsd": 161231000.0,
+      "soldUsd": 160896000.0,
+      "buys": 386285,
+      "sells": 386391,
+      "firstTradeAt": 1770064351000,
+      "lastTradeAt": 1788884202000
     }
   ],
   "meta": {
-    "asOf": 1787163134247,
+    "asOf": 1788884264787,
     "summary": {
-      "totalValueUsd": 2.480537260211693,
-      "realizedPnlUsd": 6.184,
-      "unrealizedPnlUsd": -6.76907604090017,
-      "totalPnlUsd": -0.5850760409001705,
-      "positions": 2
-    }
+      "totalValueUsd": 1904370.0,
+      "realizedPnlUsd": 30184600.0,
+      "unrealizedPnlUsd": -20955.2,
+      "totalPnlUsd": 30163600.0,
+      "positions": 27
+    },
+    "hasMore": true
   }
 }
 ```

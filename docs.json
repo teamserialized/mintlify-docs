@@ -87,7 +87,13 @@
           {
             "group": "Wallets",
             "pages": [
-              "endpoints/wallet-positions",
+              {
+                "group": "Wallet Positions",
+                "pages": [
+                  "endpoints/wallet-positions",
+                  "endpoints/wallet-positions-batch"
+                ]
+              },
               "endpoints/wallet-closed-positions",
               "endpoints/wallet-trades",
               "endpoints/wallet-pnl",

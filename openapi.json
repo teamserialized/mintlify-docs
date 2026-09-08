@@ -2786,7 +2786,7 @@
       "get": {
         "operationId": "wallet-positions",
         "summary": "Wallet Positions",
-        "description": "Every position of a wallet with entry price and PnL: amount held, USD value, average entry, realized + unrealized + total PnL, trade counts and first/last trade timestamps. EVM and Solana.",
+        "description": "Every position of a wallet with entry and exit prices, cumulative amounts and PnL: amount held, USD value, average entry and average exit, bought and sold totals, realized + unrealized + total PnL, trade counts and first/last trade timestamps. Optional native and stablecoin balances, pagination. EVM and Solana.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2836,8 +2836,143 @@
             "required": false,
             "description": "Only positions whose `amountUsd` reaches this floor. Default 0.05 (dust removed); pass 0 to lift the floor. A traded position whose value is unknown is always listed; `meta.summary` still covers every position of the wallet.",
             "example": 10
+          },
+          {
+            "schema": {
+              "default": false,
+              "type": "boolean",
+              "x-default": true
+            },
+            "in": "query",
+            "name": "includeNative",
+            "required": false,
+            "description": "Solana: also list the wallet's SOL balance (SOL plus wrapped SOL, one row of `kind` `native`) at face value and count it in `summary.totalValueUsd`. Default false.",
+            "example": true
+          },
+          {
+            "schema": {
+              "default": false,
+              "type": "boolean",
+              "x-default": true
+            },
+            "in": "query",
+            "name": "includeStables",
+            "required": false,
+            "description": "Solana: also list USD stablecoin balances (`kind` `stable`) at face value and count them in `summary.totalValueUsd`. Default false.",
+            "example": true
+          },
+          {
+            "schema": {
+              "minimum": 1,
+              "maximum": 500,
+              "type": "integer",
+              "x-default": 50
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "description": "Page size, 1-500. Omit to receive every row.",
+            "example": 50
+          },
+          {
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "type": "integer",
+              "x-default": 0
+            },
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "description": "Rows to skip. Default 0.",
+            "example": 0
           }
         ]
+      },
+      "post": {
+        "operationId": "wallet-positions-batch",
+        "summary": "Wallet Positions: batch",
+        "description": "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, summary, hasMore }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. `minValueUsd`, `includeNative`, `includeStables`, `limit` and `offset` apply to every wallet of the call. Billed per wallet.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "wallet"
+                      ],
+                      "properties": {
+                        "wallet": {
+                          "description": "Wallet address (EVM hex or Solana base58)",
+                          "type": "string"
+                        },
+                        "chain": {
+                          "description": "Public chain id. Omit for all EVM chains.",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "`[{ \"wallet\": \"…\", \"chain\": \"…\" }]` - 1 to 20 wallets, EVM and Solana mixed freely; `chain` optional (omit for all EVM chains)."
+                  },
+                  "minValueUsd": {
+                    "minimum": 0,
+                    "default": 0.05,
+                    "type": "number",
+                    "description": "Same as the GET, applied to every wallet. Default 0.05.",
+                    "example": 0.05,
+                    "x-default": 0.05
+                  },
+                  "includeNative": {
+                    "default": false,
+                    "type": "boolean",
+                    "description": "Same as the GET (Solana wallets).",
+                    "example": false,
+                    "x-default": false
+                  },
+                  "includeStables": {
+                    "default": false,
+                    "type": "boolean",
+                    "description": "Same as the GET (Solana wallets).",
+                    "example": false,
+                    "x-default": false
+                  },
+                  "limit": {
+                    "minimum": 1,
+                    "maximum": 500,
+                    "type": "integer",
+                    "description": "Page size per wallet, 1-500."
+                  },
+                  "offset": {
+                    "minimum": 0,
+                    "default": 0,
+                    "type": "integer",
+                    "description": "Rows to skip per wallet. Default 0.",
+                    "example": 0,
+                    "x-default": 0
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/wallet/profile": {
