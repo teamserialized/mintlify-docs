@@ -9,7 +9,7 @@ sidebarTitle: "Batch"
 
 Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, summary, hasMore }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. `minValueUsd`, `includeNative`, `includeStables`, `limit` and `offset` apply to every wallet of the call. Billed per wallet.
 
-<Note>Each `items[]` entry takes a `wallet` and an optional `chain` (omit it for all EVM chains of a hex address; a base58 address is Solana). A slot's `data`, `summary` and `hasMore` are exactly what `GET /v1/wallet/positions` returns for that wallet with the same options; see that page for the row fields. `includeNative` and `includeStables` are served on Solana wallets.</Note>
+<Note>Each `items[]` entry takes a `wallet` and an optional `chain` (omit it for all EVM chains of a hex address; a base58 address is Solana). A slot's `data`, `summary` and `hasMore` are exactly what `GET /v1/wallet/positions` returns for that wallet with the same options; see that page for the row fields.</Note>
 
 <RequestExample>
 ```bash cURL

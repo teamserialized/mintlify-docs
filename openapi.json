@@ -2786,7 +2786,7 @@
       "get": {
         "operationId": "wallet-positions",
         "summary": "Wallet Positions",
-        "description": "Every position of a wallet with entry and exit prices, cumulative amounts and PnL: amount held, USD value, average entry and average exit, bought and sold totals, realized + unrealized + total PnL, trade counts and first/last trade timestamps. Optional native and stablecoin balances, pagination. EVM and Solana.",
+        "description": "Every position of a wallet with entry and exit prices, cumulative amounts and PnL: amount held, USD value, average entry and average exit, bought and sold totals, realized + unrealized + total PnL, trade counts and first/last trade timestamps. Optional native and stablecoin balances read on-chain, pagination. EVM and Solana.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2846,7 +2846,7 @@
             "in": "query",
             "name": "includeNative",
             "required": false,
-            "description": "Solana: also list the wallet's SOL balance (SOL plus wrapped SOL, one row of `kind` `native`) at face value and count it in `summary.totalValueUsd`. Default false.",
+            "description": "Also list the wallet's native coin balance (and its wrapped form) as rows of `kind` `native`, read on-chain, at face value, counted in `summary.totalValueUsd`. On Solana: SOL plus wrapped SOL. Default false.",
             "example": true
           },
           {
@@ -2858,7 +2858,7 @@
             "in": "query",
             "name": "includeStables",
             "required": false,
-            "description": "Solana: also list USD stablecoin balances (`kind` `stable`) at face value and count them in `summary.totalValueUsd`. Default false.",
+            "description": "Also list USD stablecoin balances (`kind` `stable`), read on-chain, at face value, counted in `summary.totalValueUsd`. Default false.",
             "example": true
           },
           {
@@ -2943,14 +2943,14 @@
                   "includeNative": {
                     "default": false,
                     "type": "boolean",
-                    "description": "Same as the GET (Solana wallets).",
+                    "description": "Same as the GET, applied to every wallet.",
                     "example": false,
                     "x-default": false
                   },
                   "includeStables": {
                     "default": false,
                     "type": "boolean",
-                    "description": "Same as the GET (Solana wallets).",
+                    "description": "Same as the GET, applied to every wallet.",
                     "example": false,
                     "x-default": false
                   },
