@@ -1,0 +1,83 @@
+---
+openapi: '/openapi.json POST /v1/wallet/trades'
+title: "Wallet Trades: batch"
+description: "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, hasMore, nextCursor, oldestAt, usdBasis }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. Every item names its `chain` (the trade tape is per chain) and may carry its own `cursor`: each wallet paginates independently with the `nextCursor` of its slot. `limit`, `beforeAt`, `fromAt` and `includeRoutingHops` apply to every wallet of the call. Billed per wallet."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/wallet/trades` · **1 per wallet credits**
+
+Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, hasMore, nextCursor, oldestAt, usdBasis }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. Every item names its `chain` (the trade tape is per chain) and may carry its own `cursor`: each wallet paginates independently with the `nextCursor` of its slot. `limit`, `beforeAt`, `fromAt` and `includeRoutingHops` apply to every wallet of the call. Billed per wallet.
+
+<Note>A slot's `data`, `hasMore`, `nextCursor`, `oldestAt` and `usdBasis` are exactly what `GET /v1/wallet/trades` returns for that wallet with the same options; see that page for the row fields and the pagination contract (`hasMore: false` means the wallet's history is fully served).</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/wallet/trades' \\
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \\
+  -d '{"items":[{"wallet":"0xd13da05b9288ba4961973110594bd0fe3428791f","chain":"evm:8453"},{"wallet":"GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E","chain":"solana"}],"limit":1}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": [
+        {
+          "id": "0xfbdc1b50115275d104227a1db908ab93fb156305ddaeb43869a7e296e83af663:278",
+          "at": 1788937173000,
+          "chain": "evm:8453",
+          "tokenAddress": "0x1bc0c42215582d5a085795f4badbac3ff36d1bcb",
+          "poolAddress": "0xd23fe2db317e1a96454a2d1c7e8fc0dbf19bb000",
+          "isBuy": false,
+          "amountToken": 36.396901,
+          "priceNative": 0.005507,
+          "volumeNative": 0.199999,
+          "volumeUsd": 501.699128,
+          "feesNative": null,
+          "isWash": null,
+          "isRoutingHop": false,
+          "txHash": "0xfbdc1b50115275d104227a1db908ab93fb156305ddaeb43869a7e296e83af663",
+          "block": 51073913,
+          "logIndex": 278
+        }
+      ],
+      "hasMore": true,
+      "nextCursor": "MTc4ODkzNzE3M3w1MTA3MzkxM3wyNzh8MHhmYmRjMWI1MDExNTI3NWQxMDQyMjdhMWRiOTA4YWI5M2ZiMTU2MzA1ZGRhZWI0Mzg2OWE3ZTI5NmU4M2FmNjYz",
+      "oldestAt": 1788937173000
+    },
+    {
+      "data": [
+        {
+          "id": "3AoEkqnaz4YgZZvhwsVKF5a3uttKZttc9RXd7whxM3TMv12vo9LQkYpcszT7aWtdtfacYyn6S7oKyn5YpXgHnwqa:5ZqHHveYPGEbDp42pdGaEQkamvw2of1rKoQTaRHHpump:s",
+          "at": 1787202319000,
+          "chain": "solana",
+          "tokenAddress": "5ZqHHveYPGEbDp42pdGaEQkamvw2of1rKoQTaRHHpump",
+          "poolAddress": "2SrSfUPjdD3mzMAy4BgETgf4WWPgFbi5VodozTkP9rsT",
+          "isBuy": false,
+          "amountToken": 2417.79587,
+          "priceNative": 0.0,
+          "volumeNative": 0.001162,
+          "volumeUsd": 0.098504,
+          "feesNative": 0.000333,
+          "isWash": false,
+          "isRoutingHop": false,
+          "txHash": "3AoEkqnaz4YgZZvhwsVKF5a3uttKZttc9RXd7whxM3TMv12vo9LQkYpcszT7aWtdtfacYyn6S7oKyn5YpXgHnwqa",
+          "block": 440408980,
+          "logIndex": 0
+        }
+      ],
+      "hasMore": true,
+      "usdBasis": "trade",
+      "nextCursor": "MTc4NzIwMjMxOXwzQW9Fa3FuYXo0WWdaWnZod3NWS0Y1YTN1dHRLWnR0YzlSWGQ3d2h4TTNUTXYxMnZvOUxRa1lwY3N6VDdhV3RkdGZhY1l5bjZTN29LeW41WXBYZ0hud3FhfDVacUhIdmVZUEdFYkRwNDJwZEdhRVFrYW12dzJvZjFyS29RVGFSSEhwdW1wfDA",
+      "oldestAt": 1787202319000
+    }
+  ],
+  "meta": {
+    "asOf": 1788937640762
+  }
+}
+```
+</ResponseExample>

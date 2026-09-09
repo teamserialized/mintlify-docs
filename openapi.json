@@ -2636,6 +2636,85 @@
             "example": "lastTradeAt"
           }
         ]
+      },
+      "post": {
+        "operationId": "wallet-closed-positions-batch",
+        "summary": "Wallet Closed Positions: batch",
+        "description": "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, hasMore, oldestAt }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. `limit`, `offset` and `sort` apply to every wallet of the call. Billed per wallet.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items",
+                  "limit",
+                  "offset"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "wallet"
+                      ],
+                      "properties": {
+                        "wallet": {
+                          "description": "Wallet address (EVM hex or Solana base58)",
+                          "type": "string"
+                        },
+                        "chain": {
+                          "description": "Public chain id. Omit for all EVM chains.",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "`[{ \"wallet\": \"…\", \"chain\": \"…\" }]` - 1 to 20 wallets, EVM and Solana mixed freely; `chain` optional (omit for all EVM chains)."
+                  },
+                  "limit": {
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 30,
+                    "type": "integer",
+                    "description": "Page size per wallet, 1-100. Default 30.",
+                    "example": 30,
+                    "x-default": 30
+                  },
+                  "offset": {
+                    "minimum": 0,
+                    "default": 0,
+                    "type": "integer",
+                    "description": "Rows to skip per wallet. Default 0.",
+                    "example": 0,
+                    "x-default": 0
+                  },
+                  "sort": {
+                    "enum": [
+                      "lastTradeAt",
+                      "pnl"
+                    ],
+                    "default": "lastTradeAt",
+                    "type": "string",
+                    "description": "`lastTradeAt` (default) or `pnl`, applied to every wallet.",
+                    "example": "lastTradeAt",
+                    "x-default": "lastTradeAt"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/wallet/equity/history": {
@@ -2780,6 +2859,68 @@
             "example": "30d"
           }
         ]
+      },
+      "post": {
+        "operationId": "wallet-pnl-batch",
+        "summary": "Wallet PnL: batch",
+        "description": "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data }`, the body of the single GET for that wallet (daily curve plus summary), or `{ error }` when that wallet failed, so one wallet never fails the others. `period` applies to every wallet of the call. Billed per wallet.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "wallet"
+                      ],
+                      "properties": {
+                        "wallet": {
+                          "description": "Wallet address (EVM hex or Solana base58)",
+                          "type": "string"
+                        },
+                        "chain": {
+                          "description": "Public chain id. Omit for all EVM chains.",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "`[{ \"wallet\": \"…\", \"chain\": \"…\" }]` - 1 to 20 wallets, EVM and Solana mixed freely; `chain` optional (omit for all EVM chains)."
+                  },
+                  "period": {
+                    "enum": [
+                      "1d",
+                      "7d",
+                      "30d",
+                      "all"
+                    ],
+                    "default": "30d",
+                    "type": "string",
+                    "description": "Same as the GET, applied to every wallet: `1d`, `7d`, `30d` (default) or `all`.",
+                    "example": "30d",
+                    "x-default": "30d"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/wallet/positions": {
@@ -3077,6 +3218,15 @@
           },
           {
             "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "description": "Opaque resume token from `meta.nextCursor` - exact keyset pagination on both EVM and Solana, no skip or duplicate."
+          },
+          {
+            "schema": {
               "minimum": 1,
               "maximum": 100,
               "default": 50,
@@ -3111,15 +3261,6 @@
           },
           {
             "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "cursor",
-            "required": false,
-            "description": "Opaque resume token from `meta.nextCursor` - exact keyset pagination on both EVM and Solana, no skip or duplicate."
-          },
-          {
-            "schema": {
               "default": false,
               "type": "boolean",
               "x-default": false
@@ -3131,6 +3272,87 @@
             "example": false
           }
         ]
+      },
+      "post": {
+        "operationId": "wallet-trades-batch",
+        "summary": "Wallet Trades: batch",
+        "description": "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, hasMore, nextCursor, oldestAt, usdBasis }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. Every item names its `chain` (the trade tape is per chain) and may carry its own `cursor`: each wallet paginates independently with the `nextCursor` of its slot. `limit`, `beforeAt`, `fromAt` and `includeRoutingHops` apply to every wallet of the call. Billed per wallet.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items",
+                  "limit"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "wallet",
+                        "chain"
+                      ],
+                      "properties": {
+                        "wallet": {
+                          "description": "Wallet address (EVM hex or Solana base58)",
+                          "type": "string"
+                        },
+                        "chain": {
+                          "description": "Public chain id (required: the trade tape is per chain).",
+                          "type": "string"
+                        },
+                        "cursor": {
+                          "description": "Opaque resume token from meta.nextCursor",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "`[{ \"wallet\": \"…\", \"chain\": \"…\", \"cursor\": \"…\" }]` - 1 to 20 wallets, EVM and Solana mixed freely; `chain` required; `cursor` optional, the `nextCursor` of that wallet's previous slot."
+                  },
+                  "limit": {
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 50,
+                    "type": "integer",
+                    "description": "Page size per wallet, 1-100. Default 50.",
+                    "example": 50,
+                    "x-default": 50
+                  },
+                  "beforeAt": {
+                    "minimum": 0,
+                    "description": "Same as the GET, applied to every wallet: upper bound in unix MILLISECONDS, trades strictly older. Ignored for an item that carries a `cursor`.",
+                    "type": "integer"
+                  },
+                  "fromAt": {
+                    "minimum": 0,
+                    "description": "Same as the GET, applied to every wallet: inclusive lower bound in unix MILLISECONDS.",
+                    "type": "integer"
+                  },
+                  "includeRoutingHops": {
+                    "default": false,
+                    "description": "Same as the GET, applied to every wallet. Default false.",
+                    "type": "boolean",
+                    "example": false,
+                    "x-default": false
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/wallet/transfers": {

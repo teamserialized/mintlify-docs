@@ -14,11 +14,11 @@ The forming candle of a token, pushed as it changes - same candle shape as REST 
 
 ## Delivery model
 
-- **One state per event.** Each event carries the complete current candle (`open`, `high`, `low`, `close`, `volume`), never a delta. Replace the candle at `time` in your chart with the payload as is.
+- **One state per event.** Each event carries the complete current candle (`open`, `high`, `low`, `close`, `volume`, `volumeToken`), never a delta. Replace the candle at `time` in your chart with the payload as is.
 - **Cadence.** The forming candle is pushed at most once every 50 ms per subscription, with the latest state. Intermediate states inside that window are folded into the next event, so the values you receive are exactly the values the REST candle converges to.
 - **Bucket close.** A closed candle is always delivered immediately, before the first state of the next bucket. Its `time` is the bucket that just closed.
 - **First event.** On subscribe you receive the candle currently in formation (seeded from history), so the chart is continuous with what `/v1/token/ohlcv` returned a moment before.
-- **Volume** is in the candle's own quote (`native` by default, `usd` on Solana), like REST.
+- **Volume.** `volume` is in the candle's own quote (`native` by default, `usd` on Solana), like REST; `volumeToken` is in units of the token itself and is never converted.
 
 ## Parameters
 
@@ -89,6 +89,7 @@ Load history with `GET /v1/token/ohlcv` (same `interval`, same default pool set)
     "low": 5.4747109625568e-7,
     "close": 5.4747124708872e-7,
     "volume": 0.000042612402192036,
+    "volumeToken": 77.84,
     "tradeAt": 1786718835000
   },
   "asOf": 1786718835420

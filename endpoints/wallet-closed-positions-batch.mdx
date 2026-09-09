@@ -1,0 +1,76 @@
+---
+openapi: '/openapi.json POST /v1/wallet/closed-positions'
+title: "Wallet Closed Positions: batch"
+description: "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, hasMore, oldestAt }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. `limit`, `offset` and `sort` apply to every wallet of the call. Billed per wallet."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/wallet/closed-positions` · **2 per wallet credits**
+
+Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data, hasMore, oldestAt }`, the body of the single GET for that wallet, or `{ error }` when that wallet failed, so one wallet never fails the others. `limit`, `offset` and `sort` apply to every wallet of the call. Billed per wallet.
+
+<Note>A slot's `data`, `hasMore` and `oldestAt` are exactly what `GET /v1/wallet/closed-positions` returns for that wallet with the same options; see that page for the row fields.</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/wallet/closed-positions' \\
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \\
+  -d '{"items":[{"wallet":"0xd13da05b9288ba4961973110594bd0fe3428791f","chain":"evm:8453"},{"wallet":"GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E","chain":"solana"}],"limit":1,"sort":"pnl"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": [
+        {
+          "chain": "evm:8453",
+          "address": "0x940181a94a35a4569e4529a3cdfb74e38fd98631",
+          "symbol": "AERO",
+          "name": "Aerodrome",
+          "totalBuyUsd": 0,
+          "totalSellUsd": 386683376.976055,
+          "totalBuyNative": 0,
+          "totalSellNative": 154148.93611,
+          "realizedPnlUsd": 386683376.976055,
+          "realizedPnlNative": 154148.93611,
+          "realizedPnlPercent": 0,
+          "buyCount": 0,
+          "sellCount": 332133,
+          "lastTradeAt": 1788936321000
+        }
+      ],
+      "hasMore": true,
+      "oldestAt": 1788936321000
+    },
+    {
+      "data": [
+        {
+          "chain": "solana",
+          "address": "Ls8ZWkthUviRsL3Rb62VzrTVZggiwb8KzYtGNzKpump",
+          "symbol": "HIPPO",
+          "name": "disappointed hippo",
+          "totalBuyUsd": 204.930108,
+          "totalSellUsd": 291.328612,
+          "totalBuyNative": 1.955556,
+          "totalSellNative": 2.780017,
+          "realizedPnlUsd": 86.398504,
+          "realizedPnlNative": 0.824462,
+          "realizedPnlPercent": 42.159986,
+          "buyCount": 2,
+          "sellCount": 2,
+          "lastTradeAt": 1786904394000
+        }
+      ],
+      "hasMore": true,
+      "oldestAt": 1786904394000
+    }
+  ],
+  "meta": {
+    "asOf": 1788937642860
+  }
+}
+```
+</ResponseExample>

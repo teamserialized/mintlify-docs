@@ -10,6 +10,8 @@ Chart-ready candles from 1s to 1M. **Token-wide by default**: we resolve the poo
 
 <Note>An unknown token returns `404`. Prices are native-quoted by default (`meta.quote: "native"`); on Solana pass `quote=usd` for USD candles, otherwise multiply by the native USD price.</Note>
 
+<Note>Two volumes per candle. `volume` is the traded value on the quote side, in the chain's native asset (ETH, SOL, BNB...) or in USD with `quote=usd`. `volumeToken` is the traded amount in units of the token itself (the base-asset volume of a Binance kline); it is never converted, whatever `quote` is. Both count exactly the same trades.</Note>
+
 <Note>Intervals run from `1s` to `1M`. `1w` candles are epoch-aligned weeks, Thursday 00:00 UTC to Thursday (the standard weekly bucket); `1M` candles are calendar months in UTC (1st of the month 00:00 UTC, 28 to 31 days). `7d` and `30d` are accepted as aliases of `1w` and `1M`; `meta.interval` always echoes the canonical key. With `quote=usd`, a monthly candle is converted at the median of the month's daily SOL/USD rates.</Note>
 
 <Note>The time axis is dense by default: every bucket up to `endTime` is present, and a bucket without a trade is a flat zero-volume candle at the previous close. Pass `fill=false` for a sparse axis with traded buckets only. `limit` is honoured whenever the token's history allows it, however quiet the token is.</Note>
@@ -35,7 +37,8 @@ curl 'https://api.serialized.xyz/v1/token/ohlcv?chain=evm:8453&address=0x4ed4e86
       "high": 5.4748839531073e-7,
       "low": 5.4670969692593e-7,
       "close": 5.4748839531073e-7,
-      "volume": 0.22006777918571868
+      "volume": 0.22006777918571868,
+      "volumeToken": 402251.74
     },
     {
       "time": 1786701600,
@@ -43,7 +46,8 @@ curl 'https://api.serialized.xyz/v1/token/ohlcv?chain=evm:8453&address=0x4ed4e86
       "high": 5.4748839531073e-7,
       "low": 5.4747109625568e-7,
       "close": 5.4747109625568e-7,
-      "volume": 0.004838309934296527
+      "volume": 0.004838309934296527,
+      "volumeToken": 8837.29
     },
     {
       "time": 1786716000,
@@ -51,7 +55,8 @@ curl 'https://api.serialized.xyz/v1/token/ohlcv?chain=evm:8453&address=0x4ed4e86
       "high": 5.4747124708872e-7,
       "low": 5.4747109625568e-7,
       "close": 5.4747124708872e-7,
-      "volume": 0.000042612402192036
+      "volume": 0.000042612402192036,
+      "volumeToken": 77.84
     }
   ],
   "meta": {

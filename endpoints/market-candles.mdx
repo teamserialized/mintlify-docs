@@ -6,7 +6,7 @@ description: "Historical OHLCV for one market, addressed by pool. Same engine, i
 
 `GET /v1/pool/ohlcv` · **5 credits**
 
-Historical OHLCV for one market, addressed by pool. Same engine, intervals (1s to 1M) and candle shape as [`/v1/token/ohlcv`](/endpoints/candles-ohlcv) - the difference is scope: this endpoint charts exactly one pool, with no curve stitching or multi-pool aggregation. A page of `/v1/pool/ohlcv` is byte-identical to `/v1/token/ohlcv?pools=<this pool>`.
+Historical OHLCV for one market, addressed by pool. Same engine, intervals (1s to 1M) and candle shape as [`/v1/token/ohlcv`](/endpoints/candles-ohlcv) - the difference is scope: this endpoint charts exactly one pool, with no curve stitching or multi-pool aggregation. A page of `/v1/pool/ohlcv` is byte-identical to `/v1/token/ohlcv?pools=<this pool>`. Each candle carries `volume` (traded value on the quote side, native asset or USD with `quote=usd`) and `volumeToken` (traded amount in units of the token, never converted).
 
 <Note>An unknown pool returns `404` (never a silently-empty 200). The time axis is dense by default (flat zero-volume candles where the pool did not trade), so a dormant pool is carried forward at its last close; pass `fill=false` to get its last traded candles instead. `meta.nextEndTime`, when present, is the next `endTime` to page a very deep scan and always points at real history; otherwise page with `oldestTime - 1` (`meta.oldestTime` and `meta.newestTime` are `null` on an empty page). Every candle opens at the close of the previous traded candle, the first candle of a page included, so paging backwards yields one continuous series. `endTime` and `from` are unix seconds; a value in milliseconds is rejected with `400`. `1w` candles are epoch-aligned weeks (Thursday to Thursday, UTC) and `1M` candles are calendar months (UTC); `7d` and `30d` are accepted aliases.</Note>
 
@@ -27,7 +27,8 @@ curl 'https://api.serialized.xyz/v1/pool/ohlcv?chain=evm:8453&address=0x0ca6485b
       "high": 5.4747124708872e-7,
       "low": 5.4747109625568e-7,
       "close": 5.4747124708872e-7,
-      "volume": 0.000042612402192036
+      "volume": 0.000042612402192036,
+      "volumeToken": 77.84
     },
     {
       "time": 1786716000,
@@ -35,7 +36,8 @@ curl 'https://api.serialized.xyz/v1/pool/ohlcv?chain=evm:8453&address=0x0ca6485b
       "high": 5.4749102229931e-7,
       "low": 5.4747124708872e-7,
       "close": 5.4749102229931e-7,
-      "volume": 0.013277451554902
+      "volume": 0.013277451554902,
+      "volumeToken": 24251.37
     }
   ],
   "meta": {

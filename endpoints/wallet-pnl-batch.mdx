@@ -1,0 +1,73 @@
+---
+openapi: '/openapi.json POST /v1/wallet/pnl'
+title: "Wallet PnL: batch"
+description: "Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data }`, the body of the single GET for that wallet (daily curve plus summary), or `{ error }` when that wallet failed, so one wallet never fails the others. `period` applies to every wallet of the call. Billed per wallet."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/wallet/pnl` · **1 per wallet credits**
+
+Batch twin: up to 20 wallets per call, response array in input order. Each slot is `{ data }`, the body of the single GET for that wallet (daily curve plus summary), or `{ error }` when that wallet failed, so one wallet never fails the others. `period` applies to every wallet of the call. Billed per wallet.
+
+<Note>A slot's `data` is exactly what `GET /v1/wallet/pnl` returns for that wallet with the same `period`, `usdBasis` included on Solana; see that page for the fields.</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/wallet/pnl' \\
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \\
+  -d '{"items":[{"wallet":"0xd13da05b9288ba4961973110594bd0fe3428791f"},{"wallet":"GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E","chain":"solana"}],"period":"7d"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "history": [
+          {
+            "at": 1788307200000,
+            "realizedPnlUsd": 1140.85094,
+            "trades": 2
+          },
+          {
+            "at": 1788310800000,
+            "realizedPnlUsd": 2788.333763,
+            "trades": 4
+          },
+          {
+            "at": 1788314400000,
+            "realizedPnlUsd": 21605.963131,
+            "trades": 34
+          }
+        ],
+        "summary": {
+          "realizedPnlUsd": 7349355.754098,
+          "winRate": 99.774218,
+          "trades": 9305,
+          "wins": 9280,
+          "losses": 21
+        }
+      }
+    },
+    {
+      "data": {
+        "usdBasis": "trade",
+        "history": [],
+        "summary": {
+          "realizedPnlUsd": 0,
+          "winRate": null,
+          "trades": 0,
+          "wins": 0,
+          "losses": 0
+        }
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1788937658898
+  }
+}
+```
+</ResponseExample>
