@@ -5,7 +5,7 @@ description: "Security fields for up to 100 tokens in one call, one union shape 
 sidebarTitle: "Batch"
 ---
 
-`POST /v1/token/security` · **10 credits**
+`POST /v1/token/security` · **10 per item credits**
 
 The batch twin of [Token Security](/endpoints/token-security) - screen a whole watchlist in a single call. The response array is in input order with per-item `{error}` slots, and every item carries the same union shape (authorities, concentration, launch quality, liquidity safety, taxes, dexPaid). Mixed EVM and Solana in one call is fine.
 

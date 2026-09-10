@@ -1,24 +1,24 @@
 ---
 openapi: '/openapi.json GET /v1/token/ohlcv'
 title: "Candles (OHLCV)"
-description: "Chart-ready candles from 1s to 1M. Token-wide by default (the pool we price the token from, tracked across a bonding-curve migration and stitched into one continuous series), or aggregate an explicit set of up to 50 pools. Wick-outlier clamping and candle connecting included. On Base, the forming candle folds preconfirmed (flashblocks) swaps ~2.5s before block commit."
+description: "Chart-ready candles from 1s to 1M. By default the candles of the pool we price the token from (its reference market), with a bonding-curve history stitched in front so the series is continuous across the migration; or aggregate an explicit set of up to 50 pools. Wick-outlier clamping and candle connecting included. On Base, the forming candle folds preconfirmed (flashblocks) swaps ~2.5s before block commit."
 ---
 
 `GET /v1/token/ohlcv` · **5 credits**
 
-Chart-ready candles from 1s to 1M. **Token-wide by default**: we resolve the pool we price the token from and, for a token that graduated from a bonding curve, stitch its curve history onto the current pool so the series is continuous. Pass `pools=` to aggregate an explicit set instead (≤50). Wick-outlier clamping and candle connecting are applied server-side. On Base, the forming candle folds preconfirmed (flashblocks) swaps ~2.5s before block commit.
+Chart-ready candles from 1s to 1M. **By default, one market**: the pool we price the token from (rank 1 of `/v1/token/pools`), resolved at request time, and, for a token that graduated from a bonding curve, its curve history stitched in front of the current pool so the series is continuous across the migration. `meta.pools` lists the pool(s) the page was built from. Pass `pools=` to aggregate an explicit set instead (≤50). Wick-outlier clamping and candle connecting are applied server-side. On Base, the forming candle folds preconfirmed (flashblocks) swaps ~2.5s before block commit.
 
 <Note>An unknown token returns `404`. Prices are native-quoted by default (`meta.quote: "native"`); on Solana pass `quote=usd` for USD candles, otherwise multiply by the native USD price.</Note>
 
 <Note>Two volumes per candle. `volume` is the traded value on the quote side, in the chain's native asset (ETH, SOL, BNB...) or in USD with `quote=usd`. `volumeToken` is the traded amount in units of the token itself (the base-asset volume of a Binance kline); it is never converted, whatever `quote` is. Both count exactly the same trades.</Note>
 
-<Note>Intervals run from `1s` to `1M`. `1w` candles are epoch-aligned weeks, Thursday 00:00 UTC to Thursday (the standard weekly bucket); `1M` candles are calendar months in UTC (1st of the month 00:00 UTC, 28 to 31 days). `7d` and `30d` are accepted as aliases of `1w` and `1M`; `meta.interval` always echoes the canonical key. With `quote=usd`, a monthly candle is converted at the median of the month's daily SOL/USD rates.</Note>
+<Note>Intervals run from `1s` to `1M`. `1w` candles are epoch-aligned weeks, Thursday 00:00 UTC to Thursday (the standard weekly bucket); `1M` candles are calendar months in UTC (1st of the month 00:00 UTC, 28 to 31 days). `7d` and `30d` are accepted as aliases of `1w` and `1M`, and so are `1min`, `5min`, `15min`, `30min` and `60` (Mobula-style); `meta.interval` always echoes the canonical key. With `quote=usd`, a monthly candle is converted at the median of the month's daily SOL/USD rates.</Note>
 
 <Note>The time axis is dense by default: every bucket up to `endTime` is present, and a bucket without a trade is a flat zero-volume candle at the previous close. Pass `fill=false` for a sparse axis with traded buckets only. `limit` is honoured whenever the token's history allows it, however quiet the token is.</Note>
 
 <Note>Every candle opens at the close of the previous traded candle, the first candle of a page included (its open is the close of the last traded candle before the page): paging backwards yields one continuous series, and a given bucket has the same `open` whatever page it lands on. Only the very first candle of the token's history, or the first candle at or after a `from` you set, opens at its own first trade.</Note>
 
-<Note>`meta.nextEndTime` appears when a page ends early on a very deep scan - pass it as the next `endTime` to keep paging; it always points at real history, never at an empty stretch. Otherwise page with `oldestTime - 1` while `meta.hasMore` is true. `meta.oldestTime` and `meta.newestTime` are `null` on an empty page. `endTime` and `from` are unix seconds; a value in milliseconds is rejected with `400`. Historical pages are immutable and cached, so pagination is fast and deterministic.</Note>
+<Note>`meta.nextEndTime` appears when a page ends early on a very deep scan - pass it as the next `endTime` to keep paging; it always points at real history, never at an empty stretch. Otherwise page with `oldestTime - 1` while `meta.hasMore` is true. `meta.oldestTime` and `meta.newestTime` are `null` on an empty page. `endTime` and `from` are unix seconds; a value in milliseconds is accepted too and normalized (candle `time` is always seconds). Up to 2000 candles per page. Historical pages are immutable and cached, so pagination is fast and deterministic.</Note>
 
 <RequestExample>
 ```bash cURL
@@ -66,7 +66,8 @@ curl 'https://api.serialized.xyz/v1/token/ohlcv?chain=evm:8453&address=0x4ed4e86
     "oldestTime": 1786586400,
     "newestTime": 1786716000,
     "hasMore": true,
-    "quote": "native"
+    "quote": "native",
+    "pools": ["0x0ca6485b7e9cf814a3fd09d81672b07323535b64"]
   }
 }
 ```

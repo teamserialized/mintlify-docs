@@ -131,7 +131,13 @@
             "group": "Market & platform",
             "pages": [
               "endpoints/token-pools",
-              "endpoints/candles-ohlcv",
+              {
+                "group": "Candles (OHLCV)",
+                "pages": [
+                  "endpoints/candles-ohlcv",
+                  "endpoints/candles-ohlcv-batch"
+                ]
+              },
               "endpoints/trades-tape",
               "endpoints/sparklines-batch",
               "endpoints/token-sparklines",
@@ -146,7 +152,13 @@
                   "endpoints/pools-data-batch"
                 ]
               },
-              "endpoints/market-candles",
+              {
+                "group": "Market Candles",
+                "pages": [
+                  "endpoints/market-candles",
+                  "endpoints/market-candles-batch"
+                ]
+              },
               {
                 "group": "Market Trades",
                 "pages": [

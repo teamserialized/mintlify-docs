@@ -1,13 +1,13 @@
 ---
 openapi: '/openapi.json POST /v1/pools/data'
 title: "Market Data: batch"
-description: "Live snapshot of up to 100 markets in one call - the whole market-poll fan-out in a single request. Per-market shape identical to /v1/pool/data. Response is in input order, unknown markets slot in as null. Billed per market."
+description: "Live snapshot of up to 100 markets in one call - the whole market-poll fan-out in a single request. Per-market shape identical to /v1/pool/data. Response is in input order; an unknown or malformed market gets its own `{ error }` slot. Billed per market."
 sidebarTitle: "Batch"
 ---
 
-`POST /v1/pools/data` · **1 credit**
+`POST /v1/pools/data` · **1 per market credit**
 
-The batch twin of [Market Data](/endpoints/market-data): poll up to 100 markets - across chains - in one request instead of a fan-out of single calls. Each item carries the same shape as `/v1/pool/data`; the response array is in input order, and an unknown market slots in as `null`. Billed per market in the call.
+The batch twin of [Market Data](/endpoints/market-data): poll up to 100 markets - across chains - in one request instead of a fan-out of single calls. Each item carries the same shape as `/v1/pool/data`; the response array is in input order, and an unknown or malformed market gets its own `{ "error": { "code", "message" } }` slot, so one bad market never costs you the rest of the lot. Billed per market in the call.
 
 <Note>`circulatingSupply` is `null` on the batch (it comes from a slower upstream that would stall a fan-poll); fetch it per market on `/v1/pool/data` when you need it.</Note>
 
@@ -73,7 +73,12 @@ curl -X POST 'https://api.serialized.xyz/v1/pools/data' -H 'Authorization: YOUR_
         }
       }
     },
-    null
+    {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "Pool 0x000000000000000000000000000000000000dead on evm:8453"
+      }
+    }
   ],
   "meta": {
     "asOf": 1786901933078,

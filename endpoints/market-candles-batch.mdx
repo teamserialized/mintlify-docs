@@ -1,0 +1,74 @@
+---
+openapi: '/openapi.json POST /v1/pool/ohlcv'
+title: "Market Candles: batch"
+description: "Batch twin - candles for up to 10 markets (pools) in one call, across chains. Same options as the GET, shared for the lot; endTime and from per market. Response in input order, one slot per market, per-item `{error}` slots."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/pool/ohlcv` · **5 per item credits**
+
+Batch twin of [Market Candles](/endpoints/market-candles): the candles of up to 10 markets in one call, chains mixable. `interval`, `limit`, `quote` and `fill` are shared by the lot; `endTime` and `from` are per market. Each slot is the body of the GET (`data` plus `count`, `oldestTime`, `newestTime`, `hasMore`, `nextEndTime`, `pools`), or `{ "error": { "code", "message" } }` for that market alone (`NOT_FOUND` for an unknown pool, `INVALID_PARAM` for a malformed address or `quote=usd` outside Solana). A slot is byte-identical to the GET of the same market with the same options.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/pool/ohlcv' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items": [{"chain": "evm:8453", "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"}, {"chain": "solana", "address": "5zpyutJu9ee6jFymDGoK7F6S5Kczqtc9FomP3ueKuyA9"}], "interval": "5m", "limit": 1}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": [
+        {
+          "time": 1788981000,
+          "open": 4.3435079990816994e-7,
+          "high": 4.3435079990816994e-7,
+          "low": 4.3434988550577997e-7,
+          "close": 4.3434988550577997e-7,
+          "volume": 0.000321765249300794,
+          "volumeToken": 748.2793758345972
+        }
+      ],
+      "interval": "5m",
+      "count": 1,
+      "oldestTime": 1788981000,
+      "newestTime": 1788981000,
+      "hasMore": true,
+      "pools": [
+        "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
+      ]
+    },
+    {
+      "data": [
+        {
+          "time": 1788981000,
+          "open": 2.8982146498792194e-8,
+          "high": 2.8982146498792194e-8,
+          "low": 2.8981462294184192e-8,
+          "close": 2.8981462294184192e-8,
+          "volume": 0.05044522800000001,
+          "volumeToken": 1741453.5287600001
+        }
+      ],
+      "interval": "5m",
+      "count": 1,
+      "oldestTime": 1788981000,
+      "newestTime": 1788981000,
+      "hasMore": true,
+      "pools": [
+        "5zpyutJu9ee6jFymDGoK7F6S5Kczqtc9FomP3ueKuyA9"
+      ]
+    }
+  ],
+  "meta": {
+    "asOf": 1788981138405,
+    "interval": "5m",
+    "quote": "native"
+  }
+}
+```
+</ResponseExample>

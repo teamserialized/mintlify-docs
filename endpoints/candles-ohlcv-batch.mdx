@@ -1,0 +1,95 @@
+---
+openapi: '/openapi.json POST /v1/token/ohlcv'
+title: "Candles (OHLCV): batch"
+description: "Batch twin - candles for up to 10 tokens in one call, across chains. Same options as the GET, shared for the lot; endTime, from and pools per token. Response in input order, one slot per token, per-item `{error}` slots."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/token/ohlcv` · **5 per item credits**
+
+Batch twin of [Candles (OHLCV)](/endpoints/candles-ohlcv): the candles of up to 10 tokens in one call, chains mixable in the same lot. `interval`, `limit`, `quote` and `fill` are shared by the lot; `endTime`, `from` and `pools` are per token, so every series keeps its own pagination. The response is in input order: each slot is the body of the GET (`data` plus its own `count`, `oldestTime`, `newestTime`, `hasMore`, `nextEndTime`, `pools`), or `{ "error": { "code", "message" } }` for that token alone (unknown token, malformed address, `quote=usd` on a chain without USD history). A bad item never costs you the rest of the lot.
+
+<Note>An unknown `interval` or a lot of more than 10 items is refused with `400` for the whole call (it is a shared option). Everything else is judged per item.</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/token/ohlcv' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items": [{"chain": "evm:8453", "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"}, {"chain": "solana", "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", "endTime": 1788976800}], "interval": "1h", "limit": 2}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": [
+        {
+          "time": 1788976800,
+          "open": 4.3436558420585994e-7,
+          "high": 4.3436619167141e-7,
+          "low": 4.343522033037e-7,
+          "close": 4.343522033037e-7,
+          "volume": 0.008163915862969941,
+          "volumeToken": 18904.773668395424
+        },
+        {
+          "time": 1788980400,
+          "open": 4.343522033037e-7,
+          "high": 4.343527131872e-7,
+          "low": 4.3434988550577997e-7,
+          "close": 4.3434988550577997e-7,
+          "volume": 0.001671651869433317,
+          "volumeToken": 3867.580839897786
+        }
+      ],
+      "interval": "1h",
+      "count": 2,
+      "oldestTime": 1788976800,
+      "newestTime": 1788980400,
+      "hasMore": true,
+      "pools": [
+        "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
+      ]
+    },
+    {
+      "data": [
+        {
+          "time": 1788973200,
+          "open": 2.893641066501079e-8,
+          "high": 2.893641066501079e-8,
+          "low": 2.8929839822972252e-8,
+          "close": 2.8929839822972252e-8,
+          "volume": 0.047121352000000005,
+          "volumeToken": 1645080.7310600001
+        },
+        {
+          "time": 1788976800,
+          "open": 2.8929839822972252e-8,
+          "high": 2.8929839822972252e-8,
+          "low": 2.8929839822972252e-8,
+          "close": 2.8929839822972252e-8,
+          "volume": 0,
+          "volumeToken": 0
+        }
+      ],
+      "interval": "1h",
+      "count": 2,
+      "oldestTime": 1788973200,
+      "newestTime": 1788976800,
+      "hasMore": true,
+      "nextEndTime": 1788973199,
+      "pools": [
+        "BqnpCdDLPV2pFdAaLnVidmn3G93RP2p5oRdGEY2sJGez"
+      ]
+    }
+  ],
+  "meta": {
+    "asOf": 1788981137801,
+    "interval": "1h",
+    "quote": "native"
+  }
+}
+```
+</ResponseExample>

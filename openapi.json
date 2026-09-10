@@ -236,7 +236,7 @@
           {
             "schema": {
               "minimum": 1,
-              "maximum": 500,
+              "maximum": 2000,
               "default": 200,
               "type": "integer",
               "x-default": 300
@@ -244,7 +244,7 @@
             "in": "query",
             "name": "limit",
             "required": false,
-            "description": "Candles per page, 1-500 (default 200). Honoured whenever the history allows it, however quiet the token is.",
+            "description": "Candles per page, 1-2000 (default 200). Honoured whenever the history allows it, however quiet the token is.",
             "example": 300
           },
           {
@@ -255,7 +255,7 @@
             "in": "query",
             "name": "endTime",
             "required": false,
-            "description": "Unix SECONDS, inclusive upper bound (pagination: prev oldestTime - 1). At most 1 day ahead; a millisecond value is rejected (400)."
+            "description": "Unix seconds, inclusive upper bound (pagination: prev oldestTime - 1); a millisecond value is accepted and normalized. At most 1 day ahead."
           },
           {
             "schema": {
@@ -266,7 +266,7 @@
             "in": "query",
             "name": "from",
             "required": false,
-            "description": "Unix SECONDS, inclusive lower bound (scans stop there). A millisecond value is rejected (400).",
+            "description": "Unix seconds, inclusive lower bound (scans stop there); a millisecond value is accepted and normalized.",
             "example": 1755000000
           },
           {
@@ -291,7 +291,7 @@
             "in": "query",
             "name": "quote",
             "required": false,
-            "description": "usd converts each candle at its bucket rate (solana only for now)",
+            "description": "usd converts each candle at its bucket SOL/USD rate (available on Solana); volume follows the quote, volumeToken never does",
             "example": "native"
           },
           {
@@ -307,12 +307,136 @@
             "example": true
           }
         ]
+      },
+      "post": {
+        "operationId": "market-candles-batch",
+        "summary": "Market Candles: batch",
+        "description": "Batch twin: the candles of up to 10 markets (pools) in one call, chains mixable. `interval`, `limit`, `quote` and `fill` are shared by the lot; `endTime` and `from` are per market. Response in input order: each slot is the body of the GET (`data` plus `interval`, `count`, `oldestTime`, `newestTime`, `hasMore`, `nextEndTime`, `pools`), or `{ error: { code, message } }` for that market alone (`NOT_FOUND` for an unknown pool, `INVALID_PARAM` for a malformed address or `quote=usd` outside Solana). A slot is identical to the GET of the same market with the same options. Billed per item.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items",
+                  "interval"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "chain",
+                        "address"
+                      ],
+                      "properties": {
+                        "chain": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "description": "Pool / market address",
+                          "type": "string"
+                        },
+                        "endTime": {
+                          "minimum": 0,
+                          "description": "Unix seconds, inclusive upper bound (pagination: prev oldestTime - 1); a millisecond value is accepted and normalized. At most 1 day ahead.",
+                          "type": "integer"
+                        },
+                        "from": {
+                          "minimum": 0,
+                          "description": "Unix seconds, inclusive lower bound (scans stop there); a millisecond value is accepted and normalized.",
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "description": "1 to 10 of `{chain, address, endTime?, from?}`: `address` is the pool / pair address (Uniswap V4 poolIds supported); `endTime` / `from` are unix seconds (a millisecond value is accepted and normalized), per item, so each series paginates on its own.",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "5zpyut…"
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "5zpyut…"
+                      }
+                    ]
+                  },
+                  "interval": {
+                    "default": "5m",
+                    "description": "Shared by the lot: 1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m). `7d` and `30d` are accepted as aliases of `1w` and `1M`; `meta.interval` echoes the canonical key. An unknown interval is refused with `400` for the whole call.",
+                    "type": "string",
+                    "example": "1h",
+                    "x-default": "1h"
+                  },
+                  "limit": {
+                    "minimum": 1,
+                    "maximum": 2000,
+                    "default": 200,
+                    "type": "integer",
+                    "description": "Candles per item, 1-2000 (default 200), shared by the lot.",
+                    "example": 2,
+                    "x-default": 2
+                  },
+                  "quote": {
+                    "default": "native",
+                    "description": "`native` (default) or `usd` (Solana), shared by the lot but judged per item: an item on a chain without USD history gets its own `{ error }` slot, the others are served.",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "native"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "usd"
+                        ]
+                      }
+                    ],
+                    "example": "native",
+                    "x-default": "native"
+                  },
+                  "fill": {
+                    "default": true,
+                    "description": "Dense time axis (default true): a flat zero-volume candle for every bucket without a trade. `false` returns traded buckets only. Shared by the lot.",
+                    "type": "boolean",
+                    "example": true,
+                    "x-default": true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/pool/top-traders": {
       "get": {
-        "operationId": "get-v1-pool-top-traders",
-        "summary": "GET /v1/pool/top-traders",
+        "operationId": "pool-top-traders",
+        "summary": "Market Top Traders",
+        "description": "Ranked traders of a single market (pool) over a rolling window: net PnL in native and USD, tokens and native bought/sold, open position, average entry, first/last trade, and dev/sniper/pro-trader badges. Same engine as Token Top Traders, scoped to one pool. EVM and Solana, one shape.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -321,20 +445,25 @@
         "parameters": [
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "evm:8453"
             },
             "in": "query",
             "name": "chain",
-            "required": true
+            "required": true,
+            "description": "Public chain id - `evm:<id>` or `solana`.",
+            "example": "evm:8453"
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "x-default": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
             },
             "in": "query",
             "name": "address",
             "required": true,
-            "description": "Pool / market address"
+            "description": "Pool / pair address (the stable market id on its chain - Uniswap V4 poolIds supported).",
+            "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
           },
           {
             "schema": {
@@ -376,6 +505,7 @@
             "in": "query",
             "name": "timeframe",
             "required": false,
+            "description": "Rolling window: `1h`, `4h`, `1d` (default), `7d` or `30d`.",
             "example": "1d"
           },
           {
@@ -409,7 +539,8 @@
             },
             "in": "query",
             "name": "sortBy",
-            "required": false
+            "required": false,
+            "description": "`pnl` (default), `bought`, `sold` or `txns`."
           },
           {
             "schema": {
@@ -430,7 +561,8 @@
             },
             "in": "query",
             "name": "order",
-            "required": false
+            "required": false,
+            "description": "`desc` (default) or `asc`."
           },
           {
             "schema": {
@@ -438,12 +570,13 @@
               "maximum": 100,
               "default": 20,
               "type": "integer",
-              "x-default": 20
+              "x-default": 2
             },
             "in": "query",
             "name": "limit",
             "required": false,
-            "example": 20
+            "description": "1-100. Default 20.",
+            "example": 2
           }
         ]
       }
@@ -673,8 +806,9 @@
     },
     "/v1/pools/data": {
       "post": {
-        "operationId": "post-v1-pools-data",
-        "summary": "POST /v1/pools/data",
+        "operationId": "pools-data-batch",
+        "summary": "Market Data: batch",
+        "description": "The batch twin of Market Data: poll up to 100 markets, across chains, in one request instead of a fan-out of single calls. `windows` applies to every market of the call. Response in input order, one slot per market: the same shape as `/v1/pool/data`, or `{ error: { code, message } }` for that market alone (`NOT_FOUND` for an unknown pool, `INVALID_PARAM` for a malformed address), never `null`, so one bad market never costs you the rest of the lot. Billed per market.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -710,14 +844,35 @@
                           "type": "string"
                         }
                       }
-                    }
+                    },
+                    "description": "1 to 100 of `{chain, address}` pools, across chains. Billed per market.",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "58oQCh…"
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "58oQCh…"
+                      }
+                    ]
                   },
                   "windows": {
                     "default": "5m,1h,6h,24h",
-                    "description": "Comma-separated stat windows among 5m, 1h, 6h, 24h. Default: all four (5m,1h,6h,24h).",
+                    "description": "Comma-separated stat windows among `5m`, `1h`, `6h`, `24h`, applied to every market. Default: all four, the same default as `/v1/pool/data`.",
                     "type": "string",
-                    "example": "5m,1h,6h,24h",
-                    "x-default": "5m,1h,6h,24h"
+                    "example": "1h,24h",
+                    "x-default": "1h,24h"
                   }
                 }
               }
@@ -728,8 +883,9 @@
     },
     "/v1/pools/sparklines": {
       "post": {
-        "operationId": "post-v1-pools-sparklines",
-        "summary": "POST /v1/pools/sparklines",
+        "operationId": "sparklines-batch",
+        "summary": "Market Sparklines",
+        "description": "Small native-price arrays for list rows: one call for up to 100 markets, each `{chain, address}` so one lot can span chains. The response is keyed by pool address, oldest to newest. Timeframes 1m|5m|30m|1h|24h|7d. An unknown pool returns `[]` - we never invent data. For token-level sparklines (the best pool resolved for you, curve history stitched in), use `POST /v1/token/sparklines`.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -766,11 +922,24 @@
                           "type": "string"
                         }
                       }
-                    }
+                    },
+                    "description": "1 to 100 of `{chain, address}` pools, across chains. Billed per market.",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6…"
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6…"
+                      }
+                    ]
                   },
                   "timeframe": {
                     "default": "24h",
-                    "description": "1m|5m|30m|1h|24h|7d",
+                    "description": "`1m`|`5m`|`30m`|`1h`|`24h`|`7d`. Default `24h`.",
                     "type": "string",
                     "example": "24h",
                     "x-default": "24h"
@@ -1475,8 +1644,9 @@
         ]
       },
       "post": {
-        "operationId": "post-v1-token-metadata",
-        "summary": "POST /v1/token/metadata",
+        "operationId": "token-metadata-batch",
+        "summary": "Token Metadata: batch",
+        "description": "Batch twin: the metadata of up to 100 tokens in one call, EVM and Solana mixed freely. Response in input order, one slot per item: `{ data }`, the body of the single GET for that token, or `{ error: { code, message } }` for that item alone (unknown token, malformed address), never `null`, so one bad item never costs you the rest of the lot. Billed per item.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -1512,7 +1682,28 @@
                           "type": "string"
                         }
                       }
-                    }
+                    },
+                    "description": "1 to 100 of `{chain, address}`, across chains.",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x4ed4…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ…"
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x4ed4…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ…"
+                      }
+                    ]
                   }
                 }
               }
@@ -1580,7 +1771,7 @@
           {
             "schema": {
               "minimum": 1,
-              "maximum": 500,
+              "maximum": 2000,
               "default": 200,
               "type": "integer",
               "x-default": 24
@@ -1588,7 +1779,7 @@
             "in": "query",
             "name": "limit",
             "required": false,
-            "description": "Candles per page, 1-500 (default 200). Honoured whenever the history allows it, however quiet the token is.",
+            "description": "Candles per page, 1-2000 (default 200). Honoured whenever the history allows it, however quiet the token is.",
             "example": 24
           },
           {
@@ -1599,7 +1790,7 @@
             "in": "query",
             "name": "endTime",
             "required": false,
-            "description": "Unix SECONDS, inclusive upper bound (at most 1 day ahead; a millisecond value is rejected with 400). Paginate back with the previous `meta.oldestTime - 1` while `meta.hasMore` is true."
+            "description": "Unix seconds, inclusive upper bound (at most 1 day ahead; a millisecond value is accepted and normalized). Paginate back with the previous `meta.oldestTime - 1` while `meta.hasMore` is true."
           },
           {
             "schema": {
@@ -1609,7 +1800,7 @@
             "in": "query",
             "name": "from",
             "required": false,
-            "description": "Unix SECONDS, inclusive lower bound (scans stop there). A millisecond value is rejected (400)."
+            "description": "Unix seconds, inclusive lower bound (scans stop there); a millisecond value is accepted and normalized."
           },
           {
             "schema": {
@@ -1633,7 +1824,7 @@
             "in": "query",
             "name": "quote",
             "required": false,
-            "description": "`native` (default) or `usd` (Solana) - usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history (monthly candles use the median of the month's daily rates).",
+            "description": "`native` (default) or `usd` (Solana) - usd converts each candle at its bucket's SOL/USD rate from our in-house minute-grade price history (monthly candles use the median of the month's daily rates). `volume` follows the quote; `volumeToken` (units of the token) is never converted.",
             "example": "usd"
           },
           {
@@ -1649,6 +1840,135 @@
             "example": true
           }
         ]
+      },
+      "post": {
+        "operationId": "candles-ohlcv-batch",
+        "summary": "Candles (OHLCV): batch",
+        "description": "Batch twin: the candles of up to 10 tokens in one call, chains mixable in the same lot. `interval`, `limit`, `quote` and `fill` are shared by the lot; `endTime`, `from` and `pools` are per token, so every series keeps its own pagination. Response in input order: each slot is the body of the GET (`data` plus its own `interval`, `count`, `oldestTime`, `newestTime`, `hasMore`, `nextEndTime`, `pools`), or `{ error: { code, message } }` for that token alone (unknown token, malformed address, `quote=usd` on a chain without USD history). A bad item never costs you the rest of the lot. Billed per item.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items",
+                  "interval"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "chain",
+                        "address"
+                      ],
+                      "properties": {
+                        "chain": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "description": "Token address",
+                          "type": "string"
+                        },
+                        "pools": {
+                          "description": "CSV of pool addresses (≤50); default = the pool we price the token from",
+                          "type": "string"
+                        },
+                        "endTime": {
+                          "minimum": 0,
+                          "description": "Unix seconds, inclusive upper bound (pagination: prev oldestTime - 1); a millisecond value is accepted and normalized. At most 1 day ahead.",
+                          "type": "integer"
+                        },
+                        "from": {
+                          "minimum": 0,
+                          "description": "Unix seconds, inclusive lower bound (scans stop there); a millisecond value is accepted and normalized.",
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "description": "1 to 10 of `{chain, address, pools?, endTime?, from?}`. `pools`: optional CSV of up to 50 pool addresses to aggregate (default: the pool we price the token from, tracked across a bonding-curve migration). `endTime` / `from`: unix seconds (a millisecond value is accepted and normalized), per item, so each series paginates on its own with the `oldestTime - 1` of its slot.",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x4ed4…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ…",
+                        "endTime": 1788976800
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x4ed4…"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ…",
+                        "endTime": 1788976800
+                      }
+                    ]
+                  },
+                  "interval": {
+                    "default": "5m",
+                    "description": "Shared by the lot: 1s|5s|15s|30s|1m|3m|5m|15m|30m|1h|2h|4h|6h|12h|1d|1w|1M (default 5m). `7d` and `30d` are accepted as aliases of `1w` and `1M`; `meta.interval` echoes the canonical key. An unknown interval is refused with `400` for the whole call.",
+                    "type": "string",
+                    "example": "1h",
+                    "x-default": "1h"
+                  },
+                  "limit": {
+                    "minimum": 1,
+                    "maximum": 2000,
+                    "default": 200,
+                    "type": "integer",
+                    "description": "Candles per item, 1-2000 (default 200), shared by the lot.",
+                    "example": 2,
+                    "x-default": 2
+                  },
+                  "quote": {
+                    "default": "native",
+                    "description": "`native` (default) or `usd` (Solana), shared by the lot but judged per item: an item on a chain without USD history gets its own `{ error }` slot, the others are served.",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "native"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "usd"
+                        ]
+                      }
+                    ],
+                    "example": "native",
+                    "x-default": "native"
+                  },
+                  "fill": {
+                    "default": true,
+                    "description": "Dense time axis (default true): a flat zero-volume candle for every bucket without a trade. `false` returns traded buckets only. Shared by the lot.",
+                    "type": "boolean",
+                    "example": true,
+                    "x-default": true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/token/pools": {
@@ -1804,7 +2124,7 @@
             "in": "query",
             "name": "chain",
             "required": true,
-            "description": "Public chain id. `solana` for now; EVM ships with the LP burn/lock indexing (explicit 400 until then, never silent nulls).",
+            "description": "Public chain id (`solana`: LP burn and lock analysis is served on Solana).",
             "example": "solana"
           },
           {
@@ -1883,7 +2203,7 @@
     },
     "/v1/token/sparklines": {
       "post": {
-        "operationId": "sparklines-batch",
+        "operationId": "token-sparklines",
         "summary": "Sparklines",
         "description": "Small native-price arrays for list rows - one call for up to 100 pools. Timeframes 1m|5m|30m|1h|24h|7d. Missing pools return [] - we never invent data.",
         "responses": {
@@ -2374,8 +2694,9 @@
         ]
       },
       "post": {
-        "operationId": "post-v1-token-trades",
-        "summary": "POST /v1/token/trades",
+        "operationId": "trades-tape",
+        "summary": "Trades Tape: makers filter",
+        "description": "The same tape as the GET, taken as a JSON body: use it to filter by `makers[]` (up to 2000 trader addresses, far beyond what a URL can carry) or to send a long filter set. Same filters, same rows, same cursor pagination. One token per call, billed as one request whatever the number of makers: this is a filter variant, not a batch.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2394,13 +2715,19 @@
                 ],
                 "properties": {
                   "chain": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Public chain id - `evm:<id>` or `solana`.",
+                    "example": "evm:8453",
+                    "x-default": "evm:8453"
                   },
                   "address": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Token address.",
+                    "example": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+                    "x-default": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
                   },
                   "pools": {
-                    "description": "CSV of pool addresses (≤50) restricting the scope; default = token-wide",
+                    "description": "Optional CSV of pool addresses (≤50) to restrict the tape; default token-wide (every pool of the token).",
                     "type": "string"
                   },
                   "tradeType": {
@@ -2417,31 +2744,38 @@
                           "sell"
                         ]
                       }
-                    ]
+                    ],
+                    "description": "`buy` or `sell`. Default: both sides."
                   },
                   "usdMin": {
                     "minimum": 0,
-                    "type": "number"
+                    "type": "number",
+                    "description": "Minimum trade size in USD."
                   },
                   "usdMax": {
                     "minimum": 0,
-                    "type": "number"
+                    "type": "number",
+                    "description": "Maximum trade size in USD."
                   },
                   "nativeMin": {
                     "minimum": 0,
-                    "type": "number"
+                    "type": "number",
+                    "description": "Minimum trade size in the native unit."
                   },
                   "nativeMax": {
                     "minimum": 0,
-                    "type": "number"
+                    "type": "number",
+                    "description": "Maximum trade size in the native unit."
                   },
                   "tokenAmountMin": {
                     "minimum": 0,
-                    "type": "number"
+                    "type": "number",
+                    "description": "Minimum token amount."
                   },
                   "tokenAmountMax": {
                     "minimum": 0,
-                    "type": "number"
+                    "type": "number",
+                    "description": "Maximum token amount."
                   },
                   "fromAt": {
                     "minimum": 0,
@@ -2454,7 +2788,8 @@
                     "type": "integer"
                   },
                   "cursor": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Opaque - from `meta.nextCursor`."
                   },
                   "sort": {
                     "default": "desc",
@@ -2472,11 +2807,12 @@
                         ]
                       }
                     ],
+                    "description": "`desc` (default, newest first) or `asc`.",
                     "example": "desc",
                     "x-default": "desc"
                   },
                   "washFilter": {
-                    "description": "Keep only wash-tagged or only organic transactions (solana only)",
+                    "description": "`washOnly` or `organicOnly` - filter by the per-transaction wash badge (solana only).",
                     "anyOf": [
                       {
                         "type": "string",
@@ -2497,20 +2833,29 @@
                     "maximum": 500,
                     "default": 100,
                     "type": "integer",
-                    "example": 100,
-                    "x-default": 100
+                    "description": "1-500, default 100.",
+                    "example": 2,
+                    "x-default": 2
                   },
                   "include": {
-                    "description": "CSV opt-ins: traderTxCounts",
+                    "description": "Opt-ins: `traderTxCounts`.",
                     "type": "string"
                   },
                   "makers": {
                     "maxItems": 2000,
-                    "description": "filter by trader addresses",
+                    "description": "Trader addresses to keep, up to 2000. Omit for the full tape.",
                     "type": "array",
                     "items": {
                       "type": "string"
-                    }
+                    },
+                    "example": [
+                      "0x95d9…",
+                      "0x6011…"
+                    ],
+                    "x-default": [
+                      "0x95d9…",
+                      "0x6011…"
+                    ]
                   }
                 }
               }
@@ -2521,8 +2866,9 @@
     },
     "/v1/usage": {
       "get": {
-        "operationId": "get-v1-usage",
-        "summary": "GET /v1/usage",
+        "operationId": "usage",
+        "summary": "Usage",
+        "description": "Current billing cycle of the calling key: plan, credits used, limit and remaining, request count. Free.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2532,8 +2878,9 @@
     },
     "/v1/usage/breakdown": {
       "get": {
-        "operationId": "get-v1-usage-breakdown",
-        "summary": "GET /v1/usage/breakdown",
+        "operationId": "usage-breakdown",
+        "summary": "Usage Breakdown",
+        "description": "Requests and credits per endpoint over the last `days` days, heaviest first: which routes consume your budget. Stream time appears alongside REST routes, as `WS /v1/stream` (connection minutes) and `WS <channel>` (subscription minutes per channel). Free.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2543,8 +2890,9 @@
     },
     "/v1/usage/history": {
       "get": {
-        "operationId": "get-v1-usage-history",
-        "summary": "GET /v1/usage/history",
+        "operationId": "usage-history",
+        "summary": "Usage History",
+        "description": "Time series of your requests and credits over the last `days` days, bucketed at `15m`, `1h`, `6h` or `1d`: the graph of a usage dashboard. Free.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
