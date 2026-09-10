@@ -18,7 +18,7 @@ The forming candle of a token, pushed as it changes - same candle shape as REST 
 - **Cadence.** The forming candle is pushed at most once every 50 ms per subscription, with the latest state. Intermediate states inside that window are folded into the next event, so the values you receive are exactly the values the REST candle converges to.
 - **Bucket close.** A closed candle is always delivered immediately, before the first state of the next bucket. Its `time` is the bucket that just closed.
 - **First event.** On subscribe you receive the candle currently in formation (seeded from history), so the chart is continuous with what `/v1/token/ohlcv` returned a moment before.
-- **Volume.** `volume` is in the candle's own quote (`native` by default, `usd` on Solana), like REST; `volumeToken` is in units of the token itself and is never converted; `trades` counts the swaps folded into the candle.
+- **Volume.** `volume` is in the candle's own quote (`native` by default, `usd` on Solana), like REST; `volumeToken` is in units of the token itself and is never converted; `trades` counts the swaps folded into the candle (swaps, not transactions: the same rule as REST).
 
 ## Parameters
 
