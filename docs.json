@@ -63,7 +63,13 @@
                   "endpoints/token-price-batch"
                 ]
               },
-              "endpoints/token-stats-windowed",
+              {
+                "group": "Token Stats",
+                "pages": [
+                  "endpoints/token-stats-windowed",
+                  "endpoints/token-stats-batch"
+                ]
+              },
               {
                 "group": "Token Metadata",
                 "pages": [
@@ -128,7 +134,13 @@
                   "endpoints/wallet-profile-batch"
                 ]
               },
-              "endpoints/wallet-funding",
+              {
+                "group": "Wallet Funding",
+                "pages": [
+                  "endpoints/wallet-funding",
+                  "endpoints/wallet-funding-batch"
+                ]
+              },
               "endpoints/wallet-equity-history",
               "endpoints/wallet-transfers"
             ]
@@ -150,7 +162,13 @@
               "endpoints/native-prices",
               "endpoints/chains",
               "endpoints/factories",
-              "endpoints/market-definition",
+              {
+                "group": "Market Definition",
+                "pages": [
+                  "endpoints/market-definition",
+                  "endpoints/market-definition-batch"
+                ]
+              },
               {
                 "group": "Market Data",
                 "pages": [

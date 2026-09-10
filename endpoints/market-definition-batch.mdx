@@ -1,0 +1,92 @@
+---
+openapi: '/openapi.json POST /v1/pool'
+title: "Market Definition: batch"
+description: "Batch twin: the static definition of up to 100 markets in one call, across chains. Response in input order, one slot per market, billed per market."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/pool` · **1 per market credit**
+
+Batch twin: the static definition of up to 100 `{chain, address}` markets in one call, EVM and Solana mixed freely. The response comes back `200` in input order, one slot per market: `{ data }`, exactly the body of [`GET /v1/pool`](/endpoints/market-definition) for that market, or `{ error: { code, message } }` for that market alone (unknown pool, malformed address), never `null`. One bad market never costs you the rest of the lot. Billed per market.
+
+Definitions are slow-changing, so a lot you poll comes back from cache after the first call; the single GET and the batch share it.
+
+<Note>A slot's `data` is exactly what `GET /v1/pool` returns for that market: venue/type, launchpad or factory of origin, `feeBps`, base and quote token metadata, `priceNative`, `liquidityNative`, launchpad and bonding state, `createdAt`; see that page for the field rules.</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/pool' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items":[{"chain":"evm:8453","address":"0x0ca6485b7e9cf814a3fd09d81672b07323535b64"},{"chain":"solana","address":"58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"},{"chain":"evm:8453","address":"0x00000000000000000000000000000000deadbeef"}]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "chain": "evm:8453",
+        "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64",
+        "type": "UNISWAP_V3",
+        "factory": null,
+        "feeBps": 100,
+        "token": {
+          "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+          "name": "Degen",
+          "symbol": "DEGEN",
+          "decimals": 18,
+          "totalSupply": "36189963032.46508"
+        },
+        "quote": {
+          "address": "0x4200000000000000000000000000000000000006",
+          "symbol": "WETH"
+        },
+        "priceNative": "0.00000042875744501546",
+        "liquidityNative": "98.708436808261",
+        "isLaunchpad": false,
+        "bondingProgress": null,
+        "migrated": false,
+        "createdAt": 1705088299000
+      }
+    },
+    {
+      "data": {
+        "chain": "solana",
+        "address": "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2",
+        "type": "RAYDIUM_AMM_V4",
+        "factory": null,
+        "feeBps": null,
+        "token": {
+          "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          "name": "USD Coin",
+          "symbol": "USDC",
+          "decimals": 6,
+          "totalSupply": "8003434199.826001"
+        },
+        "quote": {
+          "address": "So11111111111111111111111111111111111111112",
+          "symbol": "SOL"
+        },
+        "priceNative": "0.009993169860651512",
+        "liquidityNative": "128982.611397012",
+        "isLaunchpad": false,
+        "bondingProgress": null,
+        "migrated": false,
+        "createdAt": 1629277935000
+      }
+    },
+    {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "Pool 0x00000000000000000000000000000000deadbeef on evm:8453 not found"
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1789076973417
+  }
+}
+```
+</ResponseExample>

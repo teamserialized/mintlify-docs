@@ -1,0 +1,96 @@
+---
+openapi: '/openapi.json POST /v1/token/stats'
+title: "Token Stats: batch"
+description: "Batch twin: the windowed stats of up to 25 tokens in one call, EVM and Solana mixed freely. `windows` applies to the whole call, `pools` is per token. Response in input order, one slot per token, billed per token."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/token/stats` · **1 per token credit**
+
+Batch twin: the windowed stats of up to 25 `{chain, address}` tokens in one call, EVM and Solana mixed freely. The response comes back `200` in input order, one slot per token: `{ data }`, exactly the body of [`GET /v1/token/stats`](/endpoints/token-stats-windowed) for that token, or `{ error: { code, message } }` for that token alone (unknown token, malformed address, a pool that is not on the token), never `null`. One bad token never costs you the rest of the lot. Billed per token.
+
+`windows` is shared by the whole call (an unknown window is a `400` on the call). `pools` is per token: omit it for token-wide stats across every pool of that token, or pass a CSV of up to 50 pool addresses to scope that token to those markets, exactly as on the single GET.
+
+<Note>A slot's `data` is exactly what `GET /v1/token/stats` returns for that token with the same `windows` and `pools`: one block per window with volume, buy/sell counts and volumes, `txns` and `priceChangePct`, plus the organic counters on Solana; see that page for the fields.</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/token/stats' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items":[{"chain":"evm:8453","address":"0x4ed4e862860bed51a9570b96d89af5e1b0efefed"},{"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263","pools":"5zpyutJu9ee6jFymDGoK7F6S5Kczqtc9FomP3ueKuyA9"},{"chain":"evm:8453","address":"0x00000000000000000000000000000000deadbeef"}],"windows":"1h,24h"}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "1h": {
+          "volumeNative": 0.04046108136088809,
+          "buys": 11,
+          "sells": 34,
+          "txns": 45,
+          "buyVolumeNative": 0.02796962576827465,
+          "sellVolumeNative": 0.012491455592613443,
+          "volumeUsd": 99.48712298799927,
+          "priceChangePct": 0.17110440020693965
+        },
+        "24h": {
+          "volumeNative": 13.037111790081967,
+          "buys": 453,
+          "sells": 1531,
+          "txns": 1810,
+          "buyVolumeNative": 4.212057165248522,
+          "sellVolumeNative": 8.825054624833443,
+          "volumeUsd": 32056.106768366193,
+          "priceChangePct": -2.3776107113072453
+        }
+      }
+    },
+    {
+      "data": {
+        "1h": {
+          "volumeNative": 138.879533561,
+          "volumeUsd": 13880.23230762911,
+          "buys": 177,
+          "sells": 173,
+          "buyVolumeNative": 66.61132208699999,
+          "sellVolumeNative": 72.268211474,
+          "txns": 350,
+          "volumeOrganicNative": 110.61996335899997,
+          "volumeOrganicUsd": 11055.846386537101,
+          "buysOrganic": 139,
+          "sellsOrganic": 140,
+          "priceChangePct": -0.394751195857784
+        },
+        "24h": {
+          "volumeNative": 2576.883030380001,
+          "volumeUsd": 257545.0404688424,
+          "buys": 5568,
+          "sells": 4365,
+          "buyVolumeNative": 1242.4451234659998,
+          "sellVolumeNative": 1334.4379069140002,
+          "txns": 9933,
+          "volumeOrganicNative": 2260.1478068699994,
+          "volumeOrganicUsd": 225889.12710564953,
+          "buysOrganic": 4401,
+          "sellsOrganic": 3442,
+          "priceChangePct": -6.168716955239194
+        }
+      }
+    },
+    {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "Token 0x00000000000000000000000000000000deadbeef on evm:8453 not found"
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1789077069678
+  }
+}
+```
+</ResponseExample>

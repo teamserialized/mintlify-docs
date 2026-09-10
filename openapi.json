@@ -138,6 +138,75 @@
             "example": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
           }
         ]
+      },
+      "post": {
+        "operationId": "market-definition-batch",
+        "summary": "Market Definition: batch",
+        "description": "Batch twin: the static definition of up to 100 markets in one call, across chains. Response in input order, one slot per market: `{ data }`, the body of the single GET for that market, or `{ error }` for that market alone (unknown pool, malformed address), never `null`. Billed per market.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "chain",
+                        "address"
+                      ],
+                      "properties": {
+                        "chain": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "description": "Pool / market address",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "`[{ \"chain\": \"…\", \"address\": \"…\" }]` - 1 to 100 markets (pool addresses, Uniswap V4 poolIds supported), EVM and Solana mixed freely.",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x0ca6485b7e9cf814a3fd09d81672b07323535b64"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/pool/data": {
@@ -2321,6 +2390,88 @@
             "example": "5m,1h,6h,24h"
           }
         ]
+      },
+      "post": {
+        "operationId": "token-stats-batch",
+        "summary": "Token Stats: batch",
+        "description": "Batch twin: the windowed stats of up to 25 tokens in one call, EVM and Solana mixed freely. `windows` applies to the whole call, `pools` is per token. Response in input order, one slot per token: `{ data }`, the body of the single GET for that token, or `{ error }` for that token alone, never `null`. Billed per token.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 25,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "chain",
+                        "address"
+                      ],
+                      "properties": {
+                        "chain": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "description": "Token address",
+                          "type": "string"
+                        },
+                        "pools": {
+                          "description": "CSV of pool addresses (≤50) to scope the stats. OMIT for token-wide stats across every pool (Mobula-aligned default).",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "`[{ \"chain\": \"…\", \"address\": \"…\", \"pools\": \"…\" }]` - 1 to 25 tokens, EVM and Solana mixed freely; `pools` optional per token (CSV of up to 50 pool addresses of that token; omit for token-wide).",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+                        "pools": "5zpyutJu9ee6jFymDGoK7F6S5Kczqtc9FomP3ueKuyA9"
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+                      },
+                      {
+                        "chain": "solana",
+                        "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+                        "pools": "5zpyutJu9ee6jFymDGoK7F6S5Kczqtc9FomP3ueKuyA9"
+                      }
+                    ]
+                  },
+                  "windows": {
+                    "default": "5m,1h,6h,24h",
+                    "description": "Same as the GET, applied to every token: comma-separated windows among `5m`, `1h`, `6h`, `24h`. Default: all four.",
+                    "type": "string",
+                    "example": "1h,24h",
+                    "x-default": "1h,24h"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/token/top-traders": {
@@ -3161,6 +3312,76 @@
             "description": "Wallet address (EVM hex, case-insensitive; Solana base58)."
           }
         ]
+      },
+      "post": {
+        "operationId": "wallet-funding-batch",
+        "summary": "Wallet Funding: batch",
+        "description": "Batch twin: the first funder of up to 100 wallets in one call (at most 20 of them on Solana), each item naming its chain. Response in input order, one slot per wallet: `{ data }`, the body of the single GET for that wallet (`data: null` when no funder is known), or `{ error }` for that wallet alone. Billed per wallet.",
+        "responses": {
+          "200": {
+            "description": "Standard `{ data, meta }` envelope."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "chain",
+                        "wallet"
+                      ],
+                      "properties": {
+                        "chain": {
+                          "description": "Public chain id (required: the first funder is read per chain).",
+                          "type": "string"
+                        },
+                        "wallet": {
+                          "description": "Wallet address (EVM hex or Solana base58)",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "`[{ \"chain\": \"…\", \"wallet\": \"…\" }]` - 1 to 100 wallets, `chain` required on each (the first funder is read per chain); at most 20 Solana wallets per call.",
+                    "example": [
+                      {
+                        "chain": "evm:8453",
+                        "wallet": "0xd13da05b9288ba4961973110594bd0fe3428791f"
+                      },
+                      {
+                        "chain": "solana",
+                        "wallet": "GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E"
+                      }
+                    ],
+                    "x-default": [
+                      {
+                        "chain": "evm:8453",
+                        "wallet": "0xd13da05b9288ba4961973110594bd0fe3428791f"
+                      },
+                      {
+                        "chain": "solana",
+                        "wallet": "GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/wallet/pnl": {

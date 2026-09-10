@@ -1,0 +1,55 @@
+---
+openapi: '/openapi.json POST /v1/wallet/funding'
+title: "Wallet Funding: batch"
+description: "Batch twin: the first funder of up to 100 wallets in one call (at most 20 of them on Solana), each item naming its chain. Response in input order, one slot per wallet, billed per wallet."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/wallet/funding` · **1 per wallet credit**
+
+Batch twin: the first funder of up to 100 `{chain, wallet}` items in one call, EVM and Solana mixed freely, with at most 20 Solana wallets per call. Every item names its `chain` (the first funder is read per chain). The response comes back `200` in input order, one slot per wallet: `{ data }`, exactly the body of [`GET /v1/wallet/funding`](/endpoints/wallet-funding) for that wallet (`data: null` when no funder is known, as on the GET), or `{ error: { code, message } }` for that wallet alone (unknown chain, malformed address), never a missing slot. One bad wallet never costs you the rest of the lot. Billed per wallet.
+
+<Note>A slot's `data` is exactly what `GET /v1/wallet/funding` returns for that wallet: `funder`, `fundedAt`, `txHash`, `amountNative` and `funderTag`; see that page for the fields. A call with more than 20 Solana wallets is refused as a whole (`400`).</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/wallet/funding' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items":[{"chain":"evm:8453","wallet":"0xd13da05b9288ba4961973110594bd0fe3428791f"},{"chain":"solana","wallet":"GuhieZDx6nwJV14WjeUQH2ted6CGPKoGCCTaPSPNgG2E"},{"chain":"evm:8453","wallet":"0x95d955179a7cd45aeef394ed39f6a8d8b1bd1e09"}]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "chain": "evm:8453",
+        "funder": "0x20fe51a9229eef2cf8ad9e89d91cab9312cf3b7a",
+        "fundedAt": 1722264859000,
+        "txHash": "0xb0634b8a6581f0ce99b8cb6ac8f986fb290cb9c34641c4197d8d56c30586ffff",
+        "amountNative": "49999990000000000",
+        "funderTag": null
+      }
+    },
+    {
+      "data": {
+        "chain": "solana",
+        "funder": "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9",
+        "fundedAt": 1786895727000,
+        "txHash": "2N82y8e2hZJfDQVsNhcfmpstUhcniVyiNs4vHkH4CpX1ryYRY3ekGs2px2SCdjfJPFtk8UZRGzEdze76wkzP2vCq",
+        "amountNative": "999000000",
+        "funderTag": "Hot Wallet"
+      }
+    },
+    {
+      "data": null
+    }
+  ],
+  "meta": {
+    "asOf": 1789077069707
+  }
+}
+```
+</ResponseExample>
