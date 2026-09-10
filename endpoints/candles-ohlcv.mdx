@@ -10,7 +10,7 @@ Chart-ready candles from 1s to 1M. **By default, one market**: the pool we price
 
 <Note>An unknown token returns `404`. Prices are native-quoted by default (`meta.quote: "native"`); on Solana pass `quote=usd` for USD candles, otherwise multiply by the native USD price.</Note>
 
-<Note>Two volumes per candle. `volume` is the traded value on the quote side, in the chain's native asset (ETH, SOL, BNB...) or in USD with `quote=usd`. `volumeToken` is the traded amount in units of the token itself (the base-asset volume of a Binance kline); it is never converted, whatever `quote` is. Both count exactly the same trades.</Note>
+<Note>Two volumes per candle. `volume` is the traded value on the quote side, in the chain's native asset (ETH, SOL, BNB...) or in USD with `quote=usd`. `volumeToken` is the traded amount in units of the token itself (the base-asset volume of a Binance kline); it is never converted, whatever `quote` is. Both count exactly the same trades, and `trades` is how many: the number of swaps in the bucket (0 on a filled candle).</Note>
 
 <Note>Intervals run from `1s` to `1M`. `1w` candles are epoch-aligned weeks, Thursday 00:00 UTC to Thursday (the standard weekly bucket); `1M` candles are calendar months in UTC (1st of the month 00:00 UTC, 28 to 31 days). `7d` and `30d` are accepted as aliases of `1w` and `1M`, and so are `1min`, `5min`, `15min`, `30min` and `60` (Mobula-style); `meta.interval` always echoes the canonical key. With `quote=usd`, a monthly candle is converted at the median of the month's daily SOL/USD rates.</Note>
 
@@ -38,7 +38,8 @@ curl 'https://api.serialized.xyz/v1/token/ohlcv?chain=evm:8453&address=0x4ed4e86
       "low": 5.4670969692593e-7,
       "close": 5.4748839531073e-7,
       "volume": 0.22006777918571868,
-      "volumeToken": 402251.74
+      "volumeToken": 402251.74,
+      "trades": 39
     },
     {
       "time": 1786701600,
@@ -47,7 +48,8 @@ curl 'https://api.serialized.xyz/v1/token/ohlcv?chain=evm:8453&address=0x4ed4e86
       "low": 5.4747109625568e-7,
       "close": 5.4747109625568e-7,
       "volume": 0.004838309934296527,
-      "volumeToken": 8837.29
+      "volumeToken": 8837.29,
+      "trades": 27
     },
     {
       "time": 1786716000,
@@ -56,7 +58,8 @@ curl 'https://api.serialized.xyz/v1/token/ohlcv?chain=evm:8453&address=0x4ed4e86
       "low": 5.4747109625568e-7,
       "close": 5.4747124708872e-7,
       "volume": 0.000042612402192036,
-      "volumeToken": 77.84
+      "volumeToken": 77.84,
+      "trades": 13
     }
   ],
   "meta": {
