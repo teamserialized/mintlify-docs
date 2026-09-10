@@ -1,0 +1,42 @@
+---
+openapi: '/openapi.json GET /v1/usage'
+title: "Usage"
+description: "Current billing cycle of the calling key: plan, credits used, limit and remaining, request count. Free."
+---
+
+`GET /v1/usage`
+
+Current billing cycle of the calling key: plan, credits used, limit and remaining, request count. The programmatic view of your own key, the data behind a usage dashboard. Free: never billed, and still reachable when the monthly credit allowance is exhausted (when billable endpoints answer `402`), so you can always inspect your own state. A key only ever sees its own usage.
+
+<Note>`month` is the current billing cycle (`YYYYMM`, calendar month, UTC). `tenant` is the label of the key. On an unlimited plan, `credits.limit` and `credits.remaining` are `null`.</Note>
+
+<Note>The same figure is on every billable response: the `X-Credits-Remaining` header carries the credits left in the current cycle.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/usage' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "keyId": "7c21e4b09d5a",
+    "tenant": "acme-trading",
+    "plan": "starter",
+    "month": "202609",
+    "credits": {
+      "used": 14530,
+      "limit": 1000000,
+      "remaining": 985470
+    },
+    "requests": 5020
+  },
+  "meta": {
+    "asOf": 1788980722243
+  }
+}
+```
+</ResponseExample>

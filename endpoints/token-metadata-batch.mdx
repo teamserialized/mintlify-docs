@@ -1,0 +1,74 @@
+---
+openapi: '/openapi.json POST /v1/token/metadata'
+title: "Token Metadata: batch"
+description: "Batch twin: the metadata of up to 100 tokens in one call, EVM and Solana mixed freely. Response in input order, one slot per item, billed per item."
+sidebarTitle: "Batch"
+---
+
+`POST /v1/token/metadata` · **1 per item credit**
+
+Batch twin: the metadata of up to 100 `{chain, address}` items in one call, EVM and Solana mixed freely. The response comes back `200` in input order, one slot per item: `{ data }`, exactly the body of [`GET /v1/token/metadata`](/endpoints/token-metadata) for that token, or `{ error: { code, message } }` for that item alone (unknown token, malformed address), never `null`. One bad item never costs you the rest of the lot. Billed per item.
+
+<Note>A slot's `data` is exactly what `GET /v1/token/metadata` returns: `iconUrl` and `headerUrl` are always fetchable `https` URLs (`null` when no image is available), `dexPaid` is `true`, `false` or `null` (status unknown).</Note>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.serialized.xyz/v1/token/metadata' \
+  -H 'Authorization: YOUR_API_KEY' -H 'Content-Type: application/json' \
+  -d '{"items":[{"chain":"evm:8453","address":"0x4ed4e862860bed51a9570b96d89af5e1b0efefed"},{"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"},{"chain":"solana","address":"11111111111111111111111111111112"}]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": [
+    {
+      "data": {
+        "chain": "evm:8453",
+        "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
+        "name": "Degen",
+        "symbol": "DEGEN",
+        "decimals": 18,
+        "iconUrl": "https://cdn.dexscreener.com/cms/images/c865067e6e29f660b5d0c2a69814875c7415c3fc0022434651525c21f03cc24a?width=800&height=800&quality=90",
+        "headerUrl": "https://cdn.dexscreener.com/cms/images/b0bbfdf2aa7c44176f77b9e541ae3e247c358f0ee1aed5dbe171f5cd5f8f5cd1?width=1500&height=500&quality=90",
+        "websiteUrl": "https://www.degen.tips/",
+        "twitterUrl": "https://twitter.com/degentokenbase",
+        "telegramUrl": "https://t.me/degentokenbase",
+        "discordUrl": null,
+        "description": null,
+        "dexPaid": true,
+        "dexPaidAt": null
+      }
+    },
+    {
+      "data": {
+        "chain": "solana",
+        "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+        "name": "Bonk",
+        "symbol": "Bonk",
+        "decimals": 5,
+        "iconUrl": "https://arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I",
+        "headerUrl": "https://cdn.dexscreener.com/cms/images/e2667fc59737e727f0fd18e7e534c67e371ee40689068e72d30b5bc12bf63c2d?width=1500&height=500&quality=90",
+        "websiteUrl": "https://www.bonkcoin.com",
+        "twitterUrl": "https://twitter.com/bonk_inu",
+        "telegramUrl": "https://t.me/Official_Bonk_Inu",
+        "discordUrl": "https://discord.gg/qaQa6M6mN2",
+        "description": null,
+        "dexPaid": true,
+        "dexPaidAt": null
+      }
+    },
+    {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "Token 11111111111111111111111111111112 on solana"
+      }
+    }
+  ],
+  "meta": {
+    "asOf": 1788980723721
+  }
+}
+```
+</ResponseExample>

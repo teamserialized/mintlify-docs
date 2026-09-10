@@ -1,0 +1,77 @@
+---
+openapi: '/openapi.json GET /v1/usage/breakdown'
+title: "Usage Breakdown"
+description: "Requests and credits per endpoint over the last `days` days, heaviest first: which routes consume your budget. Stream time appears alongside REST routes. Free."
+---
+
+`GET /v1/usage/breakdown`
+
+Requests and credits of the calling key per endpoint over the last `days` days, heaviest first: which routes consume your budget. Stream time appears alongside REST routes, as `WS /v1/stream` (connection minutes) and `WS <channel>` (subscription minutes per channel, `WS trades`, `WS ohlcv`...). Free: never billed, and still reachable when the monthly credit allowance is exhausted. A key only ever sees its own usage.
+
+<ParamField query="days" type="integer">
+  1 to 90. Default 30. Example: `7`
+</ParamField>
+
+<Note>Up to 100 routes, sorted by credits, then requests. Each row is `{ route, requests, credits }`; on stream rows, `credits` is the time billed on that route.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/usage/breakdown?days=7' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "days": 7,
+    "routes": [
+      {
+        "route": "GET /v1/token/ohlcv",
+        "requests": 1080,
+        "credits": 5400
+      },
+      {
+        "route": "WS ohlcv",
+        "requests": 1021,
+        "credits": 4900
+      },
+      {
+        "route": "GET /v1/token/security",
+        "requests": 77,
+        "credits": 770
+      },
+      {
+        "route": "GET /v1/token",
+        "requests": 401,
+        "credits": 401
+      },
+      {
+        "route": "GET /v1/token/pools",
+        "requests": 400,
+        "credits": 400
+      },
+      {
+        "route": "GET /v1/token/stats",
+        "requests": 320,
+        "credits": 320
+      },
+      {
+        "route": "GET /v1/pool/trades",
+        "requests": 302,
+        "credits": 302
+      },
+      {
+        "route": "GET /v1/wallet/positions",
+        "requests": 121,
+        "credits": 242
+      }
+    ]
+  },
+  "meta": {
+    "asOf": 1788980723196
+  }
+}
+```
+</ResponseExample>

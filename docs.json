@@ -64,7 +64,13 @@
                 ]
               },
               "endpoints/token-stats-windowed",
-              "endpoints/token-metadata",
+              {
+                "group": "Token Metadata",
+                "pages": [
+                  "endpoints/token-metadata",
+                  "endpoints/token-metadata-batch"
+                ]
+              },
               "endpoints/token-holders",
               "endpoints/token-top-traders",
               "endpoints/deployer-track-record",
@@ -175,6 +181,14 @@
               "endpoints/token-search",
               "endpoints/pulse",
               "endpoints/market-screener"
+            ]
+          },
+          {
+            "group": "Account usage",
+            "pages": [
+              "endpoints/usage",
+              "endpoints/usage-history",
+              "endpoints/usage-breakdown"
             ]
           }
         ]

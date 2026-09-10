@@ -1,0 +1,77 @@
+---
+openapi: '/openapi.json GET /v1/usage/history'
+title: "Usage History"
+description: "Time series of your requests and credits over the last `days` days, bucketed at `15m`, `1h`, `6h` or `1d`: the graph of a usage dashboard. Free."
+---
+
+`GET /v1/usage/history`
+
+Time series of the calling key's requests and credits over the last `days` days, bucketed at `15m`, `1h`, `6h` or `1d`: the graph of a usage dashboard. Free: never billed, and still reachable when the monthly credit allowance is exhausted. A key only ever sees its own usage.
+
+<ParamField query="days" type="integer">
+  1 to 90. Default 30. Example: `7`
+</ParamField>
+
+<ParamField query="bucket" type="string">
+  `15m`, `1h`, `6h` or `1d` (default). A bucket too fine for the range (more than about 2,200 points) is refused with `400`: pick a coarser one. Example: `1d`
+</ParamField>
+
+<Note>Each point is `{ t, requests, credits }`; `t` is the bucket start in unix seconds. Buckets without traffic are absent from the series.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/usage/history?days=7&bucket=1d' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "days": 7,
+    "bucket": "1d",
+    "series": [
+      {
+        "t": 1788393600,
+        "requests": 100,
+        "credits": 214
+      },
+      {
+        "t": 1788480000,
+        "requests": 2516,
+        "credits": 5469
+      },
+      {
+        "t": 1788566400,
+        "requests": 1870,
+        "credits": 7635
+      },
+      {
+        "t": 1788652800,
+        "requests": 224,
+        "credits": 501
+      },
+      {
+        "t": 1788739200,
+        "requests": 46,
+        "credits": 135
+      },
+      {
+        "t": 1788825600,
+        "requests": 38,
+        "credits": 133
+      },
+      {
+        "t": 1788912000,
+        "requests": 226,
+        "credits": 443
+      }
+    ]
+  },
+  "meta": {
+    "asOf": 1788980722720
+  }
+}
+```
+</ResponseExample>

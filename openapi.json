@@ -899,8 +899,7 @@
                 "additionalProperties": false,
                 "type": "object",
                 "required": [
-                  "markets",
-                  "timeframe"
+                  "markets"
                 ],
                 "properties": {
                   "markets": {
@@ -2204,8 +2203,8 @@
     "/v1/token/sparklines": {
       "post": {
         "operationId": "token-sparklines",
-        "summary": "Sparklines",
-        "description": "Small native-price arrays for list rows - one call for up to 100 pools. Timeframes 1m|5m|30m|1h|24h|7d. Missing pools return [] - we never invent data.",
+        "summary": "Token Sparklines",
+        "description": "Small native-price arrays for token list rows: one call for up to 100 tokens on one chain. We resolve each token's best pool for you and stitch bonding-curve history onto it, so a freshly graduated token draws one continuous line. The response is keyed by token address, oldest to newest. Timeframes 1m|5m|30m|1h|24h|7d. An unknown token returns `[]` - we never invent data. To spark specific pools, across chains, use `POST /v1/pools/sparklines`.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2219,13 +2218,12 @@
                 "additionalProperties": false,
                 "type": "object",
                 "required": [
-                  "chain",
-                  "timeframe"
+                  "chain"
                 ],
                 "properties": {
                   "chain": {
                     "type": "string",
-                    "description": "Public chain id - `evm:<id>` or `solana` (`solana:solana` accepted).",
+                    "description": "Public chain id - `evm:<id>` or `solana`. One chain per call.",
                     "example": "evm:8453",
                     "x-default": "evm:8453"
                   },
@@ -2235,7 +2233,14 @@
                     "type": "array",
                     "items": {
                       "type": "string"
-                    }
+                    },
+                    "description": "1 to 100 token addresses on `chain`. Billed per token.",
+                    "example": [
+                      "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+                    ],
+                    "x-default": [
+                      "0x4ed4e862860bed51a9570b96d89af5e1b0efefed"
+                    ]
                   },
                   "pools": {
                     "minItems": 1,
@@ -2243,12 +2248,11 @@
                     "type": "array",
                     "items": {
                       "type": "string"
-                    },
-                    "description": "Pool addresses (up to 100). Billing is per pool; missing pools return `[]`."
+                    }
                   },
                   "timeframe": {
                     "default": "24h",
-                    "description": "`1m`|`5m`|`30m`|`1h`|`24h`|`7d`.",
+                    "description": "`1m`|`5m`|`30m`|`1h`|`24h`|`7d`. Default `24h`.",
                     "type": "string",
                     "example": "24h",
                     "x-default": "24h"
@@ -2323,7 +2327,7 @@
       "get": {
         "operationId": "token-top-traders",
         "summary": "Token Top Traders",
-        "description": "Ranked traders of a token, from our own PnL fold (per wallet and token): realized PnL in native and USD, tokens bought/sold, open position, average entry, win rate over closed positions, first/last trade. Default sort is `pnl` on both families; `sortBy` accepts `pnl`, `bought`, `sold` or `txns`.",
+        "description": "Ranked traders of a token, from our own PnL fold (per wallet and token): realized PnL in native and USD, tokens bought/sold, open position, average entry, win rate over closed positions, first/last trade. Lifetime by default (`timeframe=all`), or any rolling window from `1h` to `30d`. Default sort is `pnl` on both families; `sortBy` accepts `pnl`, `bought`, `sold` or `txns`.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
@@ -2396,7 +2400,7 @@
             "in": "query",
             "name": "timeframe",
             "required": false,
-            "description": "all = lifetime PnL fold; 1h→30d = windowed recompute",
+            "description": "`all` (default) ranks over the token's lifetime; `1h`, `4h`, `1d`, `7d` or `30d` ranks over a rolling window. On a window, `realizedPnlNative` is the net native cashflow over the window and `winRatePct` is `null`.",
             "example": "all"
           },
           {
@@ -2453,7 +2457,7 @@
             "in": "query",
             "name": "order",
             "required": false,
-            "description": "Default: desc"
+            "description": "`desc` (default) or `asc`."
           },
           {
             "schema": {
