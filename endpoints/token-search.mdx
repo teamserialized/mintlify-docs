@@ -1,12 +1,12 @@
 ---
 openapi: '/openapi.json GET /v1/search'
 title: "Token Search"
-description: "Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry price, liquidity, market cap, 24h volume and 1h/24h price change."
+description: "Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry the token's decimals, price, liquidity, market cap, 24h volume and 1h/24h price change."
 ---
 
 `GET /v1/search` · **5 credits**
 
-Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry price, liquidity, market cap, 24h volume and 1h/24h price change.
+Low-latency token search: exact address (EVM hex, Solana base58, pool addresses) or free-text name/symbol (trigram). Covers BOTH families: `chain=solana` or `chain=evm:<id>` restricts; no chain searches EVM and Solana in parallel and merges by USD liquidity. Results carry the token's decimals, price, liquidity, market cap, 24h volume and 1h/24h price change.
 
 <Note>`volume24hUsd` and `priceChange1hPct`/`priceChange24hPct` are token-wide - aggregated across every pool of the token - and referenced to the token's close before each window.</Note>
 
@@ -27,6 +27,7 @@ curl 'https://api.serialized.xyz/v1/search?q=degen' -H 'Authorization: YOUR_API_
       "address": "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
       "name": "Degen",
       "symbol": "DEGEN",
+      "decimals": 18,
       "nameRank": 2,
       "priceUsd": 0.0010305242898887457,
       "liquidityUsd": 239687.07091684965,
@@ -47,6 +48,7 @@ curl 'https://api.serialized.xyz/v1/search?q=degen' -H 'Authorization: YOUR_API_
       "address": "0xbe92b510007bd3ec0adb3d1fca338dd631e98de7",
       "name": "Degen",
       "symbol": "DEGEN",
+      "decimals": 18,
       "nameRank": 63,
       "priceUsd": 0.0000010794758137739666,
       "liquidityUsd": 128072.76371509997,
