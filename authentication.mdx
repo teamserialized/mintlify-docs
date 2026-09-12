@@ -44,7 +44,7 @@ Every billable response carries `X-Credits-Remaining` (the credits left in the c
 
 ## Rate limits
 
-The limit is per key, on a 1-minute window, with a per-second burst cap so a full minute's budget cannot land in a single second. Standard `X-RateLimit-*` headers are on every response; exceeding a limit returns `429` with code `RATE_LIMITED` and a `Retry-After` header.
+The limit is per key, on a 1-minute window, with a per-second burst cap so a full minute's budget cannot land in a single second. Standard `X-RateLimit-*` headers are on every response; exceeding a limit returns `429` with code `RATE_LIMITED` and a `Retry-After` header. Against the per-minute limit, a batch call counts as one request; against the burst cap and the group caps below, it counts one per item.
 
 A few endpoint groups carry their own per-key cap, identical on every plan:
 
