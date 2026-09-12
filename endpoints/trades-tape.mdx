@@ -15,7 +15,7 @@ Real-time trade tape. `maker` is the trader behind the swap: when a wallet trade
 
 <Note>An unknown token returns `404`. `meta.usdBasis` states how each `volumeUsd` was priced: `spot` on EVM, `trade` (the rate at the moment of the trade) on Solana.</Note>
 
-<Note>Amounts are GROSS on-chain (the exact swapped value). `feesNative` is the transaction fee paid by the trader (gas and priority fee) in the chain's native unit, `null` when it is not available for that row (a Base preconfirmed trade, for example, has no final fee before block commit). `isWash` is a boolean on Solana. On Base, the forming candle can include preconfirmed (flashblocks) swaps ahead of block commit; dedup by `id` or `txHash`.</Note>
+<Note>Amounts are GROSS on-chain (the exact swapped value). `feesNative` is the total fee paid by the trader for the transaction (gas and priority fee, plus the validator tip on Solana) in the chain's native unit, `null` when it is not available for that row (a Base preconfirmed trade, for example, has no final fee before block commit). `isWash` is a boolean on Solana. On Base, the forming candle can include preconfirmed (flashblocks) swaps ahead of block commit; dedup by `id` or `txHash`.</Note>
 
 <RequestExample>
 ```bash cURL

@@ -10,7 +10,7 @@ Trade history of a wallet, newest first - multihop-deduplicated (one event per t
 
 <Note>**Pagination.** Each page is bounded by `limit` and by a scan window over the wallet's history: a page can hold fewer than `limit` rows while `meta.hasMore` is `true`. Keep passing `meta.nextCursor` until `hasMore` is `false`; cursors never skip or repeat a trade, and `hasMore: false` means the wallet's history is fully served.</Note>
 
-<Note>Each trade carries `feesNative` (the transaction fee paid by the trader, gas and priority fee, in the chain's native unit, `null` when it is not available for that row), `isRoutingHop` (a routed intermediate leg) and `isWash` (Solana wash/MEV flag; `null` on EVM). `volumeUsd` is at the current native price on EVM; on Solana it is valued at trade time and `meta.usdBasis` reports `trade` (or `spot` on fallback). `meta.nextCursor` is present while `meta.hasMore` is true.</Note>
+<Note>Each trade carries `feesNative` (the total fee paid by the trader for the transaction: gas and priority fee, plus the validator tip on Solana, in the chain's native unit, `null` when it is not available for that row), `isRoutingHop` (a routed intermediate leg) and `isWash` (Solana wash/MEV flag; `null` on EVM). `volumeUsd` is at the current native price on EVM; on Solana it is valued at trade time and `meta.usdBasis` reports `trade` (or `spot` on fallback). `meta.nextCursor` is present while `meta.hasMore` is true.</Note>
 
 <RequestExample>
 ```bash cURL (EVM)
