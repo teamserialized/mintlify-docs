@@ -1,12 +1,11 @@
 ---
 openapi: '/openapi.json GET /v1/audit/contract'
 title: "Contract Audit"
-description: "Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Async-first: an already-audited token answers inline; a new one starts the audit and returns a progress status to re-poll."
+description: "Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Synchronous: the reply always carries the verdict. An already-audited contract answers in milliseconds; a first-time audit holds until it completes."
 ---
 
 `GET /v1/audit/contract` · **750 credits**
 
-Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Async-first: an already-audited token answers inline; a new one starts the audit and returns a progress status to re-poll.
+Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Synchronous: the reply always carries the verdict. An already-audited contract answers in milliseconds; a first-time audit holds until it completes.
 
-<Note>`meta.complete` tells you whether the verdict is final or the audit is still running (`{ status: "FETCHING" | "DECOMPILING" | "ANALYZING" }`).</Note>
-
+<Note>The verdict sits under `data.audit`: `isSafe`, `isTokenSafe`, `isHookSafe`, `vulnerabilities[]` (each with `type`, `impact`, `mitigated`, `gateReason`), `sourceType`, `isProxy`, `implementationAddress`, `hookAddress`, `hookAudit`, `name`, `symbol`, `address`, `chain`, `createdAt`. Billed once per served verdict. A contract that has no liquidity pool yet answers `404`; retry once it trades.</Note>

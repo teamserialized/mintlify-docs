@@ -48,7 +48,7 @@
       "get": {
         "operationId": "contract-audit",
         "summary": "Contract Audit",
-        "description": "Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Async-first: an already-audited token answers inline; a new one starts the audit and returns a progress status to re-poll.",
+        "description": "Full Serialized Audit verdict for a contract: safety verdict, vulnerabilities, ownership/renounce state, proxy detection, open-source status. Synchronous: the reply always carries the verdict. An already-audited contract answers in milliseconds; a first-time audit holds until it completes.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
