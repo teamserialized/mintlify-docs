@@ -5,7 +5,7 @@ description: "The contract every endpoint follows"
 
 ## One envelope
 
-Every response is `{ data, meta }`. `meta.asOf` is the server timestamp (ms). A field that can't be computed is `null` (never a fabricated value, see [null means unknown](#null-means-unknown)); when data is momentarily unavailable the endpoint returns a `503` with `Retry-After` rather than partial data.
+Every response is `{ data, meta }`. `meta.asOf` is a timestamp (ms): on wallet positions and closed positions it is the moment the holdings were read on-chain (the age of the data, so a cached response is visible as such); elsewhere it is the server time of the response. A field that can't be computed is `null` (never a fabricated value, see [null means unknown](#null-means-unknown)); when data is momentarily unavailable the endpoint returns a `503` with `Retry-After` rather than partial data.
 
 ## Chain ids
 
