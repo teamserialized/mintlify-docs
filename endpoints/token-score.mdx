@@ -1,0 +1,89 @@
+---
+title: "Token Security Score"
+description: "A 0-100 composite security score for any token, computed on request from live on-chain data: 18 weighted checks, hard kills for fatal flaws, CEX-listing adjustment and drawdown reductions, with the full per-check breakdown in every response."
+noindex: true
+---
+
+`GET /v1/token/score` · **10 credits** · access is provisioned per API key
+
+One number to gate a trade, and the full reasoning behind it. The score starts at 100 and applies 18 weighted checks (liquidity depth, LP burn/lock, holder concentration with pools and exchange custody excluded, sniper/bundler activity, authorities, taxes, contract safety, token age, smart-money conviction), a global adjustment for tier-1 CEX listings, and two market-condition reductions (freshly launched pools, collapse from the 30-day high). A fatal flaw skips everything and returns 0 with an explicit kill code.
+
+- **`securityScore`** - the 0-100 result, integer.
+- **`tier`** - risk bucket derived from the score.
+- **`killed` / `killReason`** - a fatal flaw zeroes the score with a stable machine code (for example `HARD_KILL:HONEYPOT`, `HARD_KILL:SELL_TAX`, `HARD_KILL:TOP10_CONCENTRATION`, `HARD_KILL:ATH_DRAWDOWN`).
+- **`securityScoreDetails`** - the complete breakdown: every check with its delta and metadata, the inputs the engine saw, hard floors, the CEX multiplier and the tier-1 exchanges found, raw and final score, both global reductions, `computedAt`. The shape is a drop-in for the `securityScoreDetails` object your integration already parses.
+
+Scores are computed on request from live data and cached for up to 30 seconds, so a rug reflects on the first uncached read: the score collapses through the kill logic rather than fading.
+
+<Note>Available as a batch: `POST /v1/token/score` with `items[]` of `{chain, address}`, billed per item. The per-call item cap is provisioned with your key.</Note>
+
+<Note>Supported on every chain we index, EVM and Solana alike, with the same response shape. `chain` takes a public chain id: `solana`, `evm:1`, `evm:56`, `evm:8453`, `evm:42161`, and the rest of the catalog from `/v1/meta/chains`.</Note>
+
+<RequestExample>
+```bash cURL
+curl 'https://api.serialized.xyz/v1/token/score?chain=solana&address=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263' \
+  -H 'Authorization: YOUR_API_KEY'
+```
+
+```bash Batch
+curl -X POST 'https://api.serialized.xyz/v1/token/score' \
+  -H 'Authorization: YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{"items":[
+    {"chain":"solana","address":"DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"},
+    {"chain":"evm:8453","address":"0x4ed4e862860bed51a9570b96d89af5e1b0efefed"}
+  ]}'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "data": {
+    "chain": "solana",
+    "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "securityScore": 99,
+    "tier": "Very Low",
+    "killed": false,
+    "killReason": null,
+    "computedAt": "2026-09-17T09:41:03.301Z",
+    "securityScoreDetails": {
+      "version": 3.1,
+      "base": 100,
+      "killed": false,
+      "killReason": null,
+      "checks": [
+        { "id": 1, "name": "LP / market cap ratio", "kind": "penalty", "delta": 0, "rawDelta": 0, "cap": -25, "cexAdjusted": true, "meta": { "ratioPct": 32.8 } },
+        { "id": 3, "name": "Top 10 holder concentration", "kind": "penalty", "delta": 0, "rawDelta": 0, "cap": -12, "cexAdjusted": true, "meta": { "effectivePct": 11.4 } }
+      ],
+      "hardFloors": [],
+      "cexMultiplier": 0.05,
+      "tier1Cexes": ["Binance", "Bybit", "Coinbase", "Kraken", "OKX"],
+      "rawScore": 100,
+      "finalScore": 99,
+      "preMigrationReduction": { "applied": false, "factor": 1 },
+      "athDrawdownReduction": { "applied": false, "factor": 1, "drawdownPct": 4.8 },
+      "inputs": { "priceUSD": 0.0000027, "marketCapUSD": 243469509, "holdersCount": 613852, "top10HoldingsPct": 11.4 }
+    }
+  },
+  "meta": { "asOf": 1789638063301 }
+}
+```
+
+```json Killed token
+{
+  "data": {
+    "chain": "evm:8453",
+    "address": "0x39988bf0638edb8c65ce0fb9e1e457c575157ba3",
+    "securityScore": 0,
+    "tier": "Critical",
+    "killed": true,
+    "killReason": "HARD_KILL:ATH_DRAWDOWN",
+    "computedAt": "2026-09-17T09:41:12.114Z"
+  },
+  "meta": { "asOf": 1789638072114 }
+}
+```
+</ResponseExample>
+
+A request for a token we do not index returns `404 NOT_FOUND`. A key without this feature enabled receives `404` on the route itself: reach out to have it provisioned.
