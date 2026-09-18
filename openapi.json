@@ -3035,7 +3035,7 @@
       "get": {
         "operationId": "usage-breakdown",
         "summary": "Usage Breakdown",
-        "description": "Requests and credits per endpoint over the last `days` days, heaviest first: which routes consume your budget. Stream time appears alongside REST routes, as `WS /v1/stream` (connection minutes) and `WS <channel>` (subscription minutes per channel). Free.",
+        "description": "Requests and credits per endpoint over the last `days` days, heaviest first: which routes consume your budget. Streams appear alongside REST routes, as `WS <channel>` (events delivered per channel) and `WS /v1/stream` (connection minutes, free: 0 credits). Free.",
         "responses": {
           "200": {
             "description": "Standard `{ data, meta }` envelope."
