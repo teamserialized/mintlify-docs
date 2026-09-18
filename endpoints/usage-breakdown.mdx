@@ -6,13 +6,13 @@ description: "Requests and credits per endpoint over the last `days` days, heavi
 
 `GET /v1/usage/breakdown`
 
-Requests and credits of the calling key per endpoint over the last `days` days, heaviest first: which routes consume your budget. Stream time appears alongside REST routes, as `WS /v1/stream` (connection minutes) and `WS <channel>` (subscription minutes per channel, `WS trades`, `WS ohlcv`...). Free: never billed, and still reachable when the monthly credit allowance is exhausted. A key only ever sees its own usage.
+Requests and credits of the calling key per endpoint over the last `days` days, heaviest first: which routes consume your budget. Streams appear alongside REST routes, as `WS <channel>` (events delivered per channel, `WS trades`, `WS ohlcv`...) and `WS /v1/stream` (connection minutes, free: always 0 credits). Free: never billed, and still reachable when the monthly credit allowance is exhausted. A key only ever sees its own usage.
 
 <ParamField query="days" type="integer">
   1 to 90. Default 30. Example: `7`
 </ParamField>
 
-<Note>Up to 100 routes, sorted by credits, then requests. Each row is `{ route, requests, credits }`; on stream rows, `credits` is the time billed on that route.</Note>
+<Note>Up to 100 routes, sorted by credits, then requests. Each row is `{ route, requests, credits }`; on `WS /v1/stream`, `requests` is connection minutes (0 credits); on `WS <channel>`, `requests` is the number of events delivered.</Note>
 
 <RequestExample>
 ```bash cURL

@@ -3,7 +3,7 @@
   "info": {
     "title": "Serialized Data API Streams",
     "version": "0.1.0",
-    "description": "Real-time push over a single WebSocket connection: live trades and token updates. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged. Streams bill connection time: 1 credit per connection-minute, with no per-message cost."
+    "description": "Real-time push over a single WebSocket connection: live trades and token updates. Event payloads reuse the exact same shapes as their REST twins - anything you built against REST parses stream events unchanged. Streams bill what you receive, and only that: 1 credit per event delivered on any channel; the connection is free and a silent subscription costs nothing. Every subscribe accepts an optional `maxUpdatesPerMinute` (1 to 6000) that caps the events delivered per minute on that subscription, keeping the most recent one. Limits per key: 10 connections, 50 subscriptions per connection, 100 distinct tokens/pools."
   },
   "servers": {
     "production": {
@@ -57,6 +57,12 @@
                   "pools": {
                     "type": "string",
                     "description": "Comma-separated pool addresses to restrict the tape. Default: token-wide (every pool of the token)."
+                  },
+                  "maxUpdatesPerMinute": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 6000,
+                    "description": "Optional cap on the events delivered per minute on this subscription (and on its cost): first event immediately, then at most N per minute, the latest trade of each window. Omit to receive every trade."
                   }
                 },
                 "required": [
@@ -183,6 +189,12 @@
                     "examples": [
                       "CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump"
                     ]
+                  },
+                  "maxUpdatesPerMinute": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 6000,
+                    "description": "Optional cap on the events delivered per minute on this subscription (and on its cost): the latest state of each window is delivered. Omit for up to one event per second."
                   }
                 },
                 "required": [
@@ -308,6 +320,12 @@
                     "examples": [
                       "BqnpCdDLPV2pFdAaLnVidmn3G93RP2p5oRdGEY2sJGez"
                     ]
+                  },
+                  "maxUpdatesPerMinute": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 6000,
+                    "description": "Optional cap on the events delivered per minute on this subscription (and on its cost): the latest state of each window is delivered. Omit for up to one event per second."
                   }
                 },
                 "required": [

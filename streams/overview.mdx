@@ -36,19 +36,36 @@ Delivery is at-most-once: after a reconnect, backfill the gap over REST (trades 
 
 ## Limits
 
-Limits per key: 5 concurrent connections, 20 subscriptions per connection, 50 distinct tokens/pools across `trades`/`token-updates`/`pool-updates`. A connection sending more than 200 frames in 10 seconds is closed (1008). Need more? Ask us.
+Limits per key, on every plan: 10 concurrent connections, 50 subscriptions per connection, 100 distinct tokens/pools across `trades`/`token-updates`/`pool-updates` (`token-updates` and `pool-updates` each take up to 50 subscriptions per key). A connection sending more than 200 frames in 10 seconds is closed (1008). Need more? Ask us.
 
 ## Billing
 
-Streams bill time, never messages: 1 credit per connection-minute, plus a per-subscription price for every minute a subscription stays open (first minute charged when the subscription is acknowledged). Whatever the trade rate of a token, the price is the same.
+Streams bill what you receive, and only that: **1 credit per event delivered**, on every channel. The connection itself is free, however long it stays open. A subscription that receives nothing costs nothing. An event held back by `maxUpdatesPerMinute` or lost to backpressure (`gap`) is never billed.
 
-| Channel | Credits per subscription-minute |
+| Channel | Credits per delivered event |
 | --- | --- |
 | `trades` | 1 |
-| `token-updates` | 2 |
-| `pool-updates` | 2 |
+| `token-updates` | 1 |
+| `pool-updates` | 1 |
 
-Example: one connection with 5 `trades` subscriptions open for an hour costs 60 + 5 × 60 = 360 credits. `GET /v1/usage/breakdown` reports connection time under `WS /v1/stream` and each channel under `WS <channel>`.
+Example: one connection open for an hour, with 5 `trades` subscriptions that deliver 1,200 trades in total, costs 1,200 credits. `GET /v1/usage/breakdown` reports each channel under `WS <channel>`, where `requests` is the number of events delivered, and connection time under `WS /v1/stream` at 0 credits.
+
+### Bounding the cost of a busy token
+
+Every `subscribe` accepts an optional `maxUpdatesPerMinute` (integer, 1 to 6000): the maximum number of events delivered per minute on that subscription. The first event is delivered immediately; within each window only the most recent event is kept and delivered when the window ends. On `trades` you then receive the latest trade of each window rather than every trade; on `token-updates` and `pool-updates` you receive the latest state, which is all you need. Omit it to receive every event.
+
+```json Subscribe with a cap of one event per second
+{
+  "op": "subscribe",
+  "channel": "trades",
+  "id": "tape-1",
+  "params": {
+    "chain": "solana",
+    "address": "CBZq5ycLcr6mnYvjFTPuYSuhgS3ujsiTrT4sqatBpump",
+    "maxUpdatesPerMinute": 60
+  }
+}
+```
 
 ## Connection walkthrough
 
