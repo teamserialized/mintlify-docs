@@ -72,7 +72,7 @@ Query your own consumption programmatically, at no credit cost, and a level of s
 
 - [`GET /v1/usage`](/endpoints/usage): current cycle: `{ keyId, tenant, plan, month, credits: { used, limit, remaining }, requests }`.
 - [`GET /v1/usage/history`](/endpoints/usage-history): time series of requests and credits, bucketed at `15m`, `1h`, `6h` or `1d`.
-- [`GET /v1/usage/breakdown`](/endpoints/usage-breakdown): per endpoint, stream time included.
+- [`GET /v1/usage/breakdown`](/endpoints/usage-breakdown): per endpoint, stream channels included.
 
 A key only ever sees its own usage.
 
@@ -87,4 +87,4 @@ The first frame authenticates with your key. Close codes:
 | 1008 | Policy: limits, floods, or a stuck socket |
 | 1001 | Idle timeout |
 
-Streaming usage is metered per minute.
+Streaming bills 1 credit per delivered event, on every channel; the connection itself is free. Details in the [Streams overview](/streams/overview).
